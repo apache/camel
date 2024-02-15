@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ApprovalExamplesManualIT extends AbstractApprovalIT {
+public class ApprovalExamplesManualIT extends AbstractApprovalManualIT {
 
     public ApprovalExamplesManualIT() {
         super(3);

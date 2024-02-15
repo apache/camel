@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Parameterized
-public class ApprovalManualIT extends AbstractApprovalIT {
+public class ApprovalManualIT extends AbstractApprovalManualIT {
 
     @Parameter
     private String format;

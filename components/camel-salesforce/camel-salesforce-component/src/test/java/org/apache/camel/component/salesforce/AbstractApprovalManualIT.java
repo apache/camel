@@ -28,7 +28,7 @@ import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
-public abstract class AbstractApprovalIT extends AbstractSalesforceTestBase {
+public abstract class AbstractApprovalManualIT extends AbstractSalesforceTestBase {
 
     protected static final Object NOT_USED = null;
 
@@ -38,7 +38,7 @@ public abstract class AbstractApprovalIT extends AbstractSalesforceTestBase {
 
     private final int accountCount;
 
-    AbstractApprovalIT(final int accountCount) {
+    AbstractApprovalManualIT(final int accountCount) {
         this.accountCount = accountCount;
     }
 
