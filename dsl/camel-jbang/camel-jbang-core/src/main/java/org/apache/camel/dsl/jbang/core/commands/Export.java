@@ -17,11 +17,9 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
-import java.util.Comparator;
 import java.util.Properties;
 
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
-import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import picocli.CommandLine.Command;
 
@@ -127,57 +125,4 @@ public class Export extends ExportBaseCommand {
         // run export
         return cmd.export();
     }
-
-    public Comparator<MavenGav> mavenGavComparator() {
-        return new Comparator<MavenGav>() {
-            @Override
-            public int compare(MavenGav o1, MavenGav o2) {
-                int r1 = rankGroupId(o1);
-                int r2 = rankGroupId(o2);
-
-                if (r1 > r2) {
-                    return -1;
-                } else if (r2 > r1) {
-                    return 1;
-                } else {
-                    return o1.toString().compareTo(o2.toString());
-                }
-            }
-
-            int rankGroupId(MavenGav o1) {
-                String g1 = o1.getGroupId();
-                if ("org.springframework.boot".equals(g1)) {
-                    return 30;
-                } else if ("io.quarkus".equals(g1)) {
-                    return 30;
-                } else if ("org.apache.camel.quarkus".equals(g1)) {
-                    String a1 = o1.getArtifactId();
-                    // main/core/engine first
-                    if ("camel-quarkus-core".equals(a1)) {
-                        return 21;
-                    }
-                    return 20;
-                } else if ("org.apache.camel.springboot".equals(g1)) {
-                    String a1 = o1.getArtifactId();
-                    // main/core/engine first
-                    if ("camel-spring-boot-engine-starter".equals(a1)) {
-                        return 21;
-                    }
-                    return 20;
-                } else if ("org.apache.camel".equals(g1)) {
-                    String a1 = o1.getArtifactId();
-                    // main/core/engine first
-                    if ("camel-main".equals(a1)) {
-                        return 11;
-                    }
-                    return 10;
-                } else if ("org.apache.camel.kamelets".equals(g1)) {
-                    return 5;
-                } else {
-                    return 0;
-                }
-            }
-        };
-    }
-
 }

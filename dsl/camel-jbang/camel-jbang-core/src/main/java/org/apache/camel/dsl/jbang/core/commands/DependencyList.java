@@ -16,146 +16,86 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
-import org.apache.camel.dsl.jbang.core.common.XmlHelper;
+import org.apache.camel.dsl.jbang.core.common.MavenGavComparator;
+import org.apache.camel.main.KameletMain;
+import org.apache.camel.main.download.DownloadListener;
 import org.apache.camel.tooling.maven.MavenGav;
-import org.apache.camel.util.CamelCaseOrderedProperties;
-import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "list",
-                     description = "Displays all Camel dependencies required to run")
-public class DependencyList extends Export {
+@CommandLine.Command(name = "list", description = "Displays all Camel dependencies required to run")
+public class DependencyList extends CamelCommand {
 
-    protected static final String EXPORT_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/export";
+    // ignored list of dependencies, can be either groupId or artifactId
+    private static final String[] SKIP_DEPS = new String[] { "org.fusesource.jansi", "org.apache.logging.log4j" };
+
+    @CommandLine.Parameters(description = "The Camel file(s) to inspect for dependencies.", arity = "0..9",
+                            paramLabel = "<files>")
+    protected Path[] filePaths;
 
     @CommandLine.Option(names = { "--output" }, description = "Output format (gav, maven, jbang)", defaultValue = "gav")
     protected String output;
 
+    @CommandLine.Option(names = { "-v" }, description = "Print additional verbose output.")
+    protected boolean verbose = false;
+
+    private Set<MavenGav> dependencies;
+
     public DependencyList(CamelJBangMain main) {
         super(main);
+        Arrays.sort(SKIP_DEPS);
     }
 
     @Override
     public Integer doCall() throws Exception {
-        this.quiet = true; // be quiet and generate from fresh data to ensure the output is up-to-date
-        return super.doCall();
-    }
-
-    @Override
-    protected Integer export() throws Exception {
         if (!"gav".equals(output) && !"maven".equals(output) && !"jbang".equals(output)) {
-            System.err.println("--output must be either gav or maven, was: " + output);
+            System.err.println("--output must be either gav, maven or jbang, was: " + output);
             return 1;
         }
+        calculate();
+        return 0;
+    }
 
-        Integer answer = doExport();
-        if (answer == 0) {
-            // read pom.xml
-            File pom = new File(EXPORT_DIR, "pom.xml");
-            if (pom.exists()) {
-                DocumentBuilderFactory dbf = XmlHelper.createDocumentBuilderFactory();
-                DocumentBuilder db = dbf.newDocumentBuilder();
-                Document dom = db.parse(pom);
-                NodeList nl = dom.getElementsByTagName("dependency");
-                List<MavenGav> gavs = new ArrayList<>();
-                String camelVersion = null;
-                String springBootVersion = null;
-                String quarkusVersion = null;
-                for (int i = 0; i < nl.getLength(); i++) {
-                    Element node = (Element) nl.item(i);
-                    String g = node.getElementsByTagName("groupId").item(0).getTextContent();
-                    String a = node.getElementsByTagName("artifactId").item(0).getTextContent();
-                    String v = null;
-                    NodeList vl = node.getElementsByTagName("version");
-                    if (vl.getLength() > 0) {
-                        v = vl.item(0).getTextContent();
-                    }
-
-                    // BOMs
-                    if ("org.apache.camel".equals(g) && "camel-bom".equals(a)) {
-                        camelVersion = v;
-                        continue;
-                    }
-                    if ("org.apache.camel.springboot".equals(g) && "camel-spring-boot-bom".equals(a)) {
-                        camelVersion = v;
-                        continue;
-                    }
-                    if ("org.springframework.boot".equals(g) && "spring-boot-dependencies".equals(a)) {
-                        springBootVersion = v;
-                        continue;
-                    }
-                    if (("${quarkus.platform.group-id}".equals(g) || "io.quarkus.platform".equals(g)) &&
-                            ("${quarkus.platform.artifact-id}".equals(a) || "quarkus-bom".equals(a))) {
-                        if ("${quarkus.platform.version}".equals(v)) {
-                            quarkusVersion = dom.getElementsByTagName("quarkus.platform.version").item(0).getTextContent();
-                        } else {
-                            quarkusVersion = v;
-                        }
-                        continue;
-                    }
-
-                    // scope
-                    String scope = null;
-                    NodeList sl = node.getElementsByTagName("scope");
-                    if (sl.getLength() > 0) {
-                        scope = sl.item(0).getTextContent();
-                    }
-                    if ("test".equals(scope) || "import".equals(scope)) {
-                        // skip test/BOM import scopes
-                        continue;
-                    }
-
-                    // version
-                    if (v == null && g.equals("org.apache.camel")) {
-                        v = camelVersion;
-                    }
-                    if (v == null && g.equals("org.apache.camel.springboot")) {
-                        v = camelVersion;
-                    }
-                    if (v == null && g.equals("org.springframework.boot")) {
-                        v = springBootVersion;
-                    }
-                    if (v == null && (g.equals("io.quarkus") || g.equals("org.apache.camel.quarkus"))) {
-                        v = quarkusVersion;
-                    }
-
-                    if (skipArtifact(g, a, v)) {
-                        continue;
-                    }
-                    if (v != null) {
-                        gavs.add(MavenGav.parseGav(g + ":" + a + ":" + v));
-                    } else {
-                        gavs.add(MavenGav.parseGav(g + ":" + a));
-                    }
-                }
-                // sort GAVs
-                gavs.sort(mavenGavComparator());
-                int i = 0;
-                int total = gavs.size();
-                for (MavenGav gav : gavs) {
-                    outputGav(gav, i, total);
-                    i++;
-                }
-            }
-            // cleanup dir after complete
-            File buildDir = new File(EXPORT_DIR);
-            FileUtil.removeDir(buildDir);
+    public void calculate() throws Exception {
+        List<String> routeFiles = new ArrayList<>();
+        for (Path filePath : filePaths) {
+            routeFiles.add("file://" + filePath.toAbsolutePath());
         }
-        return answer;
+        final KameletMain main = new KameletMain();
+        main.setDownload(false);
+        main.setFresh(false);
+        RunDownloadListener downloadListener = new RunDownloadListener();
+        main.setDownloadListener(downloadListener);
+        main.setSilent(!verbose);
+        // enable stub in silent mode so we do not use real components
+        main.setStubPattern("*");
+        // do not run for very long in silent run
+        main.addInitialProperty("camel.main.autoStartup", "false");
+        main.addInitialProperty("camel.main.durationMaxSeconds", "1");
+        main.addInitialProperty("camel.jbang.verbose", Boolean.toString(verbose));
+        main.addInitialProperty("camel.main.routesIncludePattern", String.join(",", routeFiles));
+
+        main.start();
+        main.run();
+
+        dependencies = downloadListener.getDependencies();
+        int total = dependencies.size();
+        int i = 0;
+        for (MavenGav gav : dependencies) {
+            outputGav(gav, i++, total);
+        }
+        main.stop();
+        main.shutdown();
+    }
+
+    public Set<MavenGav> getDependencies() {
+        return dependencies;
     }
 
     protected void outputGav(MavenGav gav, int index, int total) {
@@ -179,62 +119,28 @@ public class DependencyList extends Export {
         }
     }
 
-    protected Integer doExport() throws Exception {
-        // read runtime and gav from profile if not configured
-        File profile = new File(getProfile() + ".properties");
-        if (profile.exists()) {
-            Properties prop = new CamelCaseOrderedProperties();
-            RuntimeUtil.loadProperties(prop, profile);
-            if (this.runtime == null) {
-                this.runtime = prop.getProperty("camel.jbang.runtime");
+    private static class RunDownloadListener implements DownloadListener {
+
+        final Set<MavenGav> dependencies = new TreeSet<>(new MavenGavComparator());
+
+        @Override
+        public void onDownloadDependency(String groupId, String artifactId, String version) {
+            MavenGav gav = MavenGav.fromCoordinates(groupId, artifactId, version, null, null);
+            if (!skipArtifact(groupId, artifactId)) {
+                dependencies.add(gav);
             }
-            if (this.gav == null) {
-                this.gav = prop.getProperty("camel.jbang.gav");
-            }
-            // allow configuring versions from profile
-            this.javaVersion = prop.getProperty("camel.jbang.javaVersion", this.javaVersion);
-            this.camelVersion = prop.getProperty("camel.jbang.camelVersion", this.camelVersion);
-            this.kameletsVersion = prop.getProperty("camel.jbang.kameletsVersion", this.kameletsVersion);
-            this.localKameletDir = prop.getProperty("camel.jbang.localKameletDir", this.localKameletDir);
-            this.quarkusGroupId = prop.getProperty("camel.jbang.quarkusGroupId", this.quarkusGroupId);
-            this.quarkusArtifactId = prop.getProperty("camel.jbang.quarkusArtifactId", this.quarkusArtifactId);
-            this.quarkusVersion = prop.getProperty("camel.jbang.quarkusVersion", this.quarkusVersion);
-            this.springBootVersion = prop.getProperty("camel.jbang.springBootVersion", this.springBootVersion);
         }
 
-        // use temporary export dir
-        exportDir = EXPORT_DIR;
-        if (gav == null) {
-            gav = "org.apache.camel:camel-jbang-dummy:1.0";
-        }
-        if (runtime == null) {
-            runtime = "camel-main";
+        private boolean skipArtifact(String groupId, String artifactId) {
+            return Arrays.binarySearch(SKIP_DEPS, artifactId) >= 0 || Arrays.binarySearch(SKIP_DEPS, groupId) >= 0;
         }
 
-        // turn off noise
-        if ("spring-boot".equals(runtime) || "camel-spring-boot".equals(runtime)) {
-            return export(new ExportSpringBoot(getMain()));
-        } else if ("quarkus".equals(runtime) || "camel-quarkus".equals(runtime)) {
-            return export(new ExportQuarkus(getMain()));
-        } else if ("main".equals(runtime) || "camel-main".equals(runtime)) {
-            return export(new ExportCamelMain(getMain()));
-        } else {
-            System.err.println("Unknown runtime: " + runtime);
-            return 1;
+        @Override
+        public void onAlreadyDownloadedDependency(String groupId, String artifactId, String version) {
+        }
+
+        private Set<MavenGav> getDependencies() {
+            return dependencies;
         }
     }
-
-    protected boolean skipArtifact(String groupId, String artifactId, String version) {
-        // skip jansi which is used for color logging
-        if ("org.fusesource.jansi".equals(groupId)) {
-            return true;
-        }
-        // skip logging framework
-        if ("org.apache.logging.log4j".equals(groupId)) {
-            return true;
-        }
-
-        return false;
-    }
-
 }

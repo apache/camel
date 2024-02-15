@@ -27,6 +27,7 @@ import java.util.Set;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.MavenGavComparator;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
@@ -196,7 +197,7 @@ class ExportCamelMain extends Export {
         }
 
         // sort artifacts
-        gavs.sort(mavenGavComparator());
+        gavs.sort(new MavenGavComparator());
 
         StringBuilder sb = new StringBuilder();
         for (MavenGav gav : gavs) {
