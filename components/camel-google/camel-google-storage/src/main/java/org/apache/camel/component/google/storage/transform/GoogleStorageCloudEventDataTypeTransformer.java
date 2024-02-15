@@ -32,7 +32,7 @@ import org.apache.camel.spi.Transformer;
  * CloudEvent headers on the exchange.
  */
 @DataTypeTransformer(name = "google-storage:application-cloudevents",
-        description = "Adds CloudEvent headers to the Camel message with Google Storage downloadTo response information")
+                     description = "Adds CloudEvent headers to the Camel message with Google Storage downloadTo response information")
 public class GoogleStorageCloudEventDataTypeTransformer extends Transformer {
 
     @Override

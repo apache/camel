@@ -42,7 +42,7 @@ import org.apache.camel.util.ObjectHelper;
  * in Exchange properties (usually resolved via Json schema resolver).
  */
 @DataTypeTransformer(name = "application-x-java-object",
-        description = "Transforms from JSon to Java object using Jackson (supports content schema)")
+                     description = "Transforms from JSon to Java object using Jackson (supports content schema)")
 public class JsonPojoDataTypeTransformer extends Transformer implements CamelContextAware {
 
     private CamelContext camelContext;

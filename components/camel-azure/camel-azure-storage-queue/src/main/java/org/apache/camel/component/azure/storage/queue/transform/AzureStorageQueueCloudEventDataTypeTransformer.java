@@ -32,7 +32,7 @@ import org.apache.camel.spi.Transformer;
  * specific CloudEvent headers on the exchange.
  */
 @DataTypeTransformer(name = "azure-storage-queue:application-cloudevents",
-        description = "Adds CloudEvent headers to the Camel message with Azure Storage Queue receive message information")
+                     description = "Adds CloudEvent headers to the Camel message with Azure Storage Queue receive message information")
 public class AzureStorageQueueCloudEventDataTypeTransformer extends Transformer {
 
     @Override

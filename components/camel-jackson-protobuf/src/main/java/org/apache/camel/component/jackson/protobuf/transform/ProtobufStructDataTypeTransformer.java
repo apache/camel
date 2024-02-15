@@ -38,7 +38,7 @@ import org.apache.camel.spi.Transformer;
  * schema from the Exchange properties when unmarshalling the payload (usually already resolved via schema resolver).
  */
 @DataTypeTransformer(name = "protobuf-x-struct",
-        description = "Transforms to generic JSonNode using Jackson Protobuf (supports content schema)")
+                     description = "Transforms to generic JSonNode using Jackson Protobuf (supports content schema)")
 public class ProtobufStructDataTypeTransformer extends Transformer {
 
     @Override

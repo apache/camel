@@ -613,6 +613,22 @@ public interface STS2EndpointBuilderFactory {
         public String awsStsFederatedName() {
             return "CamelAwsStsFederatedName";
         }
+
+        /**
+         * The duration, in seconds, of the role session. It could go from 900
+         * seconds, to 1 to 12 hours (dependent on administrator settings. The
+         * default if not specified is 3600 seconds.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsStsAssumeRoleDurationSeconds}.
+         */
+        public String awsStsAssumeRoleDurationSeconds() {
+            return "CamelAwsStsAssumeRoleDurationSeconds";
+        }
     }
     static STS2EndpointBuilder endpointBuilder(String componentName, String path) {
         class STS2EndpointBuilderImpl extends AbstractEndpointBuilder implements STS2EndpointBuilder, AdvancedSTS2EndpointBuilder {

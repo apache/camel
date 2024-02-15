@@ -33,7 +33,7 @@ import org.apache.camel.spi.Transformer;
  * values for CloudEvent attributes such as the Http content type header, event source, event type.
  */
 @DataTypeTransformer(name = "http:application-cloudevents",
-        description = "Adds default CloudEvent (HTTP binding) headers to the Camel message (such as content-type, event source, event type etc.)")
+                     description = "Adds default CloudEvent (HTTP binding) headers to the Camel message (such as content-type, event source, event type etc.)")
 public class CloudEventHttpDataTypeTransformer extends Transformer {
 
     @Override

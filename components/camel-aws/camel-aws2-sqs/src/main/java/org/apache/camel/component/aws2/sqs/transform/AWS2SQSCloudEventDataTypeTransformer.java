@@ -32,7 +32,7 @@ import org.apache.camel.spi.Transformer;
  * CloudEvent headers on the exchange.
  */
 @DataTypeTransformer(name = "aws2-sqs:application-cloudevents",
-        description = "Adds CloudEvent headers to the Camel message with AWS SQS receive message details")
+                     description = "Adds CloudEvent headers to the Camel message with AWS SQS receive message details")
 public class AWS2SQSCloudEventDataTypeTransformer extends Transformer {
 
     @Override
