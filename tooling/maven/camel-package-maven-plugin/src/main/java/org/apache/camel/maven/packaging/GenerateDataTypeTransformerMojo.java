@@ -184,7 +184,7 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
                 File camelMetaDir = new File(resourcesOutputDir, "META-INF/services/org/apache/camel/");
                 int count = models.size();
                 String properties = createProperties(project, "transformers", names.toString());
-                updateResource(camelMetaDir.toPath(), "language.properties", properties);
+                updateResource(camelMetaDir.toPath(), "transformer.properties", properties);
                 getLog().info("Generated transformer.properties containing " + count + " Camel "
                               + (count > 1 ? "transformers: " : "transformer: ") + names);
             } catch (Exception e) {
