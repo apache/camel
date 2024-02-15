@@ -514,6 +514,12 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
                 return am;
             }
         }
+        for (String name : findTransformerNames()) {
+            ArtifactModel<?> am = transformerModel(name);
+            if (matchArtifact(am, groupId, artifactId, version)) {
+                return am;
+            }
+        }
         return null;
     }
 

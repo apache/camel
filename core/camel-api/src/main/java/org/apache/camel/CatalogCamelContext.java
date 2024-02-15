@@ -48,8 +48,8 @@ public interface CatalogCamelContext extends CamelContext {
     String getLanguageParameterJsonSchema(String languageName) throws IOException;
 
     /**
-     * Returns the JSON schema representation of the {@link org.apache.camel.spi.DataTypeTransformer}
-     * parameters for the given transformer name.
+     * Returns the JSON schema representation of the {@link org.apache.camel.spi.DataTypeTransformer} parameters for the
+     * given transformer name.
      *
      * @return the json or <tt>null</tt> if the transformer does not exist
      */
