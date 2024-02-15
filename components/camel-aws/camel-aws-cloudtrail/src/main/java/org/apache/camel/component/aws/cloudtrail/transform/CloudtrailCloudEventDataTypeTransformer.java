@@ -31,7 +31,8 @@ import org.apache.camel.spi.Transformer;
  * Data type transformer converts AWS Cloudtrail lookup events response to CloudEvent v1_0 data format. The data type
  * sets Camel specific CloudEvent headers with values extracted from AWS Cloudtrail lookup events response.
  */
-@DataTypeTransformer(name = "aws-cloudtrail:application-cloudevents")
+@DataTypeTransformer(name = "aws-cloudtrail:application-cloudevents",
+        description = "Adds CloudEvent headers to the Camel message with AWS Cloudtrail lookup events response details")
 public class CloudtrailCloudEventDataTypeTransformer extends Transformer {
 
     @Override
