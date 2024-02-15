@@ -199,11 +199,11 @@ public class CSimpleLanguage extends TypedLanguageSupport implements StaticServi
         public CSimpleLanguage build() {
             final Map<String, CSimpleExpression> predicates = compiledPredicates.isEmpty()
                     ? Collections.emptyMap()
-                    : Collections.unmodifiableMap(compiledPredicates);
+                    : new ConcurrentHashMap<>(compiledPredicates);
             this.compiledPredicates = null; // invalidate the builder to prevent leaking the mutable collection
             final Map<String, CSimpleExpression> expressions = compiledExpressions.isEmpty()
                     ? Collections.emptyMap()
-                    : Collections.unmodifiableMap(compiledExpressions);
+                    : new ConcurrentHashMap<>(compiledExpressions);
             this.compiledExpressions = null; // invalidate the builder to prevent leaking the mutable collection
             return new CSimpleLanguage(predicates, expressions);
         }
