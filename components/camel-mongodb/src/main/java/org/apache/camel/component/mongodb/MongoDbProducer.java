@@ -25,11 +25,7 @@ import com.mongodb.client.DistinctIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.BulkWriteOptions;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.ReplaceOptions;
-import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.model.WriteModel;
+import com.mongodb.client.model.*;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import org.apache.camel.Exchange;
@@ -45,25 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.mongodb.client.model.Filters.eq;
-import static org.apache.camel.component.mongodb.MongoDbConstants.BATCH_SIZE;
-import static org.apache.camel.component.mongodb.MongoDbConstants.COLLECTION;
-import static org.apache.camel.component.mongodb.MongoDbConstants.COLLECTION_INDEX;
-import static org.apache.camel.component.mongodb.MongoDbConstants.CRITERIA;
-import static org.apache.camel.component.mongodb.MongoDbConstants.DATABASE;
-import static org.apache.camel.component.mongodb.MongoDbConstants.FIELDS_PROJECTION;
-import static org.apache.camel.component.mongodb.MongoDbConstants.LIMIT;
-import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
-import static org.apache.camel.component.mongodb.MongoDbConstants.MULTIUPDATE;
-import static org.apache.camel.component.mongodb.MongoDbConstants.NUM_TO_SKIP;
-import static org.apache.camel.component.mongodb.MongoDbConstants.OID;
-import static org.apache.camel.component.mongodb.MongoDbConstants.OPERATION_HEADER;
-import static org.apache.camel.component.mongodb.MongoDbConstants.RECORDS_AFFECTED;
-import static org.apache.camel.component.mongodb.MongoDbConstants.RECORDS_MATCHED;
-import static org.apache.camel.component.mongodb.MongoDbConstants.RESULT_PAGE_SIZE;
-import static org.apache.camel.component.mongodb.MongoDbConstants.RESULT_TOTAL_SIZE;
-import static org.apache.camel.component.mongodb.MongoDbConstants.SORT_BY;
-import static org.apache.camel.component.mongodb.MongoDbConstants.UPSERT;
-import static org.apache.camel.component.mongodb.MongoDbConstants.WRITERESULT;
+import static org.apache.camel.component.mongodb.MongoDbConstants.*;
 
 /**
  * The MongoDb producer.
@@ -83,6 +61,7 @@ public class MongoDbProducer extends DefaultProducer {
         bind(MongoDbOperation.findDistinct, createDoDistinct());
         bind(MongoDbOperation.findAll, createDoFindAll());
         bind(MongoDbOperation.findById, createDoFindById());
+        bind(MongoDbOperation.findOneAndUpdate, createDoFindOneAndUpdate());
         bind(MongoDbOperation.findOneByQuery, createDoFindOneByQuery());
         bind(MongoDbOperation.getColStats, createDoGetColStats());
         bind(MongoDbOperation.getDbStats, createDoGetDbStats());
@@ -654,6 +633,52 @@ public class MongoDbProducer extends DefaultProducer {
                 return dbCol.bulkWrite(requests, options);
             } catch (InvalidPayloadException e) {
                 throw new CamelMongoDbException("Invalid payload for bulk write", e);
+            }
+        };
+    }
+
+    private Function<Exchange, Object> createDoFindOneAndUpdate() {
+        return exchange -> {
+            try {
+                MongoCollection<Document> dbCol = calculateCollection(exchange);
+                Bson filter = exchange.getIn().getHeader(CRITERIA, Bson.class);
+                Bson update;
+                if (filter == null) {
+                    @SuppressWarnings("unchecked")
+                    List<Bson> saveObj = exchange.getIn().getMandatoryBody((Class<List<Bson>>) Class.class.cast(List.class));
+                    if (saveObj.size() != 2) {
+                        throw new CamelMongoDbException(
+                                "MongoDB operation = findOneAndUpdate, failed because body is not a List of Document objects with size = 2");
+                    }
+
+                    filter = saveObj.get(0);
+                    update = saveObj.get(1);
+                } else {
+                    update = exchange.getIn().getMandatoryBody(Bson.class);
+                }
+                FindOneAndUpdateOptions options = exchange.getIn().getHeader(OPTIONS, FindOneAndUpdateOptions.class);
+                if (options == null) {
+                    options = new FindOneAndUpdateOptions();
+                    Boolean upsert = exchange.getIn().getHeader(UPSERT, Boolean.class);
+                    if (upsert != null) {
+                        options.upsert(upsert);
+                    }
+                    Bson sort = exchange.getIn().getHeader(SORT_BY, Bson.class);
+                    if (sort != null) {
+                        options.sort(sort);
+                    }
+                    Bson projection = exchange.getIn().getHeader(FIELDS_PROJECTION, Bson.class);
+                    if (projection != null) {
+                        options.projection(projection);
+                    }
+                    ReturnDocument returnDoc = exchange.getIn().getHeader(RETURN_DOCUMENT, ReturnDocument.class);
+                    if (returnDoc != null) {
+                        options.returnDocument(returnDoc);
+                    }
+                }
+                return dbCol.findOneAndUpdate(filter, update, options);
+            } catch (InvalidPayloadException e) {
+                throw new CamelMongoDbException("Invalid payload for findOneAndUpdate", e);
             }
         };
     }

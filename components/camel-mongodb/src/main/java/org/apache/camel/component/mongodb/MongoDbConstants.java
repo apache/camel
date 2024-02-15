@@ -90,6 +90,16 @@ public final class MongoDbConstants {
               javaType = "String")
     public static final String STREAM_OPERATION_TYPE = "CamelMongoDbStreamOperationType";
 
+    @Metadata(label = "producer update one and return", description = "Indicates which document to return,\n" +
+                                                                      "the document before or after an update and return atomic operation.",
+              javaType = "com.mongodb.client.model.ReturnDocument")
+    public static final String RETURN_DOCUMENT = "CamelMongoDbReturnDocumentType";
+
+    @Metadata(label = "producer update one and options", description = "Options to use.\n" +
+                                                                       "When set, options set in the headers will be ignored.",
+              javaType = "Object")
+    public static final String OPTIONS = "CamelMongoDbOperationOption";
+
     private MongoDbConstants() {
     }
 
