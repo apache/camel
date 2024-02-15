@@ -17,74 +17,79 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.5.0-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-platform-http</artifactId>
+    <artifactId>camel-platform-http-jolokia</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Platform HTTP</name>
-    <description>HTTP service leveraging existing runtime platform HTTP server</description>
+
+    <name>Camel :: Platform HTTP :: Jolokia</name>
+    <description>Jolokia plugin for standalone Camel HTTP Platform</description>
+
+    <properties>
+        <firstVersion>4.4.0</firstVersion>
+        <label>http,monitoring</label>
+    </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-platform-http</artifactId>
+        </dependency>
+
+        <!-- json -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-util-json</artifactId>
         </dependency>
 
-        <!-- jolokia -->
-        <dependency>
-            <groupId>org.jolokia</groupId>
-            <artifactId>jolokia-agent-jvm</artifactId>
-            <version>${jolokia-version}</version>
-        </dependency>
-
-        <!-- test infra -->
+        <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-jetty</artifactId>
-            <version>${project.version}</version>
+            <artifactId>camel-core</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty.ee10</groupId>
-            <artifactId>jetty-ee10-servlet</artifactId>
-            <version>${jetty-version}</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty.ee10</groupId>
-            <artifactId>jetty-ee10-servlets</artifactId>
-            <version>${jetty-version}</version>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>${hamcrest-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj-version}</version>
             <scope>test</scope>
         </dependency>
 
+        <!-- logging -->
         <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>rest-assured</artifactId>
-            <version>${rest-assured-version}</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-junit5</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-http</artifactId>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
+
 </project>

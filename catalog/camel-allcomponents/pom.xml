@@ -1344,6 +1344,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-platform-http-jolokia</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-platform-http-main</artifactId>
             <version>${project.version}</version>
         </dependency>
