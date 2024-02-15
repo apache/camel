@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -102,6 +103,9 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(YamlRoutesBuilderLoader.class);
 
+    private final AtomicBoolean deprecatedWarnLogged = new AtomicBoolean();
+    private final AtomicBoolean deprecatedBindingWarnLogged = new AtomicBoolean();
+
     // API versions for Camel-K Integration and Pipe
     // we are lenient so lets just assume we can work with any of the v1 even if they evolve
     private static final String INTEGRATION_VERSION = "camel.apache.org/v1";
@@ -127,7 +131,9 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     public boolean isSupportedExtension(String extension) {
         // this builder can support multiple extensions
         if (DEPRECATED_EXTENSION.equals(extension)) {
-            LOG.warn("File extension camelk.yaml is deprecated. Use camel.yaml instead.");
+            if (deprecatedWarnLogged.compareAndSet(false, true)) {
+                LOG.warn("File extension camelk.yaml is deprecated. Use camel.yaml instead.");
+            }
             return true;
         }
         return Arrays.asList(SUPPORTED_EXTENSION).contains(extension);
@@ -343,7 +349,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             if (integration) {
                 target = preConfigureIntegration(root, ctx, target, preParse);
             } else if (binding || pipe) {
-                if (binding) {
+                if (binding && deprecatedBindingWarnLogged.compareAndSet(false, true)) {
                     LOG.warn("CamelK kind=KameletBinding is deprecated. Use CamelK kind=Pipe instead.");
                 }
                 target = preConfigurePipe(root, ctx, target, preParse);

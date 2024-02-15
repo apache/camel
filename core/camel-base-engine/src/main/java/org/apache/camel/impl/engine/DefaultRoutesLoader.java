@@ -231,7 +231,11 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
                 RoutesBuilderLoader.class);
 
         if (answer == null) {
-            answer = loaders.computeIfAbsent(extension, this::resolveService);
+            answer = loaders.values().stream()
+                    // find existing loader that support this extension
+                    .filter(l -> l.isSupportedExtension(extension)).findFirst()
+                    // or resolve loader from classpath
+                    .orElse(loaders.computeIfAbsent(extension, this::resolveService));
         }
 
         return answer;
