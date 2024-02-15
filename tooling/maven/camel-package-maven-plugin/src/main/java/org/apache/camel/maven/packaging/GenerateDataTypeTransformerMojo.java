@@ -22,7 +22,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
-import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -150,20 +149,18 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
 
         if (!models.isEmpty()) {
             try {
-                JsonArray arr = new JsonArray();
                 for (var model : models) {
                     JsonObject jo = asJsonObject(model);
-                    arr.add(jo);
+                    String json = jo.toJson();
+                    json = Jsoner.prettyPrint(json, 2);
+                    String fn = sanitizeFileName(model.getName()) + ".json";
+                    boolean updated = updateResource(resourcesOutputDir.toPath(),
+                            "META-INF/services/org/apache/camel/transformer/" + fn,
+                            json + NL);
+                    if (updated) {
+                        getLog().info("Updated transformer json: " + model.getName());
+                    }
                 }
-                JsonObject root = new JsonObject();
-                root.put("transformers", arr);
-                String json = root.toJson();
-                json = Jsoner.prettyPrint(json, 2);
-
-                // we need to store in META-INF to avoid confusing with component json
-                updateResource(resourcesOutputDir.toPath(),
-                        "META-INF/services/org/apache/camel/transformer/transformers.json",
-                        json + NL);
             } catch (Exception e) {
                 throw new MojoExecutionException(e);
             }
@@ -187,7 +184,13 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
         if (model.getDescription() != null) {
             jo.put("description", model.getDescription());
         }
-        return jo;
+        JsonObject root = new JsonObject();
+        root.put("transformer", jo);
+        return root;
+    }
+
+    private String sanitizeFileName(String fileName) {
+        return fileName.replaceAll("[^A-Za-z0-9-]", "-");
     }
 
 }
