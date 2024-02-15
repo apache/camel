@@ -39,7 +39,8 @@ import org.apache.camel.spi.Transformer;
  * representation. Uses given Avro schema from the Exchange properties when marshalling the payload (usually already
  * resolved via schema resolver).
  */
-@DataTypeTransformer(name = "avro-binary")
+@DataTypeTransformer(name = "avro-binary",
+        description = "Transforms from JSon to binary (byte array) using Jackson Avro (supports Avro schema)")
 public class AvroBinaryDataTypeTransformer extends Transformer {
 
     @Override

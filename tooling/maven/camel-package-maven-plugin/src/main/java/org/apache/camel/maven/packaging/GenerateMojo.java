@@ -50,6 +50,8 @@ public class GenerateMojo extends AbstractGenerateMojo {
         invoke(GenerateConfigurerMojo.class);
         // generate invoke-on-header
         invoke(GenerateInvokeOnHeaderMojo.class);
+        // generate data-type-transformer
+        invoke(GenerateDataTypeTransformerMojo.class);
         // prepare-components
         invoke(PrepareComponentMojo.class);
         // prepare-main

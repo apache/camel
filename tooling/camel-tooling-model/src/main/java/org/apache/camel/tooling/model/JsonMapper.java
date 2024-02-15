@@ -64,6 +64,8 @@ public final class JsonMapper {
             return generateLanguageModel(obj);
         } else if (obj.containsKey("dataformat")) {
             return generateDataFormatModel(obj);
+        } else if (obj.containsKey("transformer")) {
+            return generateTransformerModel(obj);
         } else if (obj.containsKey("other")) {
             return generateOtherModel(obj);
         } else if (obj.containsKey("model")) {
@@ -357,6 +359,21 @@ public final class JsonMapper {
         wrapper.put("language", obj);
         wrapper.put("properties", asJsonObject(model.getOptions()));
         return wrapper;
+    }
+
+    public static TransformerModel generateTransformerModel(String json) {
+        JsonObject obj = deserialize(json);
+        return generateTransformerModel(obj);
+    }
+
+    public static TransformerModel generateTransformerModel(JsonObject obj) {
+        JsonObject mobj = (JsonObject) obj.get("transformer");
+        TransformerModel model = new TransformerModel();
+        parseModel(mobj, model);
+        model.setFrom(mobj.getString("from"));
+        model.setTo(mobj.getString("to"));
+        parseArtifact(mobj, model);
+        return model;
     }
 
     public static OtherModel generateOtherModel(String json) {

@@ -84,7 +84,7 @@ public class CamelCatalogTest {
         assertTrue(names.contains("log"));
         assertTrue(names.contains("docker"));
         assertTrue(names.contains("jms"));
-        // TODO: camel4 assertTrue(names.contains("activemq"));
+        assertTrue(names.contains("activemq"));
         assertTrue(names.contains("zookeeper-master"));
     }
 
@@ -125,6 +125,17 @@ public class CamelCatalogTest {
         assertTrue(names.contains("file"));
         assertTrue(names.contains("xtokenize"));
         assertTrue(names.contains("hl7terser"));
+    }
+
+    @Test
+    public void testFindTransformerNames() {
+        List<String> names = catalog.findTransformerNames();
+
+        assertTrue(names.contains("application-cloudevents-json"));
+        assertTrue(names.contains("application-x-java-object"));
+        assertTrue(names.contains("aws-cloudtrail-application-cloudevents"));
+        assertTrue(names.contains("azure-storage-queue-application-cloudevents"));
+        assertTrue(names.contains("http-application-cloudevents"));
     }
 
     @Test
@@ -860,6 +871,17 @@ public class CamelCatalogTest {
     @Test
     public void testListLanguagesAsJson() throws Exception {
         String json = catalog.listLanguagesAsJson();
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+    }
+
+    @Test
+    public void testListTransformersAsJson() throws Exception {
+        String json = catalog.listTransformersAsJson();
         assertNotNull(json);
 
         // validate we can parse the json

@@ -31,7 +31,8 @@ import org.apache.camel.spi.Transformer;
  * Output data type represents Azure Storage Blob get blob response as CloudEvent V1. The data type sets Camel specific
  * CloudEvent headers on the exchange.
  */
-@DataTypeTransformer(name = "azure-storage-blob:application-cloudevents")
+@DataTypeTransformer(name = "azure-storage-blob:application-cloudevents",
+        description = "Adds CloudEvent headers to the Camel message with Azure Store Blob get blob information")
 public class AzureStorageBlobCloudEventDataTypeTransformer extends Transformer {
 
     @Override

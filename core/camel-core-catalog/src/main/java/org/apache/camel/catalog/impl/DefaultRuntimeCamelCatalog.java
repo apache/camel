@@ -29,6 +29,7 @@ import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
+import org.apache.camel.tooling.model.TransformerModel;
 
 /**
  * Default {@link RuntimeCamelCatalog}.
@@ -114,6 +115,16 @@ public class DefaultRuntimeCamelCatalog extends AbstractCamelCatalog implements 
     @Override
     public LanguageModel languageModel(String name) {
         return cache("language-model-" + name, name, super::languageModel);
+    }
+
+    @Override
+    public String transformerJSonSchema(String name) {
+        return cache("transformer-" + name, name, super::transformerJSonSchema);
+    }
+
+    @Override
+    public TransformerModel transformerModel(String name) {
+        return cache("transformer-model-" + name, name, super::transformerModel);
     }
 
     @Override

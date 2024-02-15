@@ -48,6 +48,7 @@ import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.OtherModel;
+import org.apache.camel.tooling.model.TransformerModel;
 import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
@@ -110,6 +111,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/languages")
     protected File languagesOutDir;
+
+    /**
+     * The output directory for transformers catalog
+     */
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/transformers")
+    protected File transformersOutDir;
 
     /**
      * The output directory for others catalog
@@ -314,7 +321,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                             if (f.endsWith(PackageHelper.JSON_SUFIX)) {
                                 allJsonFiles.add(p);
                             } else if (f.equals("component.properties") || f.equals("dataformat.properties")
-                                    || f.equals("language.properties") || f.equals("other.properties")) {
+                                    || f.equals("language.properties") || f.equals("other.properties")
+                                    || f.equals("transformer.properties")) {
                                 allPropertiesFiles.add(p);
                             }
                         });
@@ -365,6 +373,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             Set<String> components = executeComponents();
             Set<String> dataformats = executeDataFormats();
             Set<String> languages = executeLanguages();
+            Set<String> transformers = executeTransformers();
             Set<String> others = executeOthers();
             executeDocuments(components, dataformats, languages, others);
             executeXmlSchemas();
@@ -710,6 +719,48 @@ public class PrepareCatalogMojo extends AbstractMojo {
         printLanguagesReport(jsonFiles, duplicateJsonFiles, usedLabels, missingFirstVersions);
 
         return languagesNames;
+    }
+
+    protected Set<String> executeTransformers() throws Exception {
+        Path transformersOutDir = this.transformersOutDir.toPath();
+
+        getLog().info("Copying all Camel transformer json descriptors");
+
+        // lets use sorted set/maps
+        Set<Path> jsonFiles;
+        Set<Path> duplicateJsonFiles;
+        Set<Path> transformerFiles;
+
+        // find all transformers from the components directory
+        transformerFiles = allPropertiesFiles.stream().filter(p -> p.endsWith("transformer.properties"))
+                .collect(Collectors.toCollection(TreeSet::new));
+        jsonFiles = allJsonFiles.stream().filter(p -> allModels.get(p) instanceof TransformerModel)
+                .collect(Collectors.toCollection(TreeSet::new));
+
+        getLog().info("Found " + transformerFiles.size() + " transformer.properties files");
+        getLog().info("Found " + jsonFiles.size() + " transformer json files");
+
+        // make sure to create out dir
+        Files.createDirectories(transformersOutDir);
+
+        // Check duplicates
+        duplicateJsonFiles = getDuplicates(jsonFiles);
+
+        // Copy all descriptors
+        Map<Path, Path> newJsons = map(jsonFiles, p -> p, p -> transformersOutDir.resolve(p.getFileName()));
+        try (Stream<Path> stream = list(transformersOutDir).filter(p -> !newJsons.containsValue(p))) {
+            stream.forEach(this::delete);
+        }
+        newJsons.forEach(this::copy);
+
+        Path all = transformersOutDir.resolve("../transformers.properties");
+        Set<String> transformerNames
+                = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
+        FileUtil.updateFile(all, String.join("\n", transformerNames) + "\n");
+
+        printTransformersReport(jsonFiles, duplicateJsonFiles);
+
+        return transformerNames;
     }
 
     private Set<String> executeOthers() throws Exception {
@@ -1149,6 +1200,23 @@ public class PrepareCatalogMojo extends AbstractMojo {
             getLog().info("");
             getLog().warn("\tLanguages without firstVersion defined: " + missingFirstVersions.size());
             printWarnings(missingFirstVersions);
+        }
+        getLog().info("");
+        getLog().info(SEPARATOR);
+    }
+
+    private void printTransformersReport(
+            Set<Path> json, Set<Path> duplicate) {
+        getLog().info(SEPARATOR);
+        getLog().info("");
+        getLog().info("Camel transformer catalog report");
+        getLog().info("");
+        getLog().info("\tTransformers found: " + json.size());
+        printComponentDebug(json);
+        if (!duplicate.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tDuplicate transformer detected: " + duplicate.size());
+            printComponentWarning(duplicate);
         }
         getLog().info("");
         getLog().info(SEPARATOR);
