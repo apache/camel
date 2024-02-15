@@ -38,6 +38,13 @@ public interface RoutesBuilderLoader extends StaticService, CamelContextAware {
     String getSupportedExtension();
 
     /**
+     * Whether the file extension is supported
+     */
+    default boolean isSupportedExtension(String extension) {
+        return getSupportedExtension().equals(extension);
+    }
+
+    /**
      * Loads {@link RoutesBuilder} from {@link Resource}.
      *
      * @param  resource the resource to be loaded.
