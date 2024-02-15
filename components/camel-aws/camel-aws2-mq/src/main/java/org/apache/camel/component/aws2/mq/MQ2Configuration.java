@@ -73,7 +73,7 @@ public class MQ2Configuration implements Cloneable {
     }
 
     /**
-     * To use a existing configured AmazonMQClient as client
+     * To use a existing configured AmazonMQClient client
      */
     public void setAmazonMqClient(MqClient amazonMqClient) {
         this.amazonMqClient = amazonMqClient;
@@ -106,7 +106,7 @@ public class MQ2Configuration implements Cloneable {
     }
 
     /**
-     * Amazon AWS Session Token used when the user needs to assume a IAM role
+     * Amazon AWS Session Token used when the user needs to assume an IAM role
      */
     public void setSessionToken(String sessionToken) {
         this.sessionToken = sessionToken;
@@ -117,7 +117,7 @@ public class MQ2Configuration implements Cloneable {
     }
 
     /**
-     * The operation to perform. It can be listBrokers,createBroker,deleteBroker
+     * The operation to perform. It can be listBrokers, createBroker, deleteBroker
      */
     public void setOperation(MQ2Operations operation) {
         this.operation = operation;
@@ -162,7 +162,7 @@ public class MQ2Configuration implements Cloneable {
 
     /**
      * The region in which MQ client needs to work. When using this parameter, the configuration will expect the
-     * lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
+     * lowercase name of the region (for example, ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
         this.region = region;
@@ -195,8 +195,8 @@ public class MQ2Configuration implements Cloneable {
     }
 
     /**
-     * Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride
-     * option
+     * Set the need for overriding the endpoint. This option needs to be used in combination with the
+     * uriEndpointOverride option
      */
     public void setOverrideEndpoint(boolean overrideEndpoint) {
         this.overrideEndpoint = overrideEndpoint;
@@ -241,8 +241,8 @@ public class MQ2Configuration implements Cloneable {
     }
 
     /**
-     * Set whether the MQ client should expect to use Session Credentials. This is useful in situation in which the user
-     * needs to assume a IAM role for doing operations in MQ.
+     * Set whether the MQ client should expect to use Session Credentials. This is useful in a situation in which the
+     * user needs to assume an IAM role for doing operations in MQ.
      */
     public void setUseSessionCredentials(boolean useSessionCredentials) {
         this.useSessionCredentials = useSessionCredentials;
@@ -253,7 +253,7 @@ public class MQ2Configuration implements Cloneable {
     }
 
     /**
-     * If using a profile credentials provider this parameter will set the profile name
+     * If using a profile credentials provider, this parameter will set the profile name
      */
     public void setProfileCredentialsName(String profileCredentialsName) {
         this.profileCredentialsName = profileCredentialsName;

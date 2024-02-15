@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -79,6 +80,7 @@ import org.apache.camel.spi.Validator;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.LocalBeanRegistry;
+import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedLocationProperties;
@@ -136,6 +138,8 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     public DefaultCamelContext(boolean init) {
         super(init);
+        // setup model factory which must be done very early
+        setModelReifierFactory(createModelReifierFactory());
         if (isDisableJmx()) {
             disableJMX();
         }
@@ -839,6 +843,16 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         } else {
             return new TransformerKey(new DataType(def.getFromType()), new DataType(def.getToType()));
         }
+    }
+
+    protected ModelReifierFactory createModelReifierFactory() {
+        Optional<ModelReifierFactory> result = ResolverHelper.resolveService(
+                this,
+                this.getCamelContextExtension().getBootstrapFactoryFinder(),
+                ModelReifierFactory.FACTORY,
+                ModelReifierFactory.class);
+
+        return result.orElseGet(DefaultModelReifierFactory::new);
     }
 
 }

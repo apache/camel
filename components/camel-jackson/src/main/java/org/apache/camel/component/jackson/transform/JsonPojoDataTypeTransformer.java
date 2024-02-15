@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jackson.transform;
 
 import java.io.ByteArrayInputStream;
@@ -42,7 +41,8 @@ import org.apache.camel.util.ObjectHelper;
  * mapper implementation for the unmarshal operation. Requires proper setting of content schema, class and schema type
  * in Exchange properties (usually resolved via Json schema resolver).
  */
-@DataTypeTransformer(name = "application-x-java-object")
+@DataTypeTransformer(name = "application-x-java-object",
+                     description = "Transforms from JSon to Java object using Jackson (supports content schema)")
 public class JsonPojoDataTypeTransformer extends Transformer implements CamelContextAware {
 
     private CamelContext camelContext;

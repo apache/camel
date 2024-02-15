@@ -28,22 +28,54 @@ import org.apache.camel.Route;
  */
 public interface ModelReifierFactory {
 
+    /**
+     * Service factory key for custom factories.
+     */
+    String FACTORY = "model-reifier-factory";
+
+    /**
+     * Creates the route from the model.
+     */
     Route createRoute(CamelContext camelContext, Object routeDefinition);
 
+    /**
+     * Creates the data format from the model.
+     */
     DataFormat createDataFormat(CamelContext camelContext, Object dataFormatDefinition);
 
+    /**
+     * Creates the error handler for the route processor.
+     */
     Processor createErrorHandler(Route route, Processor processor) throws Exception;
 
+    /**
+     * Creates the error handler using the factory for the route processor.
+     */
     Processor createErrorHandler(Route route, ErrorHandlerFactory errorHandlerFactory, Processor processor) throws Exception;
 
+    /**
+     * Creates the default error handler.
+     */
     ErrorHandlerFactory createDefaultErrorHandler();
 
+    /**
+     * Creates the expression from the model.
+     */
     Expression createExpression(CamelContext camelContext, Object expressionDefinition);
 
+    /**
+     * Creates the predicate from the model.
+     */
     Predicate createPredicate(CamelContext camelContext, Object expressionDefinition);
 
+    /**
+     * Creates the transformer from the model.
+     */
     Transformer createTransformer(CamelContext camelContext, Object transformerDefinition);
 
+    /**
+     * Creates the validator from the model.
+     */
     Validator createValidator(CamelContext camelContext, Object transformerDefinition);
 
 }

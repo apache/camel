@@ -81,18 +81,19 @@ public class ListVariable extends ProcessWatchCommand {
                         }
                         row.pid = Long.toString(ph.pid());
 
-                        // platform-http is special
-                        JsonObject jo = (JsonObject) root.get("variables");
-                        for (String id : jo.keySet()) {
-                            JsonArray arr = jo.getCollection(id);
-                            for (int i = 0; i < arr.size(); i++) {
-                                row = row.copy();
-                                jo = (JsonObject) arr.get(i);
-                                row.id = id;
-                                row.key = jo.getString("key");
-                                row.className = jo.getString("className");
-                                row.value = jo.get("value");
-                                rows.add(row);
+                        JsonObject jv = (JsonObject) root.get("variables");
+                        for (String id : jv.keySet()) {
+                            JsonArray arr = jv.getCollection(id);
+                            if (arr != null) {
+                                for (int i = 0; i < arr.size(); i++) {
+                                    row = row.copy();
+                                    JsonObject jo = (JsonObject) arr.get(i);
+                                    row.id = id;
+                                    row.key = jo.getString("key");
+                                    row.className = jo.getString("className");
+                                    row.value = jo.get("value");
+                                    rows.add(row);
+                                }
                             }
                         }
                     }
@@ -112,7 +113,7 @@ public class ListVariable extends ProcessWatchCommand {
                     new Column().header("KEY").dataAlign(HorizontalAlign.LEFT).maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.key),
                     new Column().header("VALUE").headerAlign(HorizontalAlign.RIGHT).maxWidth(80, OverflowBehaviour.NEWLINE)
-                            .with(r -> r.value.toString()))));
+                            .with(this::getValue))));
         }
 
         return 0;

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jackson.transform;
 
 import java.nio.charset.StandardCharsets;
@@ -34,7 +33,8 @@ import org.apache.camel.spi.Transformer;
  * Data type uses Jackson data format to marshal given Exchange payload to a Json (binary byte array representation).
  * Requires Exchange payload as JsonNode representation.
  */
-@DataTypeTransformer(name = "application-json")
+@DataTypeTransformer(name = "application-json",
+                     description = "Transforms from JSon to binary (byte array) using Jackson")
 public class JsonDataTypeTransformer extends Transformer {
 
     @Override

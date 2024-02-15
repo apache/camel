@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jackson.avro.transform;
 
 import java.io.ByteArrayInputStream;
@@ -37,7 +36,8 @@ import org.apache.camel.spi.Transformer;
  * Data type uses Avro Jackson data format to unmarshal Exchange body to generic JsonNode. Uses given Avro schema from
  * the Exchange properties when unmarshalling the payload (usually already resolved via schema resolver).
  */
-@DataTypeTransformer(name = "avro-x-struct")
+@DataTypeTransformer(name = "avro-x-struct",
+                     description = "Transforms to generic JSonNode using Jackson Avro (supports content schema)")
 public class AvroStructDataTypeTransformer extends Transformer {
 
     @Override

@@ -255,8 +255,8 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             String uri = endpoint.getEndpointUri();
 
             Map<String, String> uris = outputs.get(routeId);
-            if (uris != null && !uris.containsKey(uri)) {
-                uris.put(uri, uri);
+            if (uris != null) {
+                uris.putIfAbsent(uri, uri);
             }
             if (extended) {
                 String key = asUtilizationKey(routeId, uri);

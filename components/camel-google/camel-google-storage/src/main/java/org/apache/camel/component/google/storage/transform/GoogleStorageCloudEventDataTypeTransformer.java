@@ -31,7 +31,8 @@ import org.apache.camel.spi.Transformer;
  * Output data type represents Google Storage downloadTo response as CloudEvent V1. The data type sets Camel specific
  * CloudEvent headers on the exchange.
  */
-@DataTypeTransformer(name = "google-storage:application-cloudevents")
+@DataTypeTransformer(name = "google-storage:application-cloudevents",
+                     description = "Adds CloudEvent headers to the Camel message with Google Storage downloadTo response information")
 public class GoogleStorageCloudEventDataTypeTransformer extends Transformer {
 
     @Override

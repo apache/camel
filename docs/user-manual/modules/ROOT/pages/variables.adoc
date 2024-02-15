@@ -4,10 +4,10 @@
 
 In Camel 4.4, we have introduced the concept of _variables_.
 
-A variable is a key/value that can hold a value that can either be private per `Exchange` or global shared
-in the `CamelContext`.
+A variable is a key/value that can hold a value that can either be private per `Exchange`,
+or shared per route, or per `CamelContext`.
 
-NOTE: You can also use _exchange properties_ as variables but the exchange properties are also used internally by Camel,
+NOTE: You can also use _exchange properties_ as variables, but the exchange properties are also used internally by Camel,
 and some EIPs and components. With the newly introduced _variables_ then these are exclusively for end users.
 
 == Variable Repository
@@ -15,20 +15,22 @@ and some EIPs and components. With the newly introduced _variables_ then these a
 The variables are stored in one or more `org.apache.camel.spi.VariableRepository`. By default, there are the following repositories
 
 - `ExchangeVariableRepository` - A private repository per `Exchange` that holds variables that are private for the lifecycle of each `Exchange`.
-- `GlobalVariableRepository` - Uses `global` as id. A shared global repository for the entire `CamelContext`.
+- `RouteVariableRepository` - Uses `route` as id. A single repository, that holds variables per `Route`.
+- `GlobalVariableRepository` - Uses `global` as id. A single global repository for the entire `CamelContext`.
 
 The `ExchangeVariableRepository` is special as its private per exchange and is the default repository when used during routing.
+The `RouteVariableRepository` is a single repository that holds variables that are route scoped.
 
 TIP: There is also `org.apache.camel.spi.BrowsableVariableRepository` which is an extension to `VariableRepository` that
-has APIs to browse the currently variables. This is used by Camel with Camel JBang, and JMX to be able to see the current variables
-from management tooling, CLI and the developer console.
+has APIs to browse the current variables. Camel uses this with Camel JBang, and JMX to be able to see the current variables
+from management tooling, CLI, and the developer console.
 
 === Custom variable repositories
 
 You can implement custom `org.apache.camel.spi.VariableRepository` and plugin to be used out of the box with Apache Camel.
 For example, you can build a custom repository that stores the variables in a database, so they are persisted.
 
-Each repository must have its own unique id. However, it's also possible to replace the default `global` repository with another.
+Each repository must have its own unique id. However, it's also possible to replace the default `global`, or `route` repositories with another.
 
 IMPORTANT: The id `exchange` and `header` is reserved by Camel internally and should not be used as id for custom repositories.
 
@@ -74,14 +76,31 @@ Object val = context.getVariable("myGlobalKey");
 String str = context.getVariable("myGlobalKey", String.class);
 ----
 
+You can also assign a variable to a specific route with `route:` as follows:
+
+[source,java]
+----
+exchange.setVariable("route:myRouteId:myRouteKey", someObjectHere);
+----
+
+And you can get route variables as well:
+
+[source,java]
+----
+Object val = context.getVariable("route:myRouteId:myRouteKey");
+
+// you can get the value as a specific type
+String str = context.getVariable("route:myRouteId:myRouteKey", String.class);
+----
+
 == Setting and getting variables from DSL
 
 It is also possible to use variables in Camel xref:routes.adoc[routes] using the
 setVariable, removeVariable, and convertVariableTo EIPs.
 
-These EIPs makes it possible to set and remove variables from routes. And you can also access variables from the xref:components:languages:simple-language.adoc[Simple] language.
+These EIPs make it possible to set and remove variables from routes. And you can also access variables from the xref:components:languages:simple-language.adoc[Simple] language.
 
-In the following route we set a variable on the exchange which we use later to build a human-readable event message:
+In the following route, we set a variable on the exchange which we use later to build a human-readable event message:
 
 [tabs]
 ====
@@ -139,9 +158,31 @@ YAML::
 ----
 ====
 
+When `route` variables in Camel routes, then the `routeId` is implied as the current route, if not explicit declared.
+For example, the following example the first route will set a variable (`route:second:foo`) in the second route.
+Then the second route can get hold of the variable without having to specify its route id `route:foo`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start").routeId("first")
+    // sets variable in another route
+    .setVariable("route:second:foo").constant("Hello World")
+    .to("mock:end");
+
+from("direct:second").routeId("second")
+    // use variable from this route
+    .setBody().variable("route:foo");
+----
+====
+
+
 == Configuring initial variables on startup
 
-When Camel is starting then it's possible to configure initial variables.
+When Camel is starting then it's possible to configure initial variables for `global` and `route` repositories only.
 
 This can be done in `application.properties` as shown below:
 
@@ -151,20 +192,21 @@ camel.variable.greeting = Random number
 camel.variable.random = 999
 ----
 
-The variables are default set on the `global` repository, but you can specify a custom repository by
-prefixing with `id:` in the key, such as below:
+The variables are default set on the `global` repository, but you can set route scoped variables,
+using `route.` as prefix. As we cannot use colon (`:`) in property keys, then dot is used to separate
+the route id from the variable name, eg `myRoute.gold`.
 
 [source,properties]
 ----
-camel.variable.acme:gold = true
+camel.variable.route.myRoute.gold = true
 camel.variable.greeting = Random number
 camel.variable.random = 999
 ----
 
-Here the gold variable is set on the `acme` repository, and the other variables are set on the `global` repository.
+Here the gold variable is set on the `route` repository, and the other variables are set on the `global` repository.
 
-The value of a variable can also be loaded from file system, such as a JSon file. To do this you should
-prefix the value with `resource:file:` or `resource:classpath:` to load from file system or classpath,
+The value of a variable can also be loaded from the file system, such as a JSon file. To do this, you should
+prefix the value with `resource:file:` or `resource:classpath:` to load from the file system or classpath,
 as shown below:
 
 [source,properties]
@@ -192,10 +234,10 @@ or with the xref:components:eips:claimCheck-eip.adoc[Claim Check] EIP.
 
 === Important concept when using variables and EIPs
 
-It is **important** to understand that the variables focuses the use of the message **body** only.
+It is **important** to understand that the variables focus the use of the message **body** only.
 This is on purpose to keep it simpler and primary work with the message body as the user data.
 
-The following table summarises what the EIP supports with variables:
+The following table summarizes what the EIP supports with variables:
 
 |===
 |*EIP* | *VariableSend* | *VariableReceive*
@@ -212,7 +254,7 @@ The following table summarises what the EIP supports with variables:
 The EIPs listed above have support for using variables when sending and receiving data. This is done by using the `variableSend` and `variableReceive` options
 to specify the name of the variable.
 
-The EIPs works in two modes where *variableSend* and *variableReceive* is a little bit different, so pay attention to the following table:
+The EIPs works in two modes where *variableSend* and *variableReceive* are a little bit different, so pay attention to the following table:
 
 |===
 | *VariableSend*       | *VariableReceive*
@@ -221,11 +263,11 @@ The EIPs works in two modes where *variableSend* and *variableReceive* is a litt
 |===
 
 The *VariableSend* is intended for sending as regular Camel where the sending headers are from the current `Message` and the body is
-from the variable. In other words it's only the message body that is taken from the variable instead of the current `Message` body.
+from the variable. In other words it's only the message body taken from the variable instead of the current `Message` body.
 
 The *VariableReceive* works in a different mode. The idea is that all the received data is stored as variables. This means the current `Message`
 is not changed at all. The received body is stored in the variable, and the received headers (transport headers etc.) are stored as read-only
-headers as variables as well. The names of the variable is `header:variableName.headerName`. For example if the variable is `myVar` and the header is `Content-Type`
+headers as variables as well. The names of the variable is `header:variableName.headerName`. For example, if the variable is `myVar` and the header is `Content-Type`
 then the header is stored as a variable with the full name `header:myVar.Content-Type`.
 
 === Example using VariableReceive
@@ -397,4 +439,3 @@ from:
 
 NOTE: In the examples above the transform `Bye $\{body}` will result as `Bye ` because the `Message` has no message body, as the incoming
 message body is stored in the variable `myKey` instead.
-

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jackson.transform;
 
 import java.io.ByteArrayInputStream;
@@ -36,7 +35,8 @@ import org.apache.camel.spi.Transformer;
 /**
  * Data type uses Jackson data format to unmarshal Exchange body to a generic JsonNode representation.
  */
-@DataTypeTransformer(name = "application-x-struct")
+@DataTypeTransformer(name = "application-x-struct",
+                     description = "Transforms to generic JSonNode using Jackson")
 public class JsonStructDataTypeTransformer extends Transformer {
 
     @Override

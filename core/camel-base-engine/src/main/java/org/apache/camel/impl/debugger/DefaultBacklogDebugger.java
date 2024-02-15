@@ -82,6 +82,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     private boolean bodyIncludeStreams;
     private boolean bodyIncludeFiles = true;
     private boolean includeExchangeProperties = true;
+    private boolean includeExchangeVariables = true;
     private boolean includeException = true;
 
     /**
@@ -678,6 +679,16 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     }
 
     @Override
+    public boolean isIncludeExchangeVariables() {
+        return includeExchangeVariables;
+    }
+
+    @Override
+    public void setIncludeExchangeVariables(boolean includeExchangeVariables) {
+        this.includeExchangeVariables = includeExchangeVariables;
+    }
+
+    @Override
     public boolean isIncludeException() {
         return includeException;
     }
@@ -792,7 +803,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
      * @return          the XML
      */
     private String dumpAsXml(Exchange exchange) {
-        return MessageHelper.dumpAsXml(exchange.getIn(), includeExchangeProperties, true, 2, true,
+        return MessageHelper.dumpAsXml(exchange.getIn(), includeExchangeProperties, includeExchangeVariables, true, 2, true,
                 isBodyIncludeStreams(), isBodyIncludeFiles(),
                 getBodyMaxChars());
     }
@@ -804,7 +815,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
      * @return          the JSon
      */
     private String dumpAsJSon(Exchange exchange) {
-        return MessageHelper.dumpAsJSon(exchange.getIn(), includeExchangeProperties, true, 2, true,
+        return MessageHelper.dumpAsJSon(exchange.getIn(), includeExchangeProperties, includeExchangeVariables, true, 2, true,
                 isBodyIncludeStreams(), isBodyIncludeFiles(),
                 getBodyMaxChars(), true);
     }

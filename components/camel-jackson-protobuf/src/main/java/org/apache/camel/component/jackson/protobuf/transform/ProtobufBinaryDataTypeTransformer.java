@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jackson.protobuf.transform;
 
 import java.io.ByteArrayInputStream;
@@ -39,7 +38,8 @@ import org.apache.camel.spi.Transformer;
  * representation. Uses given Protobuf schema from the Exchange properties when marshalling the payload (usually already
  * resolved via schema resolver).
  */
-@DataTypeTransformer(name = "protobuf-binary")
+@DataTypeTransformer(name = "protobuf-binary",
+                     description = "Transforms from JSon to binary (byte array) using Jackson Protobuf (supports Protobuf schema)")
 public class ProtobufBinaryDataTypeTransformer extends Transformer {
 
     @Override

@@ -615,7 +615,6 @@ public void configure() {
     });
 }
 ----
-include::spring-boot:partial$starter.adoc[]
 
 ==== Dealing with long polling timeouts
 
@@ -634,6 +633,8 @@ public void configure() {
     // route setup ...
 }
 ----
+
+include::spring-boot:partial$starter.adoc[]
 
 
 

@@ -50,6 +50,8 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
     @Metadata(defaultValue = "true")
     private boolean includeExchangeProperties = true;
     @Metadata(defaultValue = "true")
+    private boolean includeExchangeVariables = true;
+    @Metadata(defaultValue = "true")
     private boolean includeException = true;
     @Metadata(label = "advanced", defaultValue = "300")
     private long fallbackTimeout = 300;
@@ -185,6 +187,17 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
         this.includeExchangeProperties = includeExchangeProperties;
     }
 
+    public boolean isIncludeExchangeVariables() {
+        return includeExchangeVariables;
+    }
+
+    /**
+     * Whether to include the exchange variables in the traced message
+     */
+    public void setIncludeExchangeVariables(boolean includeExchangeVariables) {
+        this.includeExchangeVariables = includeExchangeVariables;
+    }
+
     public boolean isIncludeException() {
         return includeException;
     }
@@ -293,6 +306,14 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
      */
     public DebuggerConfigurationProperties withIncludeExchangeProperties(boolean includeExchangeProperties) {
         this.includeExchangeProperties = includeExchangeProperties;
+        return this;
+    }
+
+    /**
+     * Whether to include the exchange variables in the traced message
+     */
+    public DebuggerConfigurationProperties withIncludeExchangeVariables(boolean includeExchangeVariables) {
+        this.includeExchangeVariables = includeExchangeVariables;
         return this;
     }
 

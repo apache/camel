@@ -31,6 +31,7 @@ import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
 import org.apache.camel.tooling.model.ReleaseModel;
+import org.apache.camel.tooling.model.TransformerModel;
 
 /**
  * Catalog of components, data formats, models (EIPs), languages, and more from this Apache Camel release.
@@ -193,6 +194,11 @@ public interface CamelCatalog {
     List<String> findLanguageNames();
 
     /**
+     * Find all the transformer names from the Camel catalog
+     */
+    List<String> findTransformerNames();
+
+    /**
      * Find all the model names from the Camel catalog
      */
     List<String> findModelNames();
@@ -214,6 +220,8 @@ public interface CamelCatalog {
                 return findDataFormatNames();
             case language:
                 return findLanguageNames();
+            case transformer:
+                return findTransformerNames();
             case other:
                 return findOtherNames();
             case eip:
@@ -271,6 +279,14 @@ public interface CamelCatalog {
      * @return      language details in JSon
      */
     String languageJSonSchema(String name);
+
+    /**
+     * Returns the transformer information as JSON format.
+     *
+     * @param  name the transformer name
+     * @return      transformer details in JSon
+     */
+    String transformerJSonSchema(String name);
 
     /**
      * Returns the other (miscellaneous) information as JSON format.
@@ -488,6 +504,11 @@ public interface CamelCatalog {
     String listLanguagesAsJson();
 
     /**
+     * Lists all the transformers summary details in JSon
+     */
+    String listTransformersAsJson();
+
+    /**
      * Lists all the models (EIPs) summary details in JSon
      */
     String listModelsAsJson();
@@ -521,6 +542,12 @@ public interface CamelCatalog {
     LanguageModel languageModel(String name);
 
     /**
+     * @param  name the transformer name to look up
+     * @return      the requested transformer or {@code null} in case it is not available in this {@link CamelCatalog}
+     */
+    TransformerModel transformerModel(String name);
+
+    /**
      * @param  name the other name to look up
      * @return      the requested other or {@code null} in case it is not available in this {@link CamelCatalog}
      */
@@ -552,6 +579,8 @@ public interface CamelCatalog {
                 return dataFormatModel(name);
             case language:
                 return languageModel(name);
+            case transformer:
+                return transformerModel(name);
             case other:
                 return otherModel(name);
             case eip:

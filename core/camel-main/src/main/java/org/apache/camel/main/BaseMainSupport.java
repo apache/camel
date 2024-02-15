@@ -33,6 +33,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelConfiguration;
@@ -475,25 +476,38 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     private static void logConfigurationSummary(OrderedLocationProperties autoConfiguredProperties) {
+        // first log variables
+        doLogConfigurationSummary(autoConfiguredProperties, "Variables summary", (k) -> k.startsWith("camel.variable."));
+        // then log standard options
+        doLogConfigurationSummary(autoConfiguredProperties, "Auto-configuration summary", null);
+    }
+
+    private static void doLogConfigurationSummary(
+            OrderedLocationProperties autoConfiguredProperties, String title, Predicate<String> filter) {
         boolean header = false;
+        List<String> toRemove = new ArrayList<>();
         for (var entry : autoConfiguredProperties.entrySet()) {
             String k = entry.getKey().toString();
-            Object v = entry.getValue();
-            String loc = locationSummary(autoConfiguredProperties, k);
+            if (filter == null || filter.test(k)) {
+                Object v = entry.getValue();
+                String loc = locationSummary(autoConfiguredProperties, k);
 
-            // tone down logging noise for our own internal configurations
-            boolean debug = loc.contains("[camel-main]");
-            if (debug && !LOG.isDebugEnabled()) {
-                continue;
+                // tone down logging noise for our own internal configurations
+                boolean debug = loc.contains("[camel-main]");
+                if (debug && !LOG.isDebugEnabled()) {
+                    continue;
+                }
+
+                if (!header) {
+                    LOG.info(title);
+                    header = true;
+                }
+
+                sensitiveAwareLogging(k, v, loc, debug);
+                toRemove.add(k);
             }
-
-            if (!header) {
-                LOG.info("Auto-configuration summary");
-                header = true;
-            }
-
-            sensitiveAwareLogging(k, v, loc, debug);
         }
+        toRemove.forEach(autoConfiguredProperties::remove);
     }
 
     protected void configureStartupRecorder(CamelContext camelContext) {
@@ -1635,6 +1649,7 @@ public abstract class BaseMainSupport extends BaseService {
         debugger.setBodyIncludeStreams(config.isBodyIncludeStreams());
         debugger.setBodyIncludeFiles(config.isBodyIncludeFiles());
         debugger.setIncludeExchangeProperties(config.isIncludeExchangeProperties());
+        debugger.setIncludeExchangeVariables(config.isIncludeExchangeVariables());
         debugger.setIncludeException(config.isIncludeException());
         debugger.setLoggingLevel(config.getLoggingLevel().name());
         debugger.setSuspendMode(config.isWaitForAttach());
@@ -1701,7 +1716,6 @@ public abstract class BaseMainSupport extends BaseService {
             src.setUnhealthyOnExhausted(config.isUnhealthyOnExhausted());
             src.setUnhealthyOnRestarting(config.isUnhealthyOnRestarting());
         }
-
     }
 
     private void bindBeansToRegistry(

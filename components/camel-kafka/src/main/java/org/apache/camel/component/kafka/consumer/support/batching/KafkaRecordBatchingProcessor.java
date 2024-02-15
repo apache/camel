@@ -47,7 +47,6 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
     private final StopWatch watch = new StopWatch();
     private List<Exchange> exchangeList;
 
-
     private final class CommitSynchronization implements Synchronization {
         private final ExceptionHandler exceptionHandler;
         private ProcessingResult result;
@@ -111,7 +110,8 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
     }
 
     public ProcessingResult processExchange(KafkaConsumer camelKafkaConsumer, ConsumerRecords<Object, Object> consumerRecords) {
-        LOG.debug("There's {} records to process ... max poll is set to {}", consumerRecords.count(), configuration.getMaxPollRecords());
+        LOG.debug("There's {} records to process ... max poll is set to {}", consumerRecords.count(),
+                configuration.getMaxPollRecords());
         // Aggregate all consumer records in a single exchange
         if (exchangeList == null) {
             exchangeList = new ArrayList<>(configuration.getMaxPollRecords());
@@ -119,7 +119,8 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
         }
 
         if (hasExpiredRecords(consumerRecords)) {
-            LOG.debug("The polling timeout has expired with {} records in cache. Dispatching the incomplete batch for processing",
+            LOG.debug(
+                    "The polling timeout has expired with {} records in cache. Dispatching the incomplete batch for processing",
                     exchangeList.size());
 
             // poll timeout has elapsed, so check for expired records

@@ -37,6 +37,8 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
         case "IncludeException": target.setIncludeException(property(camelContext, boolean.class, value)); return true;
         case "includeexchangeproperties":
         case "IncludeExchangeProperties": target.setIncludeExchangeProperties(property(camelContext, boolean.class, value)); return true;
+        case "includeexchangevariables":
+        case "IncludeExchangeVariables": target.setIncludeExchangeVariables(property(camelContext, boolean.class, value)); return true;
         case "logginglevel":
         case "LoggingLevel": target.setLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "singlestepincludestartend":
@@ -68,6 +70,8 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
         case "IncludeException": return boolean.class;
         case "includeexchangeproperties":
         case "IncludeExchangeProperties": return boolean.class;
+        case "includeexchangevariables":
+        case "IncludeExchangeVariables": return boolean.class;
         case "logginglevel":
         case "LoggingLevel": return org.apache.camel.LoggingLevel.class;
         case "singlestepincludestartend":
@@ -100,6 +104,8 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
         case "IncludeException": return target.isIncludeException();
         case "includeexchangeproperties":
         case "IncludeExchangeProperties": return target.isIncludeExchangeProperties();
+        case "includeexchangevariables":
+        case "IncludeExchangeVariables": return target.isIncludeExchangeVariables();
         case "logginglevel":
         case "LoggingLevel": return target.getLoggingLevel();
         case "singlestepincludestartend":

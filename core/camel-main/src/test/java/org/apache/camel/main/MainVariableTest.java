@@ -31,7 +31,7 @@ public class MainVariableTest {
     public void testMainVariableParameters() throws Exception {
         Main main = new Main();
 
-        main.addInitialProperty("camel.variable.global:greeting", "Random number");
+        main.addInitialProperty("camel.variable.global.greeting", "Random number");
         // global is default
         main.addInitialProperty("camel.variable.random", "999");
 

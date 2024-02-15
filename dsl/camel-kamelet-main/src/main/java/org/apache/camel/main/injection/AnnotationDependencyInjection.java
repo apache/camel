@@ -116,15 +116,16 @@ public final class AnnotationDependencyInjection {
             if (instance instanceof EventNotifier) {
                 ManagementStrategy ms = camelContext.getManagementStrategy();
                 if (ms != null) {
-                    // remove previous instance
-                    EventNotifier old = notifiers.get(name);
-                    if (old != null) {
-                        ms.removeEventNotifier(old);
-                    }
-                    // and new notifier
-                    EventNotifier en = (EventNotifier) instance;
-                    ms.addEventNotifier(en);
-                    notifiers.put(name, en);
+                    notifiers.compute(name, (key, old) -> {
+                        // remove previous instance
+                        if (old != null) {
+                            ms.removeEventNotifier(old);
+                        }
+                        // and new notifier
+                        EventNotifier en = (EventNotifier) instance;
+                        ms.addEventNotifier(en);
+                        return en;
+                    });
                 }
             }
         }

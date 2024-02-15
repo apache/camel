@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jackson.protobuf.transform;
 
 import java.io.IOException;
@@ -34,7 +33,8 @@ import org.apache.camel.spi.DataTypeTransformer;
  * Protobuf object mapper implementation for the unmarshal operation. Requires proper setting of content schema, class
  * and schema type in Exchange properties (usually resolved via Json schema resolver).
  */
-@DataTypeTransformer(name = "protobuf-x-java-object")
+@DataTypeTransformer(name = "protobuf-x-java-object",
+                     description = "Transforms from JSon to Java object using Jackson Protobuf (supports content schema)")
 public class ProtobufPojoDataTypeTransformer extends JsonPojoDataTypeTransformer {
 
     @Override

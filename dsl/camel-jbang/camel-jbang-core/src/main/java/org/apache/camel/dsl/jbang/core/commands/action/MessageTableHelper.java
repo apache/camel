@@ -43,6 +43,7 @@ public class MessageTableHelper {
     private boolean loggingColor;
     private boolean pretty;
     private boolean showExchangeProperties;
+    private boolean showExchangeVariables;
     private ColorChooser exchangeIdColorChooser;
 
     public boolean isLoggingColor() {
@@ -67,6 +68,14 @@ public class MessageTableHelper {
 
     public void setShowExchangeProperties(boolean showExchangeProperties) {
         this.showExchangeProperties = showExchangeProperties;
+    }
+
+    public boolean isShowExchangeVariables() {
+        return showExchangeVariables;
+    }
+
+    public void setShowExchangeVariables(boolean showExchangeVariables) {
+        this.showExchangeVariables = showExchangeVariables;
     }
 
     public ColorChooser getExchangeIdColorChooser() {
@@ -96,7 +105,7 @@ public class MessageTableHelper {
             eRow = new TableRow("Endpoint", null, null, endpoint.getString("endpoint"));
             tab0 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
                     new Column().dataAlign(HorizontalAlign.LEFT)
-                            .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
+                            .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10).with(TableRow::kindAsString),
                     new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::valueAsString)));
         }
 
@@ -104,15 +113,23 @@ public class MessageTableHelper {
             eRow = new TableRow("Exchange", root.getString("exchangeType"), exchangePattern, exchangeId);
             tab1 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
                     new Column().dataAlign(HorizontalAlign.LEFT)
-                            .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
+                            .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10).with(TableRow::kindAsString),
                     new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::typeAsString)));
             tab1b = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
                     new Column().dataAlign(HorizontalAlign.CENTER)
                             .minWidth(18).maxWidth(18).with(TableRow::mepAsKey),
                     new Column().dataAlign(HorizontalAlign.RIGHT)
                             .maxWidth(80).with(TableRow::exchangeIdAsValue)));
+            // exchange variables
+            JsonArray arr = root.getCollection("exchangeVariables");
+            if (arr != null) {
+                for (Object o : arr) {
+                    JsonObject jo = (JsonObject) o;
+                    rows.add(new TableRow("Variable", jo.getString("type"), jo.getString("key"), jo.get("value")));
+                }
+            }
             // exchange properties
-            JsonArray arr = root.getCollection("exchangeProperties");
+            arr = root.getCollection("exchangeProperties");
             if (arr != null) {
                 for (Object o : arr) {
                     JsonObject jo = (JsonObject) o;
@@ -129,7 +146,7 @@ public class MessageTableHelper {
             }
             tab2 = AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().dataAlign(HorizontalAlign.LEFT)
-                            .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
+                            .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10).with(TableRow::kindAsString),
                     new Column().dataAlign(HorizontalAlign.LEFT)
                             .minWidth(25).maxWidth(50, OverflowBehaviour.CLIP_LEFT).with(TableRow::typeAsString),
                     new Column().dataAlign(HorizontalAlign.RIGHT)
@@ -142,7 +159,7 @@ public class MessageTableHelper {
             TableRow msgRow = new TableRow("Message", root.getString("messageType"), null, null);
             tab3 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(msgRow), Arrays.asList(
                     new Column().dataAlign(HorizontalAlign.LEFT)
-                            .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
+                            .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10).with(TableRow::kindAsString),
                     new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::typeAsString)));
             arr = root.getCollection("headers");
             if (arr != null) {
@@ -154,7 +171,7 @@ public class MessageTableHelper {
             // headers
             tab4 = AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().dataAlign(HorizontalAlign.LEFT)
-                            .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
+                            .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10).with(TableRow::kindAsString),
                     new Column().dataAlign(HorizontalAlign.LEFT)
                             .minWidth(25).maxWidth(50, OverflowBehaviour.CLIP_LEFT).with(TableRow::typeAsString),
                     new Column().dataAlign(HorizontalAlign.RIGHT)
@@ -169,7 +186,8 @@ public class MessageTableHelper {
                         "Body", jo.getString("type"), null, jo.get("value"), jo.getLong("size"), jo.getLong("position"));
                 tab5 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(bodyRow), Arrays.asList(
                         new Column().dataAlign(HorizontalAlign.LEFT)
-                                .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
+                                .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10)
+                                .with(TableRow::kindAsString),
                         new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::typeAndLengthAsString)));
                 // body value only (span)
                 if (bodyRow.value != null) {
@@ -185,7 +203,7 @@ public class MessageTableHelper {
             eRow = new TableRow("Exception", cause.getString("type"), null, cause.get("message"));
             tab7 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
                     new Column().dataAlign(HorizontalAlign.LEFT)
-                            .minWidth(showExchangeProperties ? 12 : 10)
+                            .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10)
                             .with(TableRow::kindAsStringRed),
                     new Column().dataAlign(HorizontalAlign.LEFT)
                             .maxWidth(40, OverflowBehaviour.CLIP_LEFT).with(TableRow::typeAsString),
@@ -302,6 +320,8 @@ public class MessageTableHelper {
                 s = type.substring(10);
             } else if (type.startsWith("org.apache.camel.support.")) {
                 s = type.substring(25);
+            } else if (type.equals("org.apache.camel.converter.stream.CachedOutputStream.WrappedInputStream")) {
+                s = "WrappedInputStream";
             } else if (type.startsWith("org.apache.camel.converter.stream.")) {
                 s = type.substring(34);
             } else if (type.length() > 34) {
@@ -331,6 +351,8 @@ public class MessageTableHelper {
                 s = type.substring(10);
             } else if (type.startsWith("org.apache.camel.support.")) {
                 s = type.substring(25);
+            } else if (type.equals("org.apache.camel.converter.stream.CachedOutputStream.WrappedInputStream")) {
+                s = "WrappedInputStream";
             } else if (type.startsWith("org.apache.camel.converter.stream.")) {
                 s = type.substring(34);
             } else {

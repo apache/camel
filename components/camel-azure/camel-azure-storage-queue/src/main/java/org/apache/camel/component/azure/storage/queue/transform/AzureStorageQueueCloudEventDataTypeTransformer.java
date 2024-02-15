@@ -31,7 +31,8 @@ import org.apache.camel.spi.Transformer;
  * Output data type represents Azure Storage Queue receive messages operation as CloudEvent V1. The data type sets Camel
  * specific CloudEvent headers on the exchange.
  */
-@DataTypeTransformer(name = "azure-storage-queue:application-cloudevents")
+@DataTypeTransformer(name = "azure-storage-queue:application-cloudevents",
+                     description = "Adds CloudEvent headers to the Camel message with Azure Storage Queue receive message information")
 public class AzureStorageQueueCloudEventDataTypeTransformer extends Transformer {
 
     @Override
@@ -45,7 +46,7 @@ public class AzureStorageQueueCloudEventDataTypeTransformer extends Transformer 
 
         if (message.getHeaders().containsKey(QueueConstants.MESSAGE_ID)) {
             headers.put(CloudEvents.CAMEL_CLOUD_EVENT_SOURCE,
-                    "azure.storage.blob." + message.getHeader(QueueConstants.MESSAGE_ID, String.class));
+                    "azure.storage.queue." + message.getHeader(QueueConstants.MESSAGE_ID, String.class));
         }
 
         if (message.getHeaders().containsKey(QueueConstants.POP_RECEIPT)) {

@@ -110,6 +110,16 @@ public interface BacklogTracer {
     void setIncludeExchangeProperties(boolean includeExchangeProperties);
 
     /**
+     * Trace messages to include exchange variables
+     */
+    boolean isIncludeExchangeVariables();
+
+    /**
+     * Trace messages to include exchange variables
+     */
+    void setIncludeExchangeVariables(boolean includeExchangeVariables);
+
+    /**
      * Trace messages to include exception if the message failed
      */
     boolean isIncludeException();

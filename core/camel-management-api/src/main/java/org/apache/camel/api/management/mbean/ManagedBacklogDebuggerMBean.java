@@ -137,6 +137,12 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedAttribute(description = "Whether to include exchange properties in the trace message.")
     void setIncludeExchangeProperties(boolean includeExchangeProperties);
 
+    @ManagedAttribute(description = "Whether to include exchange variables in the trace message.")
+    boolean isIncludeExchangeVariables();
+
+    @ManagedAttribute(description = "Whether to include exchange variables in the trace message.")
+    void setIncludeExchangeVariables(boolean includeExchangeVariables);
+
     @ManagedOperation(description = "Dumps the messages in XML format from the suspended breakpoint at the given node.")
     String dumpTracedMessagesAsXml(String nodeId);
 

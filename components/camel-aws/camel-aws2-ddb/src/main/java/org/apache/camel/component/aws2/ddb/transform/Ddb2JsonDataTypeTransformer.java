@@ -78,7 +78,8 @@ import software.amazon.awssdk.services.dynamodb.model.ReturnValue;
  * In case key and item attribute value maps are identical you can omit the special top level properties completely. The
  * transformer will map the whole Json body as is then and use it as source for the attribute value map.
  */
-@DataTypeTransformer(name = "aws2-ddb:application-json")
+@DataTypeTransformer(name = "aws2-ddb:application-json",
+                     description = "Prepares the message to perform a DynamoDB operation with the aws2-ddb component")
 public class Ddb2JsonDataTypeTransformer extends Transformer {
 
     private final JacksonDataFormat dataFormat = new JacksonDataFormat(Json.mapper(), JsonNode.class);

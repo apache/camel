@@ -199,7 +199,7 @@ public class SjmsProducer extends DefaultAsyncProducer {
     private ExecutorService createReplyManagerExecutor(ReplyManager temporaryQueueReplyManager, String name) {
         int max = doGetMax();
         return getEndpoint().getCamelContext().getExecutorServiceManager().newThreadPool(temporaryQueueReplyManager, name, 0,
-                        max);
+                max);
     }
 
     private int doGetMax() {

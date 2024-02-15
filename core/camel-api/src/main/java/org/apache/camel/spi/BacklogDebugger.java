@@ -353,6 +353,16 @@ public interface BacklogDebugger extends StatefulService {
     void setIncludeExchangeProperties(boolean includeExchangeProperties);
 
     /**
+     * Whether to include the exchange variables in the traced message
+     */
+    boolean isIncludeExchangeVariables();
+
+    /**
+     * Whether to include the exchange variables in the traced message
+     */
+    void setIncludeExchangeVariables(boolean includeExchangeVariables);
+
+    /**
      * Trace messages to include exception if the message failed
      */
     boolean isIncludeException();

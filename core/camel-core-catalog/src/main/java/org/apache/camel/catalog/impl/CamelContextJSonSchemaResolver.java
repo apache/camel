@@ -73,6 +73,16 @@ public class CamelContextJSonSchemaResolver implements JSonSchemaResolver {
     }
 
     @Override
+    public String getTransformerJSonSchema(String name) {
+        try {
+            return camelContext.getTransformerParameterJsonSchema(name);
+        } catch (IOException e) {
+            // ignore
+        }
+        return null;
+    }
+
+    @Override
     public String getOtherJSonSchema(String name) {
         // not supported
         return null;

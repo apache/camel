@@ -27,13 +27,15 @@ import org.apache.camel.component.cloudevents.CloudEvents;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.support.MessageHelper;
 
 /**
  * Data type represents a default Camel CloudEvent V1 Json format binding. The data type reads Camel specific CloudEvent
  * headers and transforms these to a Json object representing the CloudEvents Json format specification. Sets default
  * values for CloudEvent attributes such as the Http content type header, event source, event type.
  */
-@DataTypeTransformer(name = "application-cloudevents+json")
+@DataTypeTransformer(name = "application-cloudevents+json",
+                     description = "Adds default CloudEvent (JSon binding) headers to the Camel message (such as content-type, event source, event type etc.)")
 public class CloudEventJsonDataTypeTransformer extends Transformer {
 
     @Override
@@ -60,7 +62,8 @@ public class CloudEventJsonDataTypeTransformer extends Transformer {
         cloudEventAttributes.putIfAbsent(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_TIME).json(),
                 cloudEvent.getEventTime(message.getExchange()));
 
-        cloudEventAttributes.putIfAbsent("data", message.getBody(String.class));
+        String body = MessageHelper.extractBodyAsString(message);
+        cloudEventAttributes.putIfAbsent("data", body);
         cloudEventAttributes.putIfAbsent(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE).json(),
                 headers.getOrDefault(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, "application/json"));
 

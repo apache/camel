@@ -76,7 +76,12 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
                 }
             }
             if (name == null) {
-                name = getLineNumberLoggerName(definition);
+                if (camelContext.isSourceLocationEnabled()) {
+                    name = getLineNumberLoggerName(definition);
+                    if (name != null) {
+                        LOG.debug("LogName is not configured, using source location as logName: {}", name);
+                    }
+                }
                 if (name == null) {
                     name = route.getRouteId();
                     LOG.debug("LogName is not configured, using route id as logName: {}", name);

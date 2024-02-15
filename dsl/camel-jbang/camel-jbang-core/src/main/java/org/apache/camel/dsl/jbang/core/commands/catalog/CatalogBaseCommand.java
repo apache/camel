@@ -49,7 +49,7 @@ public abstract class CatalogBaseCommand extends CamelCommand {
     String runtime;
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = "3.7.2")
+                        defaultValue = "3.7.3")
     String quarkusVersion;
 
     @CommandLine.Option(names = { "--repos" },
@@ -143,7 +143,7 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                                         "native", row.nativeSupported)).collect(Collectors.toList())));
             } else {
                 printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                        new Column().header("NAME").visible(!gav).dataAlign(HorizontalAlign.LEFT).maxWidth(30)
+                        new Column().header("NAME").visible(!gav).dataAlign(HorizontalAlign.LEFT).maxWidth(nameWidth())
                                 .with(r -> r.name),
                         new Column().header("ARTIFACT-ID").visible(gav).dataAlign(HorizontalAlign.LEFT).with(this::shortGav),
                         new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.level),
@@ -155,6 +155,10 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         }
 
         return 0;
+    }
+
+    int nameWidth() {
+        return 30;
     }
 
     int sortRow(Row o1, Row o2) {

@@ -28,6 +28,7 @@ import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogDoc;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogKamelet;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogLanguage;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogOther;
+import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogTransformer;
 import org.apache.camel.dsl.jbang.core.commands.config.ConfigCommand;
 import org.apache.camel.dsl.jbang.core.commands.config.ConfigGet;
 import org.apache.camel.dsl.jbang.core.commands.config.ConfigList;
@@ -83,6 +84,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("inflight", new CommandLine(new ListInflight(main)))
                         .addSubcommand("blocked", new CommandLine(new ListBlocked(main)))
                         .addSubcommand("route-controller", new CommandLine(new RouteControllerAction(main)))
+                        .addSubcommand("transformer", new CommandLine(new ListTransformer(main)))
                         .addSubcommand("circuit-breaker", new CommandLine(new ListCircuitBreaker(main)))
                         .addSubcommand("metric", new CommandLine(new ListMetric(main)))
                         .addSubcommand("service", new CommandLine(new ListService(main)))
@@ -116,6 +118,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("component", new CommandLine(new CatalogComponent(main)))
                         .addSubcommand("dataformat", new CommandLine(new CatalogDataFormat(main)))
                         .addSubcommand("language", new CommandLine(new CatalogLanguage(main)))
+                        .addSubcommand("transformer", new CommandLine(new CatalogTransformer(main)))
                         .addSubcommand("other", new CommandLine(new CatalogOther(main)))
                         .addSubcommand("kamelet", new CommandLine(new CatalogKamelet(main))))
                 .addSubcommand("doc", new CommandLine(new CatalogDoc(main)))

@@ -18,13 +18,13 @@ This component provides access to Azure Files.
 
 [CAUTION]
 ====
-A preview component so anything can change in a next release
-or it could be even dropped. At the same time it is consolidated
+This is preview component, therefore, anything can change in future releases
+(features and behavior can be changed, modified or even dropped without notice). At the same time it is consolidated
 enough, sparingly documented, a few users reported it was working
 in their environment, and it is ready for wider feedback. 
 ====
 
-When consuming from remote files server make sure you read the section titled _Consuming Files_
+When consuming from remote files server, make sure you read the section titled _Consuming Files_
 further below for details related to consuming files.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -51,10 +51,10 @@ is a relative path and does not include the share name. The relative path
 can contain nested folders, such as `inbox/spam`. It defaults to
 the share root directory.
 
-The `autoCreate` option is supported for the directory,
+The `autoCreate` option is supported for the directory;
 when consumer or producer starts, there's an additional operation
 performed to create the directory configured for the endpoint. The default
-value for `autoCreate` is `true`. On contrary, the share must exist, it
+value for `autoCreate` is `true`. On the contrary, the share must exist; it
 is not automatically created.
 
 If no *port* number is provided, Camel will provide default values
@@ -63,7 +63,7 @@ according to the protocol (https 443).
 You can append query options to the URI in the following format
 `?option=value&option2=value&...`.
 
-To use this component, you have multiple options in order to provide the required Azure authentication information:
+To use this component, you have multiple options to provide the required Azure authentication information:
 
 - Via Azure Identity, when specifying `credentialType=AZURE_IDENTITY` and providing required https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/identity/azure-identity#environment-variables[environment variables]. This enables service principal (e.g. app registration) authentication with secret/certificate as well as username password. 
 - Via shared storage account key, when specifying `credentialType=SHARED_ACCOUNT_KEY` and providing `sharedKey` for your Azure account, this is the simplest way to get started. The sharedKey can be generated through your Azure portal.
@@ -99,7 +99,7 @@ azure-files://camelazurefiles/samples/inbox/spam?sharedKey=FAKE502UyuBD...3Z%2BA
 == Paths
 
 The path separator is `/`. The absolute paths start with the path separator.
-The absolute paths do not include the share name and they are relative
+The absolute paths do not include the share name, and they are relative
 to the share root rather than to the endpoint starting directory.
  
 *NOTE:* At some places, namely logs of used libraries, OS-specific path separator
@@ -124,7 +124,7 @@ This component uses the Azure Java SDK libraries for the actual work.
 The remote consumer will by default leave the consumed
 files untouched on the remote cloud files server. You have to configure it
 explicitly if you want it to delete the files or move them to another
-location. For example you can use `delete=true` to delete the files, or
+location. For example, you can use `delete=true` to delete the files, or
 use `move=.done` to move the files into `.done` sub directory.
 
 In Camel, the `.`-prefixed folders are excluded from
@@ -150,20 +150,20 @@ performance targets, route processors, caching, resuming, etc.
 === Limitations
 
 The option *readLock* can be used to force Camel *not* to consume files
-that is currently in the progress of being written. However, this option
+that are currently in the progress of being written. However, this option
 is turned off by default, as it requires that the user has write access.
-See the options table at File2 for more details about
+See the endpoint options table for more details about
 read locks. +
  There are other solutions to avoid consuming files that are currently
 being written; for instance, you can write to a temporary
 destination and move the file after it has been written.
 
-For the `readLock=changed`, it relies only on the last modified,
+For the `readLock=changed`, it relies only on the last modified;
 furthermore a precision finer than 5 seconds might be problematic.
 
 When moving files using `move` or `preMove` option, the files are
 restricted to the share. That prevents consumer from moving files
-outside of the endpoint share.
+outside the endpoint share.
 
 === Exchange Properties
 
@@ -173,11 +173,11 @@ The consumer sets the following exchange properties
 |=======================================================================
 |Header |Description
 
-|`CamelBatchIndex` |Current index out of total number of files being consumed in this batch.
+|`CamelBatchIndex` | The current index out of total number of files being consumed in this batch.
 
-|`CamelBatchSize` |Total number of files being consumed in this batch.
+|`CamelBatchSize` |The total number of files being consumed in this batch.
 
-|`CamelBatchComplete` |True if there are no more files in this batch.
+|`CamelBatchComplete` | True if there are no more files in this batch.
 |=======================================================================
 
 == Producing Files
@@ -187,19 +187,19 @@ The Files producer is optimized for two body types:
   - `java.io.InputStream` if `CamelFileLength` header is set
   - `byte[]`
 
-In either case the remote file size is allocated
+In either case, the remote file size is allocated
 and then rewritten with body content. Any inconsistency between
 declared file length and stream length results in a corrupted
 remote file.
 
 === Limitations
 
-The underlying Azure Files service does not allow to grow files. The file
+The underlying Azure Files service does not allow growing files. The file
 length must be known at its creation time, consequently:
 
   - `CamelFileLength` header has an important
     meaning even for producers.
-  - No append mode is supported.
+  - No appending mode is supported.
 
 
 == About Timeouts
@@ -212,7 +212,7 @@ The `timeout` option only applies as the data timeout in millis.
 The meta-data operations timeout is minimum of:
 `readLockCheckInterval`, `timeout` and 20_000 millis.
 
-For now the files upload has no timeout. During the upload,
+For now, the file upload has no timeout. During the upload,
 the underlying library could log timeout warnings. They are
 recoverable and upload could continue.   
 
@@ -224,13 +224,13 @@ entire remote file content into memory as it is streamed directly into
 the local file using `FileOutputStream`.
 
 Camel will store to a local file with the same name as the remote file,
-though with `.inprogress` as extension while the file is being
-downloaded. Afterwards, the file is renamed to remove the `.inprogress`
-suffix. And finally, when the Exchange is complete
+though with `.inprogress` as an extension while the file is being
+downloaded. Afterward, the file is renamed to remove the `.inprogress`
+suffix. And finally, when the Exchange is complete,
 the local file is deleted.
 
 So if you want to download files from a remote files server and store it
-as local files then you need to route to a file endpoint such as:
+as local files, then you need to route to a file endpoint such as:
 
 [source,java]
 ----
@@ -252,8 +252,8 @@ the build in `org.apache.camel.component.file.GenericFileFilter` in
 Java. You can then configure the endpoint with such a filter to skip
 certain filters before being processed.
 
-In the sample we have built our own filter that only accepts files
-starting with report in the filename.
+In the sample, we have built our own filter that only accepts files
+starting with the report in the filename.
 
 And then we can configure our route using the *filter* attribute to
 reference our filter (using `#` notation) that we have defined in the
@@ -264,12 +264,12 @@ The accept(file) file argument has properties:
   - endpoint path: the share name such as `/samples`
   - relative path: a path to the file such as `subdir/a file`
   - directory: `true` if a directory
-  - file length: if not a directory then a length of the file in bytes
+  - file length: if not a directory, then a length of the file in bytes
 
 
 == Filtering using ANT path matcher
 
-The ANT path matcher is a filter that is shipped out-of-the-box in the
+The ANT path matcher is a filter shipped out-of-the-box in the
 *camel-spring* jar. So you need to depend on *camel-spring* if you are
 using Maven. +
  The reason is that we leverage Spring's
@@ -297,14 +297,14 @@ documentation.
 
 == Consuming a single file using a fixed name
 
-Unlike FTP component that features special combination of options:
+Unlike FTP component that features a special combination of options:
   
   - `useList=false`
   - `fileName=myFileName.txt`
   - `ignoreFileNotFoundOrPermissionError=true`
 
 to optimize _the single file using a fixed name_ use case,
-it is necessary to fallback to regular filters (i.e. the list
+it is necessary to fall back to regular filters (i.e. the list
 permission is needed). 
 
 

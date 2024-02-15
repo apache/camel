@@ -30,9 +30,11 @@ https://aws.amazon.com/s3[Amazon S3].
 aws2-s3://bucketNameOrArn[?options]
 ------------------------------
 
-The bucket will be created if it don't already exists. +
- You can append query options to the URI in the following format,
-?options=value&option2=value&...
+The bucket will be created if it doesn't already exist.
+
+You can append query options to the URI in the following format:
+
+`?options=value&option2=value&...`
 
 
 // component-configure options: START
@@ -59,13 +61,13 @@ the https://aws.amazon.com/s3[Amazon's S3].
 
 This component implements the Batch Consumer.
 
-This allows you for instance to know how many messages exists in this
-batch and for instance let the Aggregator
+This allows you, for instance, to know how many messages exist in this
+batch and for instance, let the Aggregator
 aggregate this number of messages.
 
 == Usage
 
-For example in order to read file `hello.txt` from bucket `helloBucket`, use the following snippet:
+For example, to read file `hello.txt` from bucket `helloBucket`, use the following snippet:
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -90,7 +92,8 @@ Camel-AWS2-S3 component provides the following operation on the producer side:
 - getObjectRange (this will return an S3Object instance)
 - createDownloadLink
 
-If you don't specify an operation explicitly the producer will do:
+If you don't specify an operation, explicitly the producer will do:
+
 - a single file upload
 - a multipart upload if multiPartUpload option is enabled
 
@@ -108,7 +111,7 @@ from("aws2-s3://MyBucket?amazonS3Client=#client&delay=5000&maxMessagesPerPoll=5"
 
 === Use KMS with the S3 component
 
-To use AWS KMS to encrypt/decrypt data by using AWS infrastructure you can use the options introduced in 2.21.x like in the following example
+To use AWS KMS to encrypt/decrypt data by using AWS infrastructure, you can use the options introduced in 2.21.x like in the following example
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -117,19 +120,20 @@ from("file:tmp/test?fileName=test.txt")
      .to("aws2-s3://mybucket?amazonS3Client=#client&useAwsKMS=true&awsKMSKeyId=3f0637ad-296a-3dfe-a796-e60654fb128c");
 --------------------------------------------------------------------------------
 
-In this way you'll ask to S3, to use the KMS key 3f0637ad-296a-3dfe-a796-e60654fb128c, to encrypt the file test.txt. When you'll ask to download this file, the decryption will be done directly before the download.
+In this way, you'll ask S3 to use the KMS key 3f0637ad-296a-3dfe-a796-e60654fb128c, to encrypt the file test.txt.
+When you ask to download this file, the decryption will be done directly before the download.
 
 === Static credentials, Default Credential Provider and Profile Credentials Provider
 
-You have the possibility of avoiding the usage of explicit static credentials, by specifying the useDefaultCredentialsProvider option and set it to true.
+You have the possibility of avoiding the usage of explicit static credentials by specifying the useDefaultCredentialsProvider option and set it to true.
 
 The order of evaluation for Default Credentials Provider is the following:
 
- - Java system properties - aws.accessKeyId and aws.secretKey
- - Environment variables - AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY.
+ - Java system properties - `aws.accessKeyId` and `aws.secretKey`.
+ - Environment variables - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
  - Web Identity Token from AWS STS.
  - The shared credentials and config files.
- - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable AWS_CONTAINER_CREDENTIALS_RELATIVE_URI is set.
+ - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
  - Amazon EC2 Instance profile credentials. 
  
 You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
@@ -156,7 +160,7 @@ For more information about this you can look at https://docs.aws.amazon.com/sdk-
   .to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation will upload the file camel.txt with the content "Camel rocks!" in the mycamelbucket bucket
+This operation will upload the file camel.txt with the content "Camel rocks!" in the _mycamelbucket_ bucket
 
 - Multipart Upload: This operation will perform a multipart upload of a file to S3 based on the body content
 
@@ -174,9 +178,9 @@ This operation will upload the file camel.txt with the content "Camel rocks!" in
   .to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation will perform a multipart upload of the file empty.txt with based on the content the file src/empty.txt in the mycamelbucket bucket
+This operation will perform a multipart upload of the file empty.txt with based on the content the file src/empty.txt in the _mycamelbucket_ bucket
 
-- CopyObject: this operation copy an object from one bucket to a different one
+- CopyObject: this operation copies an object from one bucket to a different one
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -193,7 +197,7 @@ This operation will perform a multipart upload of the file empty.txt with based 
   .to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation will copy the object with the name expressed in the header camelDestinationKey to the camelDestinationBucket bucket, from the bucket mycamelbucket.
+This operation will copy the object with the name expressed in the header camelDestinationKey to the camelDestinationBucket bucket, from the bucket _mycamelbucket_.
 
 - DeleteObject: this operation deletes an object from a bucket
 
@@ -210,9 +214,9 @@ This operation will copy the object with the name expressed in the header camelD
   .to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation will delete the object camelKey from the bucket mycamelbucket.
+This operation will delete the object camelKey from the bucket _mycamelbucket_.
 
-- ListBuckets: this operation list the buckets for this account in this region
+- ListBuckets: this operation lists the buckets for this account in this region
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -223,7 +227,7 @@ This operation will delete the object camelKey from the bucket mycamelbucket.
 
 This operation will list the buckets for this account
 
-- DeleteBucket: this operation delete the bucket specified as URI parameter or header
+- DeleteBucket: this operation deletes the bucket specified as URI parameter or header
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -232,7 +236,7 @@ This operation will list the buckets for this account
   .to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation will delete the bucket mycamelbucket
+This operation will delete the bucket _mycamelbucket_
 
 - ListObjects: this operation list object in a specific bucket
 
@@ -243,9 +247,9 @@ This operation will delete the bucket mycamelbucket
   .to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation will list the objects in the mycamelbucket bucket
+This operation will list the objects in the _mycamelbucket_ bucket
 
-- GetObject: this operation get a single object in a specific bucket
+- GetObject: this operation gets a single object in a specific bucket
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -260,9 +264,9 @@ This operation will list the objects in the mycamelbucket bucket
   .to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation will return an S3Object instance related to the camelKey object in mycamelbucket bucket.
+This operation will return an S3Object instance related to the camelKey object in _mycamelbucket_ bucket.
 
-- GetObjectRange: this operation get a single object range in a specific bucket
+- GetObjectRange: this operation gets a single object range in a specific bucket
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -279,7 +283,7 @@ This operation will return an S3Object instance related to the camelKey object i
   .to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation will return an S3Object instance related to the camelKey object in mycamelbucket bucket, containing a the bytes from 0 to 9.
+This operation will return an S3Object instance related to the camelKey object in _mycamelbucket_ bucket, containing the bytes from 0 to 9.
 
 - CreateDownloadLink: this operation will return a download link through S3 Presigner
 
@@ -296,16 +300,17 @@ This operation will return an S3Object instance related to the camelKey object i
   .to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation will return a download link url for the file camel-key in the bucket mycamelbucket and region region.
+This operation will return a download link url for the file camel-key in the bucket _mycamelbucket_ and region _region_.
 Parameters (`accessKey`, `secretKey` and `region`) are mandatory for this operation, if S3 client is autowired from the registry.
 
 NOTE: If checksum validations are enabled, the url will no longer be browser compatible because it adds a signed header that must be included in the HTTP request.
 
 == Streaming Upload mode
 
-With the stream mode enabled users will be able to upload data to S3 without knowing ahead of time the dimension of the data, by leveraging multipart upload.
-The upload will be completed when: the batchSize has been completed or the batchMessageNumber has been reached.
-There are two possible naming strategy: progressive and random. With the progressive strategy each file will have the name composed by keyName option and a progressive counter, and eventually the file extension (if any), while with the random strategy a UUID will be added after keyName and eventually the file extension will appended.
+With the stream mode enabled, users will be able to upload data to S3 without knowing ahead of time the dimension of the data, by leveraging multipart upload.
+The upload will be completed when the batchSize has been completed or the batchMessageNumber has been reached.
+There are two possible naming strategies: progressive and random.
+With the progressive strategy, each file will have the name composed by keyName option and a progressive counter, and eventually the file extension (if any), while with the random strategy a UUID will be added after keyName and eventually the file extension will be appended.
 
 As an example:
 
@@ -322,9 +327,9 @@ from(kafka("topic2").brokers("localhost:9092"))
 
 The default size for a batch is 1 Mb, but you can adjust it according to your requirements.
 
-When you'll stop your producer route, the producer will take care of flushing the remaining buffered messaged and complete the upload.
+When you stop your producer route, the producer will take care of flushing the remaining buffered message and complete the upload.
 
-In Streaming upload you'll be able restart the producer from the point where it left. It's important to note that this feature is critical only when using the progressive naming strategy.
+In Streaming upload, you'll be able to restart the producer from the point where it left. It's important to note that this feature is critical only when using the progressive naming strategy.
 
 By setting the restartingPolicy to lastPart, you will restart uploading files and contents from the last part number the producer left.
 
@@ -332,26 +337,26 @@ As example:
  - Start the route with progressive naming strategy and keyname equals to camel.txt, with batchMessageNumber equals to 20, and restartingPolicy equals to lastPart
  - Send 70 messages.
  - Stop the route
- - On your S3 bucket you should now see 4 files: camel.txt, camel-1.txt, camel-2.txt and camel-3.txt, the first three will have 20 messages, while the last one only 10.
+ - On your S3 bucket you should now see four files: camel.txt, camel-1.txt, camel-2.txt and camel-3.txt, the first three will have 20 messages, while the last one is only 10.
  - Restart the route
  - Send 25 messages
  - Stop the route
- - You'll now have 2 other files in your bucket: camel-5.txt and camel-6.txt, the first with 20 messages and second with 5 messages.
+ - You'll now have two other files in your bucket: camel-5.txt and camel-6.txt, the first with 20 messages and the second with 5 messages.
  - Go ahead
 
 This won't be needed when using the random naming strategy.
 
-On the opposite you can specify the override restartingPolicy. In that case you'll be able to override whatever you written before (for that particular keyName) on your bucket.
+On the opposite, you can specify the override restartingPolicy. In that case, you'll be able to override whatever you written before (for that particular keyName) in your bucket.
 
 [NOTE]
 ====
-In Streaming upload mode the only keyName option that will be taken into account is the endpoint option. Using the header will throw an NPE and this is done by design.
-Setting the header means potentially change the file name on each exchange and this is against the aim of the streaming upload producer. The keyName needs to be fixed and static. 
-The selected naming strategy will do the rest of the of the work.
+In Streaming upload mode, the only keyName option that will be taken into account is the endpoint option. Using the header will throw an NPE and this is done by design.
+Setting the header means potentially change the file name on each exchange, and this is against the aim of the streaming upload producer. The keyName needs to be fixed and static.
+The selected naming strategy will do the rest of the work.
 ====
 
-Another possibility is specifying a streamingUploadTimeout with batchMessageNumber and batchSize options. With this option the user will be able to complete the upload of a file after a certain time passed.
-In this way the upload completion will be passed on three tiers: the timeout, the number of messages and the batch size.
+Another possibility is specifying a streamingUploadTimeout with batchMessageNumber and batchSize options. With this option, the user will be able to complete the upload of a file after a certain time passed.
+In this way, the upload completion will be passed on three tiers: the timeout, the number of messages and the batch size.
 
 As an example:
 
@@ -362,22 +367,22 @@ from(kafka("topic1").brokers("localhost:9092"))
         .to(aws2S3("camel-bucket").streamingUploadMode(true).batchMessageNumber(25).streamingUploadTimeout(10000).namingStrategy(AWS2S3EndpointBuilderFactory.AWSS3NamingStrategyEnum.progressive).keyName("{{kafkaTopic1}}/{{kafkaTopic1}}.txt"));
 --------------------------------------------------------------------------------
 
-In this case the upload will be completed after 10 seconds.
+In this case, the upload will be completed after 10 seconds.
 
-== Bucket Autocreation
+== Bucket Auto-creation
 
-With the option `autoCreateBucket` users are able to avoid the autocreation of an S3 Bucket in case it doesn't exist. The default for this option is `false`.
-If set to false any operation on a not-existent bucket in AWS won't be successful and an error will be returned.
+With the option `autoCreateBucket` users are able to avoid the auto-creation of an S3 Bucket in case it doesn't exist. The default for this option is `false`.
+If set to false, any operation on a not-existent bucket in AWS won't be successful and an error will be returned.
 
 == Moving stuff between a bucket and another bucket
 
 Some users like to consume stuff from a bucket and move the content in a different one without using the copyObject feature of this component.
-If this is case for you, don't forget to remove the bucketName header from the incoming exchange of the consumer, otherwise the file will be always overwritten on the same
+If this is case for you, remember to remove the bucketName header from the incoming exchange of the consumer, otherwise the file will always be overwritten on the same
 original bucket.
 
 == MoveAfterRead consumer option
 
-In addition to deleteAfterRead it has been added another option, moveAfterRead. With this option enabled the consumed object will be moved to a target destinationBucket instead of being only deleted.
+In addition to deleteAfterRead, it has been added another option, moveAfterRead. With this option enabled, the consumed object will be moved to a target destinationBucket instead of being only deleted.
 This will require specifying the destinationBucket option. As example:
 
 [source,java]
@@ -386,7 +391,7 @@ This will require specifying the destinationBucket option. As example:
   .to("mock:result");
 --------------------------------------------------------------------------------
 
-In this case the objects consumed will be moved to myothercamelbucket bucket and deleted from the original one (because of deleteAfterRead set to true as default).
+In this case, the objects consumed will be moved to _myothercamelbucket_ bucket and deleted from the original one (because of deleteAfterRead set to true as default).
 
 You have also the possibility of using a key prefix/suffix while moving the file to a different bucket. The options are destinationBucketPrefix and destinationBucketSuffix.
 
@@ -398,9 +403,9 @@ Taking the above example, you could do something like:
   .to("mock:result");
 --------------------------------------------------------------------------------
 
-In this case the objects consumed will be moved to myothercamelbucket bucket and deleted from the original one (because of deleteAfterRead set to true as default).
+In this case, the objects consumed will be moved to _myothercamelbucket_ bucket and deleted from the original one (because of deleteAfterRead set to true as default).
 
-So if the file name is test, in the myothercamelbucket you should see a file called pre-test-suff.
+So if the file name is test, in the _myothercamelbucket_ you should see a file called pre-test-suff.
 
 == Using customer key as encryption
 
@@ -423,7 +428,7 @@ from("direct:putObject")
 
 == Using a POJO as body
 
-Sometimes build an AWS Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
+Sometimes building an AWS Request can be complex because of multiple options. We introduce the possibility to use a POJO as the body.
 In AWS S3 there are multiple operations you can submit, as an example for List brokers request, you can do something like:
 
 [source,java]
@@ -433,10 +438,10 @@ from("direct:aws2-s3")
      .to("aws2-s3://test?amazonS3Client=#amazonS3Client&operation=listObjects&pojoRequest=true")
 ------------------------------------------------------------------------------------------------------
 
-In this way you'll pass the request directly without the need of passing headers and options specifically related to this operation.
+In this way, you'll pass the request directly without the need of passing headers and options specifically related to this operation.
 
 == Create S3 client and add component to registry
-Sometimes you would want to perform some advanced configuration using AWS2S3Configuration which also allows to set the S3 client.
+Sometimes you would want to perform some advanced configuration using AWS2S3Configuration, which also allows to set the S3 client.
 You can create and set the S3 client in the component configuration as shown in the following example
 
 [source,java]

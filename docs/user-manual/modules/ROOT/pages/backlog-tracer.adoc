@@ -68,6 +68,8 @@ is that the file content has to be read from the file.
 
 |includeExchangeProperties |`true` |Trace messages to include exchange properties.
 
+|includeExchangeVariables |`true` |Trace messages to include exchange variables.
+
 |includeException |`true` |Trace messages to include exception if the message failed.
 
 |===

@@ -16,7 +16,7 @@
 *{component-header}*
 
 
-https://azure.microsoft.com/en-us/services/cosmos-db/[Azure Cosmos DB] is Microsoft's globally distributed, multi-model database service for operational and analytics
+https://azure.microsoft.com/en-us/services/cosmos-db/[Azure Cosmos DB] is Microsoft's globally distributed, multimodel database service for operational and analytics
 workloads. It offers multi-mastering feature by automatically scaling throughput, compute, and storage. This
 component interacts with Azure CosmosDB through Azure SQL API.
 
@@ -67,7 +67,7 @@ include::partial$component-endpoint-options.adoc[]
 
 == Authentication Information
 
-To use this component, you have 2 options in order to provide the required Azure authentication information:
+To use this component, you have two options to provide the required Azure authentication information:
 
 - Provide `accountKey` and `databaseEndpoint` for your Azure CosmosDB account. The account key can
 be generated through your CosmosDB Azure portal.
@@ -83,7 +83,7 @@ This allows camel route to consume and produce events asynchronously without blo
 
 == Usage
 
-For example in order to consume records from a specific container in a specific database to a file, use the following snippet:
+For example, to consume records from a specific container in a specific database to a file, use the following snippet:
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -98,18 +98,18 @@ to("file://directory");
 
 |`CamelAzureCosmosDbDatabaseName`| `CosmosDbConstants.DATABASE_NAME`|`String`| Overrides the database name which is the name of the Cosmos database that component should connect to. In case you are producing data and have createDatabaseIfNotExists=true, the component will automatically auto create a Cosmos database.
 |`CamelAzureCosmosDbContainerName`| `CosmosDbConstants.CONTAINER_NAME`|`String`| Overrides the container name which is the name of the Cosmos container that component should connect to. In case you are producing data and have createContainerIfNotExists=true, the component will automatically auto create a Cosmos container.
-|`CamelAzureCosmosDbOperation`| `CosmosDbConstants.OPERATION`|`CosmosDbOperationsDefinition`| Sets the producer operation which can be used to execute a specific operation on the producer.
-|`CamelAzureCosmosDbQuery`| `CosmosDbConstants.QUERY`|`String`| Sets the SQL query to execute on a given producer query operations.
+|`CamelAzureCosmosDbOperation`| `CosmosDbConstants.OPERATION`|`CosmosDbOperationsDefinition`| Set the producer operation which can be used to execute a specific operation on the producer.
+|`CamelAzureCosmosDbQuery`| `CosmosDbConstants.QUERY`|`String`| Set the SQL query to execute on a given producer query operations.
 |`CamelAzureCosmosDbQueryRequestOptions`| `CosmosDbConstants.QUERY_REQUEST_OPTIONS`|`CosmosQueryRequestOptions`| Set additional QueryRequestOptions that can be used with queryItems, queryContainers, queryDatabases, listDatabases, listItems, listContainers operations.
-|`CamelAzureCosmosDbCreateDatabaseIfNotExist`| `CosmosDbConstants.CREATE_DATABASE_IF_NOT_EXIST`|`boolean`| Sets if the component should create Cosmos database automatically in case it doesn't exist in Cosmos account.
-|`CamelAzureCosmosDbCreateContainerIfNotExist`| `CosmosDbConstants.CREATE_CONTAINER_IF_NOT_EXIST`|`boolean`| Sets if the component should create Cosmos container automatically in case it doesn't exist in Cosmos account.
+|`CamelAzureCosmosDbCreateDatabaseIfNotExist`| `CosmosDbConstants.CREATE_DATABASE_IF_NOT_EXIST`|`boolean`| Sets if the component should create the Cosmos database automatically in case it doesn't exist in the Cosmos account.
+|`CamelAzureCosmosDbCreateContainerIfNotExist`| `CosmosDbConstants.CREATE_CONTAINER_IF_NOT_EXIST`|`boolean`| Sets if the component should create Cosmos container automatically in case it doesn't exist in the Cosmos account.
 |`CamelAzureCosmosDbThroughputProperties`| `CosmosDbConstants.THROUGHPUT_PROPERTIES`|`ThroughputProperties`| Sets throughput of the resources in the Azure Cosmos DB service.
 |`CamelAzureCosmosDbDatabaseRequestOptions`| `CosmosDbConstants.DATABASE_REQUEST_OPTIONS`|`CosmosDatabaseRequestOptions`| Sets additional options to execute on database operations.
-|`CamelAzureCosmosDbContainerPartitionKeyPath`| `CosmosDbConstants.CONTAINER_PARTITION_KEY_PATH`|`String`| Sets the container partition key path.
-|`CamelAzureCosmosDbContainerRequestOptions`| `CosmosDbConstants.CONTAINER_REQUEST_OPTIONS`|`CosmosContainerRequestOptions`| Sets additional options to execute on container operations.
-|`CamelAzureCosmosDbItemPartitionKey`| `CosmosDbConstants.ITEM_PARTITION_KEY`|`String`|  Sets partition key. Represents a partition key value in the Azure Cosmos DB database service. A partition key identifies the partition where the item is stored in.
-|`CamelAzureCosmosDbItemRequestOptions`| `CosmosDbConstants.ITEM_REQUEST_OPTIONS`|`CosmosItemRequestOptions`|  Sets additional options to execute on item operations.
-|`CamelAzureCosmosDbItemId`| `CosmosDbConstants.ITEM_ID`|`String`|  Sets the itemId in case needed for operation on item like delete, replace.
+|`CamelAzureCosmosDbContainerPartitionKeyPath`| `CosmosDbConstants.CONTAINER_PARTITION_KEY_PATH`|`String`| Set the container partition key path.
+|`CamelAzureCosmosDbContainerRequestOptions`| `CosmosDbConstants.CONTAINER_REQUEST_OPTIONS`|`CosmosContainerRequestOptions`| Set additional options to execute on container operations.
+|`CamelAzureCosmosDbItemPartitionKey`| `CosmosDbConstants.ITEM_PARTITION_KEY`|`String`|  Set the partition key. Represents a partition key value in the Azure Cosmos DB database service. A partition key identifies the partition where the item is stored in.
+|`CamelAzureCosmosDbItemRequestOptions`| `CosmosDbConstants.ITEM_REQUEST_OPTIONS`|`CosmosItemRequestOptions`|  Set additional options to execute on item operations.
+|`CamelAzureCosmosDbItemId`| `CosmosDbConstants.ITEM_ID`|`String`|  Set the itemId in case needed for operation on item like _delete_, _replace_.
 |=======================================================================
 
 
@@ -130,7 +130,7 @@ to("file://directory");
 
 === Azure CosmosDB Producer operations
 
-Camel Azure CosmosDB component provides wide range of operations on the producer side:
+Camel Azure CosmosDB component provides a wide range of operations on the producer side:
 
 *Operations on the service level*
 
@@ -139,7 +139,7 @@ For these operations, `databaseName` is *required* except for `queryDatabases` a
 |===
 |Operation |Description
 |`listDatabases`  | Gets a list of all databases as `List<CosmosDatabaseProperties>` set in the exchange message body.
-|`createDatabase`  | Creates a database in the specified Azure CosmosDB account.
+|`createDatabase`  | Create a database in the specified Azure CosmosDB account.
 |`queryDatabases`  | *`query` is required* Execute an SQL query against the service level in order for example return only a small subset of the databases list. It will set `List<CosmosDatabaseProperties>` set in the exchange message body.
 |===
 
@@ -150,11 +150,11 @@ For these operations, `databaseName` is *required* for all operations here and `
 [width="100%",cols="10%,90%",options="header",]
 |===
 |Operation |Description
-|`deleteDatabase`  | Deletes a database from the Azure CosmosDB account.
-|`createContainer`  | Creates a container in the specified Azure CosmosDB database.
-|`replaceDatabaseThroughput`  | Replaces the throughput for the specified Azure CosmosDB database.
+|`deleteDatabase`  | Delete a database from the Azure CosmosDB account.
+|`createContainer`  | Create a container in the specified Azure CosmosDB database.
+|`replaceDatabaseThroughput`  | Replace the throughput for the specified Azure CosmosDB database.
 |`listContainers`  | Gets a list of all containers in the specified database as `List<CosmosContainerProperties>` set in the exchange message body.
-|`queryContainers`  | *`query` is required* Executes an SQL query against the database level in order for example return only a small subset of the containers list for the specified database. It will set `List<CosmosContainerProperties>` set in the exchange message body.
+|`queryContainers`  | *`query` is required* Executes an SQL query against the database level in order for example return only a small subset of the container list for the specified database. It will set `List<CosmosContainerProperties>` set in the exchange message body.
 |===
 
 
@@ -164,15 +164,15 @@ For these operations, `databaseName` and `containerName` is *required* for all o
 [width="100%",cols="10%,90%",options="header",]
 |===
 |Operation |Description
-|`deleteContainer`  | Deletes a container from the specified Azure CosmosDB database.
-|`replaceContainerThroughput`  | Replaces the throughput for the specified Azure CosmosDB container.
+|`deleteContainer`  | Delete a container from the specified Azure CosmosDB database.
+|`replaceContainerThroughput`  | Replace the throughput for the specified Azure CosmosDB container.
 |`createItem`  | *`itemPartitionKey` is required* Creates an item in the specified container, it accepts POJO or key value as `Map<String, ?>`.
 |`upsertItem`  | *`itemPartitionKey` is required* Creates an item in the specified container if it doesn't exist otherwise overwrite it if it exists, it accepts POJO or key value as `Map<String, ?>`.
-|`replaceItem`  | *`itemPartitionKey` and `itemId` are required* Overwrites an item in the specified container , it accepts POJO or key value as `Map<String, ?>`.
+|`replaceItem`  | *`itemPartitionKey` and `itemId` are required* Overwrites an item in the specified container, it accepts POJO or key value as `Map<String, ?>`.
 |`deleteItem`  | *`itemPartitionKey` and `itemId` are required* Deletes an item in the specified container.
 |`readItem`  | *`itemPartitionKey` and `itemId` are required* Gets an item in the specified container as `Map<String,?>` set in the exchange body message.
 |`readItem`  | *`itemPartitionKey`* Gets a list of items in the specified container per the `itemPartitionKey` as `List<Map<String,?>>` set in the exchange body message.
-|`queryItems`  | *`query` is required* Execute an SQL query against the container level in order for example return only matching items per the SQL query. It will set `List<Map<String,>?>` in the exchange message body.
+|`queryItems`  | *`query` is required* Execute an SQL query against the container level in order, for example, return only matching items per the SQL query. It will set `List<Map<String,>?>` in the exchange message body.
 |===
 
 Refer to the example section in this page to learn how to use these operations into your camel application.
@@ -346,20 +346,20 @@ from("direct:start")
 
 
 === Azure CosmosDB Consumer
-Camel Azure CosmosDB uses https://docs.microsoft.com/en-us/azure/cosmos-db/change-feed-design-patterns[ChangeFeed pattern] to capture a feed of events and feed them into the Camel in an Async manner, something similar to Change Data Capture (CDC) design pattern.
-However, it doesn't capture deletes as these are removed from the feed as well.
+Camel Azure CosmosDB uses https://docs.microsoft.com/en-us/azure/cosmos-db/change-feed-design-patterns[ChangeFeed pattern] to capture a feed of events and feed them into the Camel in an Async manner, something similar to the Change Data Capture (CDC) design pattern.
+However, it doesn't capture deletions as these are removed from the feed as well.
 
-To use the Camel Azure CosmosDB, `containerName` and `databaseName` are required. However, there are more options that need to be set in order to use this feature:
+To use the Camel Azure CosmosDB, `containerName` and `databaseName` are required. However, there are more options that need to be set to use this feature:
 
-- `leaseDatabaseName` : Sets the lease database where the `leaseContainerName` will be stored. If it is not specified, this component will store the lease container in the same database that is specified in databaseName. It will be auto created if `createLeaseDatabaseIfNotExists` is set to true.
-- `leaseContainerName` : Sets the lease container which acts as a state storage and coordinates processing the change feed across multiple workers. The lease container can be stored in the same account as the monitored container or in a separate account. It will be auto created if `createLeaseContainerIfNotExists` is set to true. If not specified, this component will create container called `camel-lease`.
-- `hostName` : Sets the hostname. The host: a host is an application instance that uses the change feed processor to listen for changes. Multiple instances with the same lease configuration can run in parallel, but each instance should have a different instance name. If not specified, this will be a generated random hostname.
-- `changeFeedProcessorOptions` : Sets additional options for the change feed processor.
+- `leaseDatabaseName`: Sets the lease database where the `leaseContainerName` will be stored. If it is not specified, this component will store the lease container in the same database that is specified in databaseName. It will be auto-created if `createLeaseDatabaseIfNotExists` is set to true.
+- `leaseContainerName`: Sets the lease container which acts as a state storage and coordinates processing the change feed across multiple workers. The lease container can be stored in the same account as the monitored container or in a separate account. It will be auto-created if `createLeaseContainerIfNotExists` is set to true. If not specified, this component will create container called `camel-lease`.
+- `hostName`: Sets the hostname. The host: a host is an application instance that uses the change feed processor to listen for changes. Multiple instances with the same lease configuration can run in parallel, but each instance should have a different instance name. If not specified, this will be a generated random hostname.
+- `changeFeedProcessorOptions`: Sets additional options for the change feed processor.
 
-The consumer will set `List<Map<String,>>` in exchange message body which reflect list of items in a single feed.
+The consumer will set `List<Map<String,>>` in exchange message body which reflect the list of items in a single feed.
 
 ==== Example:
-For example to listen to the events in `myContainer` container in `myDb`:
+For example, to listen to the events in `myContainer` container in `myDb`:
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -370,7 +370,7 @@ from("azure-cosmosdb://myDb/myContainer?leaseDatabaseName=myLeaseDb&createLeaseD
 
 === Development Notes (Important)
 
-When developing on this component, you will need to obtain your Azure accessKey in order to run the integration tests. In addition to the mocked unit tests
+When developing on this component, you will need to obtain your Azure accessKey in order to run the integration tests. In addition to the mocked unit tests,
 you *will need to run the integration tests with every change you make or even client upgrade as the Azure client can break things even on minor versions upgrade.*
 To run the integration tests, on this component directory, run the following maven command:
 

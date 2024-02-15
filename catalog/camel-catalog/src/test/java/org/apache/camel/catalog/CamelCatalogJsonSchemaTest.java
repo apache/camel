@@ -54,6 +54,10 @@ public class CamelCatalogJsonSchemaTest {
         return CATALOG.findLanguageNames().stream();
     }
 
+    static Stream<String> transformers() {
+        return CATALOG.findTransformerNames().stream();
+    }
+
     static Stream<String> models() {
         return CATALOG.findModelNames().stream();
     }
@@ -152,6 +156,21 @@ public class CamelCatalogJsonSchemaTest {
 
         assertTrue(tree.has("language"), name);
         assertTrue(tree.has("properties"), name);
+    }
+
+    @ParameterizedTest
+    @MethodSource("transformers")
+    public void testValidateJsonTransformers(String name) throws Exception {
+        String json = CATALOG.transformerJSonSchema(name);
+        LOG.info("Validating {} transformer", name);
+        LOG.debug("with JSon: {}", json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+
+        assertTrue(tree.has("transformer"), name);
     }
 
     @ParameterizedTest

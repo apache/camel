@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.aws2.ses;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -102,12 +99,6 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithMaximalConfiguration() throws Exception {
         AmazonSESClientMock mock = new AmazonSESClientMock();
-        List<String> to = new ArrayList<String>();
-        to.add("to1@example.com");
-        to.add("to2@example.com");
-        List<String> replyAddress = new ArrayList<String>();
-        replyAddress.add("replyTo1@example.com");
-        replyAddress.add("replyTo2@example.com");
 
         context.getRegistry().bind("amazonSESClient", mock);
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);

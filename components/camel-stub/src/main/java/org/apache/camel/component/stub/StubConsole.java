@@ -165,7 +165,7 @@ public class StubConsole extends AbstractDevConsole {
                 for (Exchange exchange : copy) {
                     try {
                         JsonObject msg
-                                = MessageHelper.dumpAsJSonObject(exchange.getMessage(), false, true, true, false, true,
+                                = MessageHelper.dumpAsJSonObject(exchange.getMessage(), false, true, true, true, false, true,
                                         128 * 1024);
                         arr.add(msg);
                     } catch (Exception e) {

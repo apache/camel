@@ -31,7 +31,8 @@ import org.apache.camel.spi.Transformer;
  * Output data type represents AWS SQS receive Message response as CloudEvent V1. The data type sets Camel specific
  * CloudEvent headers on the exchange.
  */
-@DataTypeTransformer(name = "aws2-sqs:application-cloudevents")
+@DataTypeTransformer(name = "aws2-sqs:application-cloudevents",
+                     description = "Adds CloudEvent headers to the Camel message with AWS SQS receive message details")
 public class AWS2SQSCloudEventDataTypeTransformer extends Transformer {
 
     @Override

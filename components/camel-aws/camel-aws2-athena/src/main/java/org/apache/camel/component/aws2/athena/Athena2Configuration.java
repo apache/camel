@@ -478,8 +478,8 @@ public class Athena2Configuration implements Cloneable {
     }
 
     /**
-     * Set whether the Athena client should expect to use Session Credentials. This is useful in a situation in which the
-     * user needs to assume a IAM role for doing operations in Athena.
+     * Set whether the Athena client should expect to use Session Credentials. This is useful in a situation in which
+     * the user needs to assume a IAM role for doing operations in Athena.
      */
     public void setUseSessionCredentials(boolean useSessionCredentials) {
         this.useSessionCredentials = useSessionCredentials;

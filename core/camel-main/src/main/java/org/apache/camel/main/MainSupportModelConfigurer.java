@@ -96,8 +96,16 @@ public final class MainSupportModelConfigurer {
 
         for (String key : variableProperties.stringPropertyNames()) {
             String value = variableProperties.getProperty(key);
-            String id = StringHelper.before(key, ":", "global");
-            key = StringHelper.after(key, ":", key);
+            String id = "global";
+            if (key.startsWith("route.")) {
+                id = "route";
+                key = key.substring(6);
+                key = StringHelper.replaceFirst(key, ".", ":");
+            } else if (key.startsWith("global.")) {
+                id = "global";
+                key = key.substring(7);
+                key = StringHelper.replaceFirst(key, ".", ":");
+            }
             VariableRepository repo = camelContext.getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class)
                     .getVariableRepository(id);
             // it may be a resource to load from disk then
@@ -111,7 +119,10 @@ public final class MainSupportModelConfigurer {
             }
             repo.setVariable(key, value);
         }
-        autoConfiguredProperties.putAll(variableProperties);
+        for (var e : variableProperties.entrySet()) {
+            String loc = variableProperties.getLocation(e.getKey());
+            autoConfiguredProperties.put(loc, "camel.variable." + e.getKey(), e.getValue());
+        }
     }
 
     static void setThreadPoolProperties(

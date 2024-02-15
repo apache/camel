@@ -18,7 +18,8 @@ package org.apache.camel.dsl.yaml.support
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.networknt.schema.JsonSchemaFactory;
+import com.networknt.schema.JsonSchemaFactory
+import com.networknt.schema.SchemaValidatorsConfig
 import com.networknt.schema.SpecVersionDetector
 import groovy.util.logging.Slf4j
 import org.apache.camel.CamelContext
@@ -40,9 +41,14 @@ import java.nio.charset.StandardCharsets
 @Slf4j
 class YamlTestSupport extends Specification implements HasCamelContext {
     static def MAPPER = new ObjectMapper(new YAMLFactory())
-    static def SCHEMA_NODE = MAPPER.readTree(ResourceHelper.getResourceAsStream('/schema/camelYamlDsl.json'));
-    static def FACTORY = JsonSchemaFactory.getInstance(SpecVersionDetector.detect(SCHEMA_NODE));
-    static def SCHEMA = FACTORY.getSchema(SCHEMA_NODE);
+    static def SCHEMA_NODE = MAPPER.readTree(ResourceHelper.getResourceAsStream('/schema/camelYamlDsl.json'))
+    static def FACTORY = JsonSchemaFactory.getInstance(SpecVersionDetector.detect(SCHEMA_NODE))
+    static def SCHEMA_VALIDATORS_CONFIG = {
+        SchemaValidatorsConfig config = new SchemaValidatorsConfig()
+        config.setLocale(Locale.ENGLISH)
+        return config
+    }()
+    static def SCHEMA = FACTORY.getSchema(SCHEMA_NODE, SCHEMA_VALIDATORS_CONFIG)
 
     @AutoCleanup
     def context = new DefaultCamelContext()

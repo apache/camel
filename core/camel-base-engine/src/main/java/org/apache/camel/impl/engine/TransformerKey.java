@@ -48,10 +48,6 @@ public final class TransformerKey extends ValueHolder<String> {
     /**
      * Create the string that represents this transformer key. Either uses both full names of from/to data types in
      * combination or only uses the toType data type full name in case fromType is not specified.
-     *
-     * @param  from
-     * @param  to
-     * @return
      */
     private static String createKeyString(DataType from, DataType to) {
         if (DataType.isAnyType(from)) {
@@ -64,9 +60,6 @@ public final class TransformerKey extends ValueHolder<String> {
     /**
      * Create the transformer key for the given transformer either using the transformer name or it's specified from/to
      * data type name.
-     *
-     * @param  answer
-     * @return
      */
     public static TransformerKey createFrom(Transformer answer) {
         if (!DataType.isAnyType(answer.getFrom()) && !DataType.isAnyType(answer.getTo())) {

@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.knative.spi.Knative;
 import org.apache.camel.component.knative.spi.KnativeConsumerFactory;
@@ -312,7 +311,7 @@ public class KnativeComponent extends HealthCheckComponent {
 
                 this.managedProducer = true;
 
-                CamelContextAware.trySetCamelContext(this.producerFactory, getCamelContext());
+                getCamelContext().addService(this.producerFactory);
             }
 
             LOGGER.info("Using Knative producer factory: {} for protocol: {}", producerFactory, protocol.name());
@@ -339,7 +338,7 @@ public class KnativeComponent extends HealthCheckComponent {
 
                 this.managedConsumer = true;
 
-                CamelContextAware.trySetCamelContext(this.consumerFactory, getCamelContext());
+                getCamelContext().addService(this.consumerFactory);
             }
 
             LOGGER.info("Using Knative consumer factory: {} for protocol: {}", consumerFactory, protocol.name());

@@ -22,12 +22,19 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 
+import io.vertx.core.Vertx;
+import io.vertx.core.VertxOptions;
 import io.vertx.core.http.HttpServerRequest;
+import io.vertx.ext.web.Router;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.component.cloudevents.CloudEvent;
 import org.apache.camel.component.knative.spi.KnativeResource;
+import org.apache.camel.support.CamelContextHelper;
 
 public final class KnativeHttpSupport {
+    private static final String PLATFORM_HTTP_ROUTER_NAME = "platform-http-router";
+
     private KnativeHttpSupport() {
     }
 
@@ -95,4 +102,41 @@ public final class KnativeHttpSupport {
         }
     }
 
+    /**
+     * Retrieve router from given CamelContext using the default platform http router name.
+     *
+     * @param  camelContext the current context.
+     * @return              router
+     */
+    public static Router lookupRouter(CamelContext camelContext) {
+        Router router = CamelContextHelper.findSingleByType(camelContext, Router.class);
+        if (router != null) {
+            return router;
+        }
+
+        return CamelContextHelper.lookup(
+                camelContext,
+                PLATFORM_HTTP_ROUTER_NAME,
+                Router.class);
+    }
+
+    /**
+     * Retrieve Vert.x instance from given CamelContext or create new instance.
+     *
+     * @param  camelContext the current context.
+     * @return              vertx instance
+     */
+    public static Vertx lookupVertxInstance(CamelContext camelContext) {
+        Vertx vertx = CamelContextHelper.findSingleByType(camelContext, Vertx.class);
+        if (vertx != null) {
+            return vertx;
+        }
+
+        VertxOptions options = CamelContextHelper.findSingleByType(camelContext, VertxOptions.class);
+        if (options == null) {
+            options = new VertxOptions();
+        }
+
+        return Vertx.vertx(options);
+    }
 }
