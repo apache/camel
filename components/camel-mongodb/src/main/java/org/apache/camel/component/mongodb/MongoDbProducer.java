@@ -62,6 +62,7 @@ public class MongoDbProducer extends DefaultProducer {
         bind(MongoDbOperation.findAll, createDoFindAll());
         bind(MongoDbOperation.findById, createDoFindById());
         bind(MongoDbOperation.findOneAndUpdate, createDoFindOneAndUpdate());
+        bind(MongoDbOperation.findOneAndReplace, createDoFindOneAndReplace());
         bind(MongoDbOperation.findOneByQuery, createDoFindOneByQuery());
         bind(MongoDbOperation.getColStats, createDoGetColStats());
         bind(MongoDbOperation.getDbStats, createDoGetDbStats());
@@ -679,6 +680,40 @@ public class MongoDbProducer extends DefaultProducer {
                 return dbCol.findOneAndUpdate(filter, update, options);
             } catch (InvalidPayloadException e) {
                 throw new CamelMongoDbException("Invalid payload for findOneAndUpdate", e);
+            }
+        };
+    }
+
+    private Function<Exchange, Object> createDoFindOneAndReplace() {
+        return exchange -> {
+            try {
+                FindOneAndReplaceOptions options = exchange.getIn().getHeader(OPTIONS, FindOneAndReplaceOptions.class);
+                if (options == null) {
+                    options = new FindOneAndReplaceOptions();
+                    Boolean upsert = exchange.getIn().getHeader(UPSERT, Boolean.class);
+                    if (upsert != null) {
+                        options.upsert(upsert);
+                    }
+                    Bson sort = exchange.getIn().getHeader(SORT_BY, Bson.class);
+                    if (sort != null) {
+                        options.sort(sort);
+                    }
+                    Bson projection = exchange.getIn().getHeader(FIELDS_PROJECTION, Bson.class);
+                    if (projection != null) {
+                        options.projection(projection);
+                    }
+                    ReturnDocument returnDoc = exchange.getIn().getHeader(RETURN_DOCUMENT, ReturnDocument.class);
+                    if (returnDoc != null) {
+                        options.returnDocument(returnDoc);
+                    }
+                }
+
+                MongoCollection<Document> dbCol = calculateCollection(exchange);
+                Document replacement = exchange.getIn().getMandatoryBody(Document.class);
+                Bson filter = exchange.getIn().getHeader(CRITERIA, Bson.class);
+                return dbCol.findOneAndReplace(filter, replacement, options);
+            } catch (InvalidPayloadException e) {
+                throw new CamelMongoDbException("Invalid payload for findOneAndReplace", e);
             }
         };
     }
