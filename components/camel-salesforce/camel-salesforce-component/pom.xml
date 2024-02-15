@@ -307,6 +307,9 @@
     <profiles>
         <profile>
             <id>integration</id>
+            <properties>
+                <skipITs>false</skipITs>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
