@@ -19,6 +19,7 @@ package org.apache.camel.dsl.yaml;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -96,6 +97,8 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeseri
 public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
     public static final String EXTENSION = "yaml";
+    public static final String[] SUPPORTED_EXTENSION = { EXTENSION, "camel.yaml", "pipe.yaml" };
+    private static final String DEPRECATED_EXTENSION = "camelk.yaml";
 
     private static final Logger LOG = LoggerFactory.getLogger(YamlRoutesBuilderLoader.class);
 
@@ -118,6 +121,16 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
     YamlRoutesBuilderLoader(String extension) {
         super(extension);
+    }
+
+    @Override
+    public boolean isSupportedExtension(String extension) {
+        // this builder can support multiple extensions
+        if (DEPRECATED_EXTENSION.equals(extension)) {
+            LOG.warn("File extension camelk.yaml is deprecated. Use camel.yaml instead.");
+            return true;
+        }
+        return Arrays.asList(SUPPORTED_EXTENSION).contains(extension);
     }
 
     protected RouteBuilder builder(final YamlDeserializationContext ctx, final Node root) {

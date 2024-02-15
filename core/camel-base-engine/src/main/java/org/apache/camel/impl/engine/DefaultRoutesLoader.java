@@ -42,6 +42,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -249,6 +250,16 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
 
         RoutesBuilderLoader answer
                 = ResolverHelper.resolveService(getCamelContext(), finder, extension, RoutesBuilderLoader.class).orElse(null);
+
+        // if it's a multi-extension then fallback to parent
+        if (answer == null && extension.contains(".")) {
+            String single = FileUtil.onlyExt(extension, true);
+            answer = ResolverHelper.resolveService(getCamelContext(), finder, single, RoutesBuilderLoader.class).orElse(null);
+            if (answer != null && !answer.isSupportedExtension(extension)) {
+                // okay we cannot support this extension as fallback
+                answer = null;
+            }
+        }
 
         if (answer != null) {
             CamelContextAware.trySetCamelContext(answer, getCamelContext());
