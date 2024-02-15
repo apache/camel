@@ -28,6 +28,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.StartupStep;
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteBuilderLifecycleStrategy;
 import org.apache.camel.spi.CompilePostProcessor;
@@ -53,6 +54,12 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
     @Override
     public String getSupportedExtension() {
         return extension;
+    }
+
+    @ManagedOperation(description = "Is the file extension supported by this route loader")
+    @Override
+    public boolean isSupportedExtension(String extension) {
+        return super.isSupportedExtension(extension);
     }
 
     /**
