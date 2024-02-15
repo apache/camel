@@ -30,9 +30,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  *
  */
-public class SessionIT implements SalesforceSession.SalesforceSessionListener {
+public class SessionManualIT implements SalesforceSession.SalesforceSessionListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SessionIT.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SessionManualIT.class);
     private static final int TIMEOUT = 60000;
     private boolean onLoginTriggered;
     private boolean onLogoutTriggered;

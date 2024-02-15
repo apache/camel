@@ -16,44 +16,41 @@
  */
 package org.apache.camel.maven;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.tools.JavaFileObject;
 
 import com.google.testing.compile.Compilation;
+import com.google.testing.compile.Compilation.Status;
 import com.google.testing.compile.Compiler;
 import com.google.testing.compile.JavaFileObjects;
+import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.apache.camel.maven.AbstractSalesforceMojoIT.setup;
+import static org.apache.camel.maven.AbstractSalesforceMojoTest.setup;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GeneratePubSubMojoIT {
-
-    private static final String TEST_LOGIN_PROPERTIES = "../test-salesforce-login.properties";
+public class CamelSalesforceMojoManualIT {
 
     @TempDir
     public Path temp;
 
     @Test
     public void testExecute() throws Exception {
-        final GeneratePubSubMojo mojo = createMojo();
+        final GenerateMojo mojo = createMojo();
 
         // generate code
         mojo.execute();
 
         // validate generated code check that it was generated
-        final Path packagePath = temp.resolve("com").resolve("sforce").resolve("eventbus");
+        final Path packagePath = temp.resolve("test").resolve("dto");
         assertThat(packagePath).as("Package directory was not created").exists();
 
         // test that the generated sources can be compiled
@@ -66,25 +63,24 @@ public class GeneratePubSubMojoIT {
                 }
             }).collect(Collectors.toList());
             final Compilation compilation = Compiler.javac().compile(sources);
-            assertThat(compilation.status()).isEqualTo(Compilation.Status.SUCCESS);
+            assertThat(compilation.status()).isEqualTo(Status.SUCCESS);
         }
     }
 
-    GeneratePubSubMojo createMojo() throws IOException {
-        final GeneratePubSubMojo mojo = new GeneratePubSubMojo();
+    GenerateMojo createMojo() throws IOException {
+        final GenerateMojo mojo = new GenerateMojo();
 
         // set login properties
         setup(mojo);
 
-        // set additional properties specific to this Mojo
-        try (final InputStream stream = new FileInputStream(TEST_LOGIN_PROPERTIES)) {
-            final Properties properties = new Properties();
-            properties.load(stream);
-            mojo.pubSubHost = properties.getProperty("salesforce.pubsub.host");
-            mojo.pubSubPort = Integer.valueOf(properties.getProperty("salesforce.pubsub.port"));
-            mojo.topics = new String[] { "/event/BatchApexErrorEvent" };
-        }
+        // set defaults
+        mojo.version = SalesforceEndpointConfig.DEFAULT_VERSION;
         mojo.outputDirectory = temp.toFile();
+        mojo.packageName = "test.dto";
+
+        // set code generation properties
+        mojo.includePattern = "(.*__c)|(PushTopic)|(Document)|(Account)";
+
         return mojo;
     }
 }

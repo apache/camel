@@ -40,7 +40,7 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelperIT.MessageArgumentMatcher.messageForAccountCreationWithName;
+import static org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelperManualIT.MessageArgumentMatcher.messageForAccountCreationWithName;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.atLeastOnce;
@@ -51,7 +51,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @TestInstance(Lifecycle.PER_CLASS)
-public class SubscriptionHelperIT {
+public class SubscriptionHelperManualIT {
 
     final CamelContext camel;
     final SalesforceEndpointConfig config = new SalesforceEndpointConfig();
@@ -85,9 +85,9 @@ public class SubscriptionHelperIT {
         }
     }
 
-    public SubscriptionHelperIT() throws SalesforceException {
+    public SubscriptionHelperManualIT() throws SalesforceException {
         server = new StubServer();
-        LoggerFactory.getLogger(SubscriptionHelperIT.class).info("Port for wireshark to filter: {}",
+        LoggerFactory.getLogger(SubscriptionHelperManualIT.class).info("Port for wireshark to filter: {}",
                 server.port());
         final String instanceUrl = "http://localhost:" + server.port();
         server.replyTo(

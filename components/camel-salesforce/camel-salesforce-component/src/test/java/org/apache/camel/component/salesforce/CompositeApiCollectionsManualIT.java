@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("unchecked")
 @Parameterized
-public class CompositeApiCollectionsIT extends AbstractSalesforceTestBase {
+public class CompositeApiCollectionsManualIT extends AbstractSalesforceTestBase {
 
     private static final Set<String> VERSIONS = new HashSet<>(Arrays.asList("46.0", SalesforceEndpointConfig.DEFAULT_VERSION));
 

@@ -26,10 +26,10 @@ import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.apache.camel.maven.AbstractSalesforceMojoIT.setup;
+import static org.apache.camel.maven.AbstractSalesforceMojoTest.setup;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SchemaMojoIT {
+public class SchemaMojoManualIT {
 
     @TempDir
     public Path temp;

@@ -26,7 +26,7 @@ import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.ProxyAuthenticator;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 
-public class HttpProxyMojoIT extends CamelSalesforceMojoIT {
+public class HttpProxyMojoManualIT extends CamelSalesforceMojoManualIT {
 
     private static final String HTTP_PROXY_PASSWORD = "camel-user-password";
 
