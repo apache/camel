@@ -40,7 +40,7 @@ import org.apache.camel.spi.Transformer;
  * resolved via schema resolver).
  */
 @DataTypeTransformer(name = "avro-binary",
-        description = "Transforms from JSon to binary (byte array) using Jackson Avro (supports Avro schema)")
+                     description = "Transforms from JSon to binary (byte array) using Jackson Avro (supports Avro schema)")
 public class AvroBinaryDataTypeTransformer extends Transformer {
 
     @Override

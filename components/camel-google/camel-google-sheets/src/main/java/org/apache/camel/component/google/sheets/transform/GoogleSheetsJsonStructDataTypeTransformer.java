@@ -46,11 +46,11 @@ import org.apache.camel.util.ObjectHelper;
  * depending on the given message body content. When Google Sheets ValueRange object is given as message body (e.g. as a
  * result of a get values operation) the transformer will transform into generic Json struct. When generic Json struct
  * is given as a message body transformer will transform into a proper ValueRange object that is ready to be used in an
- * update/append values operation. The Implementation also supports splitResults setting where a set of values is split into
- * its individual items.
+ * update/append values operation. The Implementation also supports splitResults setting where a set of values is split
+ * into its individual items.
  */
 @DataTypeTransformer(name = "google-sheets:application-x-struct",
-        description = "Transforms to/from JSon data and Google Sheets ValueRange object")
+                     description = "Transforms to/from JSon data and Google Sheets ValueRange object")
 public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
 
     private static final String ROW_PREFIX = "#";

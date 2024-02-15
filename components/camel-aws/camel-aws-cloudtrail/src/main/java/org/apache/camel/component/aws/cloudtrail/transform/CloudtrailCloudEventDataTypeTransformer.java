@@ -32,7 +32,7 @@ import org.apache.camel.spi.Transformer;
  * sets Camel specific CloudEvent headers with values extracted from AWS Cloudtrail lookup events response.
  */
 @DataTypeTransformer(name = "aws-cloudtrail:application-cloudevents",
-        description = "Adds CloudEvent headers to the Camel message with AWS Cloudtrail lookup events response details")
+                     description = "Adds CloudEvent headers to the Camel message with AWS Cloudtrail lookup events response details")
 public class CloudtrailCloudEventDataTypeTransformer extends Transformer {
 
     @Override

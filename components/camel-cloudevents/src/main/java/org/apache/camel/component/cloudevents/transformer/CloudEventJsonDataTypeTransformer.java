@@ -35,7 +35,7 @@ import org.apache.camel.support.MessageHelper;
  * values for CloudEvent attributes such as the Http content type header, event source, event type.
  */
 @DataTypeTransformer(name = "application-cloudevents+json",
-        description = "Adds default CloudEvent (JSon binding) headers to the Camel message (such as content-type, event source, event type etc.)")
+                     description = "Adds default CloudEvent (JSon binding) headers to the Camel message (such as content-type, event source, event type etc.)")
 public class CloudEventJsonDataTypeTransformer extends Transformer {
 
     @Override

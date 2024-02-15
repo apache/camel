@@ -34,7 +34,7 @@ import org.apache.camel.spi.DataTypeTransformer;
  * and schema type in Exchange properties (usually resolved via Json schema resolver).
  */
 @DataTypeTransformer(name = "protobuf-x-java-object",
-        description = "Transforms from JSon to Java object using Jackson Protobuf (supports content schema)")
+                     description = "Transforms from JSon to Java object using Jackson Protobuf (supports content schema)")
 public class ProtobufPojoDataTypeTransformer extends JsonPojoDataTypeTransformer {
 
     @Override

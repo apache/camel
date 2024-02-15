@@ -34,7 +34,7 @@ import org.apache.camel.spi.Transformer;
  * Requires Exchange payload as JsonNode representation.
  */
 @DataTypeTransformer(name = "application-json",
-        description = "Transforms from JSon to binary (byte array) using Jackson")
+                     description = "Transforms from JSon to binary (byte array) using Jackson")
 public class JsonDataTypeTransformer extends Transformer {
 
     @Override

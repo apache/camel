@@ -36,7 +36,7 @@ import org.apache.camel.spi.Transformer;
  * Data type uses Jackson data format to unmarshal Exchange body to a generic JsonNode representation.
  */
 @DataTypeTransformer(name = "application-x-struct",
-        description = "Transforms to generic JSonNode using Jackson")
+                     description = "Transforms to generic JSonNode using Jackson")
 public class JsonStructDataTypeTransformer extends Transformer {
 
     @Override

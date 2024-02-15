@@ -37,7 +37,7 @@ import org.apache.camel.spi.Transformer;
  * the Exchange properties when unmarshalling the payload (usually already resolved via schema resolver).
  */
 @DataTypeTransformer(name = "avro-x-struct",
-        description = "Transforms to generic JSonNode using Jackson Avro (supports content schema)")
+                     description = "Transforms to generic JSonNode using Jackson Avro (supports content schema)")
 public class AvroStructDataTypeTransformer extends Transformer {
 
     @Override

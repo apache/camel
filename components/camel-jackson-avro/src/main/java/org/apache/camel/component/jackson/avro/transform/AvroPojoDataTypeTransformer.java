@@ -34,7 +34,7 @@ import org.apache.camel.spi.DataTypeTransformer;
  * type in Exchange properties (usually resolved via Json schema resolver).
  */
 @DataTypeTransformer(name = "avro-x-java-object",
-        description = "Transforms from JSon to Java object using Jackson Avro (supports content schema)")
+                     description = "Transforms from JSon to Java object using Jackson Avro (supports content schema)")
 public class AvroPojoDataTypeTransformer extends JsonPojoDataTypeTransformer {
 
     @Override

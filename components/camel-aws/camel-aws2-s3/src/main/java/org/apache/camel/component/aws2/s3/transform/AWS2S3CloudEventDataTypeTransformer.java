@@ -32,7 +32,7 @@ import org.apache.camel.spi.Transformer;
  * specific CloudEvent headers with values extracted from AWS S3 get object response.
  */
 @DataTypeTransformer(name = "aws2-s3:application-cloudevents",
-        description = "Adds CloudEvent headers to the Camel message with AWS S3 get object response details")
+                     description = "Adds CloudEvent headers to the Camel message with AWS S3 get object response details")
 public class AWS2S3CloudEventDataTypeTransformer extends Transformer {
 
     @Override

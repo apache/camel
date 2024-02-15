@@ -39,7 +39,7 @@ import org.apache.camel.spi.Transformer;
  * resolved via schema resolver).
  */
 @DataTypeTransformer(name = "protobuf-binary",
-        description = "Transforms from JSon to binary (byte array) using Jackson Protobuf (supports Protobuf schema)")
+                     description = "Transforms from JSon to binary (byte array) using Jackson Protobuf (supports Protobuf schema)")
 public class ProtobufBinaryDataTypeTransformer extends Transformer {
 
     @Override
