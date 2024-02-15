@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.StringJoiner;
 
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.tooling.util.Strings;
@@ -163,7 +164,10 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
 
         if (!models.isEmpty()) {
             try {
+                StringJoiner names = new StringJoiner(" ");
                 for (var model : models) {
+                    names.add(model.getName());
+
                     JsonObject jo = asJsonObject(model);
                     String json = jo.toJson();
                     json = Jsoner.prettyPrint(json, 2);
@@ -175,6 +179,14 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
                         getLog().info("Updated transformer json: " + model.getName());
                     }
                 }
+
+                // generate marker file
+                File camelMetaDir = new File(resourcesOutputDir, "META-INF/services/org/apache/camel/");
+                int count = models.size();
+                String properties = createProperties(project, "transformers", names.toString());
+                updateResource(camelMetaDir.toPath(), "language.properties", properties);
+                getLog().info("Generated transformer.properties containing " + count + " Camel "
+                              + (count > 1 ? "transformers: " : "transformer: ") + names);
             } catch (Exception e) {
                 throw new MojoExecutionException(e);
             }
