@@ -24,7 +24,7 @@ import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class SalesforceHeadersIT extends AbstractSalesforceTestBase {
+public class SalesforceHeadersManualIT extends AbstractSalesforceTestBase {
 
     @Test
     public void shouldSendCustomHeaders() {

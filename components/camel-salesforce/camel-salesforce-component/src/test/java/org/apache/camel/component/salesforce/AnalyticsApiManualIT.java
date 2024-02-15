@@ -47,9 +47,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Integration test for Salesforce analytics API endpoints.
  */
-public class AnalyticsApiIT extends AbstractSalesforceTestBase {
+public class AnalyticsApiManualIT extends AbstractSalesforceTestBase {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AnalyticsApiIT.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AnalyticsApiManualIT.class);
     private static final int RETRY_DELAY = 5000;
     private static final int REPORT_RESULT_RETRIES = 5;
     private static final String[] REPORT_OPTIONS = new String[] {

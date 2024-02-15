@@ -51,9 +51,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Test HTTP proxy configuration for Salesforce component.
  */
 @Parameterized
-public class HttpProxyIT extends AbstractSalesforceTestBase {
+public class HttpProxyManualIT extends AbstractSalesforceTestBase {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HttpProxyIT.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HttpProxyManualIT.class);
     private static final String HTTP_PROXY_HOST = "localhost";
     private static final String HTTP_PROXY_USER_NAME = "camel-user";
     private static final String HTTP_PROXY_PASSWORD = "camel-user-password";
@@ -69,8 +69,8 @@ public class HttpProxyIT extends AbstractSalesforceTestBase {
 
     @Parameters
     public static Iterable<Consumer<SalesforceComponent>> methods() {
-        return Arrays.asList(HttpProxyIT::configureProxyViaComponentProperties,
-                HttpProxyIT::configureProxyViaClientPropertiesMap);
+        return Arrays.asList(HttpProxyManualIT::configureProxyViaComponentProperties,
+                HttpProxyManualIT::configureProxyViaClientPropertiesMap);
     }
 
     @Test

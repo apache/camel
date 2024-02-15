@@ -21,7 +21,7 @@ import java.util.HashMap;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.junit.jupiter.api.Test;
 
-public class LazyLoginIT extends AbstractSalesforceTestBase {
+public class LazyLoginManualIT extends AbstractSalesforceTestBase {
 
     @Test
     public void lazyLoginDoesNotThrowExceptions() throws Exception {

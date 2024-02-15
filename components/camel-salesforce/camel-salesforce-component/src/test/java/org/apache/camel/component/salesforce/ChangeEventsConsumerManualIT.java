@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * merely uses some API calls to trigger some change events, and then perform assertion on the received events.
  */
 @Tag("standalone")
-public class ChangeEventsConsumerIT extends AbstractSalesforceTestBase {
+public class ChangeEventsConsumerManualIT extends AbstractSalesforceTestBase {
 
     private static final String ACCOUNT_NAME = "ChangeEventsConsumerIntegrationTest-TestAccount";
     private static final String ACCOUNT_DESCRIPTION

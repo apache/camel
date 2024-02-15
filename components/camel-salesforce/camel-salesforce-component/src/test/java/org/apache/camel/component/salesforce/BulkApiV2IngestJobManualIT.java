@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("BusyWait")
-public class BulkApiV2IngestJobIT extends AbstractSalesforceTestBase {
+public class BulkApiV2IngestJobManualIT extends AbstractSalesforceTestBase {
 
     @Test
     public void testLifecycle() throws Exception {

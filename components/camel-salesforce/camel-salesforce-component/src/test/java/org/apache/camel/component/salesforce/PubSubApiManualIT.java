@@ -40,7 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Tag("standalone")
-public class PubSubApiIT extends AbstractSalesforceTestBase {
+public class PubSubApiManualIT extends AbstractSalesforceTestBase {
 
     private final Logger LOG = LoggerFactory.getLogger(getClass());
 

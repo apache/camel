@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class LimitsIT extends AbstractSalesforceTestBase {
+public class LimitsManualIT extends AbstractSalesforceTestBase {
 
     private static final Object NOT_USED = null;
 

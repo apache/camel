@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class NotFoundIT extends AbstractSalesforceTestBase {
+public class NotFoundManualIT extends AbstractSalesforceTestBase {
 
     @Test
     public void shouldNotReportNotFoundExceptionFromRestApiIfConfiguredNotTo() {

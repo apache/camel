@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.assertListSize;
 
 @Tag("standalone")
-public class RecentIT extends AbstractSalesforceTestBase {
+public class RecentManualIT extends AbstractSalesforceTestBase {
 
     public static class Accounts extends AbstractQueryRecordsBase<Account> {
     }
@@ -47,7 +47,7 @@ public class RecentIT extends AbstractSalesforceTestBase {
     @BeforeEach
     public void setupTenRecentItems() {
         final List<Account> accounts
-                = IntStream.range(0, 10).mapToObj(RecentIT::account).collect(Collectors.toList());
+                = IntStream.range(0, 10).mapToObj(RecentManualIT::account).collect(Collectors.toList());
 
         template.sendBody("direct:create-recent", accounts);
     }

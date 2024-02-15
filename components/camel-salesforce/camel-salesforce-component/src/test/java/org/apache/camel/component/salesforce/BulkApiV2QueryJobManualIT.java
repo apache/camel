@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("BusyWait")
-public class BulkApiV2QueryJobIT extends AbstractSalesforceTestBase {
+public class BulkApiV2QueryJobManualIT extends AbstractSalesforceTestBase {
 
     private static final String LAST_NAME = "CamelBulkTest";
 

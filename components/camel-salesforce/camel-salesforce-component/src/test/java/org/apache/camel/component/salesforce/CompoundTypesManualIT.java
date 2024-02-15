@@ -35,9 +35,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *      "https://www.salesforce.com/developer/docs/api/index_Left.htm#CSHID=compound_fields.htm|StartTopic=Content%2Fcompound_fields.htm|SkinName=webhelp">Compound
  *      data types</a>
  */
-public class CompoundTypesIT extends AbstractSalesforceTestBase {
+public class CompoundTypesManualIT extends AbstractSalesforceTestBase {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CompoundTypesIT.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CompoundTypesManualIT.class);
 
     @Test
     public void testTypes() throws Exception {

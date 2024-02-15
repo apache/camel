@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tag("standalone")
-public class BulkApiIT extends AbstractBulkApiTestBase {
+public class BulkApiManualIT extends AbstractBulkApiTestBase {
 
     @Test
     public void testRetry() throws Exception {

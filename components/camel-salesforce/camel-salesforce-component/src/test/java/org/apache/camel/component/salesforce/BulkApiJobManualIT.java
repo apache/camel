@@ -32,7 +32,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class BulkApiJobIT extends AbstractBulkApiTestBase {
+public class BulkApiJobManualIT extends AbstractBulkApiTestBase {
 
     @BeforeEach
     public void setupProfileWithHardDelete() throws IOException {

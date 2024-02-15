@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class RawOperationIT extends AbstractSalesforceTestBase {
+public class RawOperationManualIT extends AbstractSalesforceTestBase {
 
     @Test
     public void testCreate() {

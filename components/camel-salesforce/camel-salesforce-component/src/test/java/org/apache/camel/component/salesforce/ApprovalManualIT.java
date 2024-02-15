@@ -34,12 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Parameterized
-public class ApprovalIT extends AbstractApprovalIT {
+public class ApprovalManualIT extends AbstractApprovalIT {
 
     @Parameter
     private String format;
 
-    public ApprovalIT() {
+    public ApprovalManualIT() {
         super(5);
     }
 

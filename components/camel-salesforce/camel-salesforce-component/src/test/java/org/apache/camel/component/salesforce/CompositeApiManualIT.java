@@ -46,7 +46,7 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 @Parameterized
-public class CompositeApiIT extends AbstractSalesforceTestBase {
+public class CompositeApiManualIT extends AbstractSalesforceTestBase {
 
     public static class Accounts extends AbstractQueryRecordsBase<Account> {
     }

@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SalesforceComponentIT extends AbstractSalesforceTestBase {
+public class SalesforceComponentTest extends AbstractSalesforceTestBase {
 
     private SalesforceHttpClient client = new SalesforceHttpClient();
     private SalesforceComponent component;

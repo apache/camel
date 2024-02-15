@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class BulkApiBatchIT extends AbstractBulkApiTestBase {
+public class BulkApiBatchManualIT extends AbstractBulkApiTestBase {
 
     private static final String TEST_REQUEST_XML = "/test-request.xml";
     private static final String TEST_REQUEST_CSV = "/test-request.csv";
@@ -44,12 +44,12 @@ public class BulkApiBatchIT extends AbstractBulkApiTestBase {
         List<BatchTest> result = new ArrayList<>();
         BatchTest test = new BatchTest();
         test.contentType = ContentType.XML;
-        test.stream = BulkApiBatchIT.class.getResourceAsStream(TEST_REQUEST_XML);
+        test.stream = BulkApiBatchManualIT.class.getResourceAsStream(TEST_REQUEST_XML);
         result.add(test);
 
         test = new BatchTest();
         test.contentType = ContentType.CSV;
-        test.stream = BulkApiBatchIT.class.getResourceAsStream(TEST_REQUEST_CSV);
+        test.stream = BulkApiBatchManualIT.class.getResourceAsStream(TEST_REQUEST_CSV);
         result.add(test);
 
         // TODO test ZIP_XML and ZIP_CSV

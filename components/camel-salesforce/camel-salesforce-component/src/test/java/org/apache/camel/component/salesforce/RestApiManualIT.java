@@ -85,7 +85,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @Tag("standalone")
-public class RestApiIT extends AbstractSalesforceTestBase {
+public class RestApiManualIT extends AbstractSalesforceTestBase {
 
     /**
      * Request DTO for Salesforce APEX REST calls. See

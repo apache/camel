@@ -31,7 +31,7 @@ import org.apache.camel.test.junit5.params.Test;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Parameterized
-public class CompositeApiTreeIT extends AbstractSalesforceTestBase {
+public class CompositeApiTreeManualIT extends AbstractSalesforceTestBase {
 
     @Parameter
     private String format;

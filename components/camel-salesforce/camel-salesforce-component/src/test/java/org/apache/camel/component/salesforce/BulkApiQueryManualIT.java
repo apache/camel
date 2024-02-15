@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class BulkApiQueryIT extends AbstractBulkApiTestBase {
+public class BulkApiQueryManualIT extends AbstractBulkApiTestBase {
 
     @ParameterizedTest
     @EnumSource(names = { "XML", "CSV" })

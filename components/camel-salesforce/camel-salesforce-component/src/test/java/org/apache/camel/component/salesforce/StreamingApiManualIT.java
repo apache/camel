@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("standalone")
-public class StreamingApiIT extends AbstractSalesforceTestBase {
+public class StreamingApiManualIT extends AbstractSalesforceTestBase {
 
     @Test
     public void testSubscribeAndReceive() throws Exception {

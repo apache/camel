@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.entry;
 
 @Tag("standalone")
-public class PlatformEventsConsumerIT extends AbstractSalesforceTestBase {
+public class PlatformEventsConsumerManualIT extends AbstractSalesforceTestBase {
 
     @Test
     public void shouldConsumePlatformEvents() throws InterruptedException, ExecutionException {

@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Parameterized
-public class CompositeApiBatchIT extends AbstractSalesforceTestBase {
+public class CompositeApiBatchManualIT extends AbstractSalesforceTestBase {
 
     public static class Accounts extends AbstractQueryRecordsBase<Account> {
     }

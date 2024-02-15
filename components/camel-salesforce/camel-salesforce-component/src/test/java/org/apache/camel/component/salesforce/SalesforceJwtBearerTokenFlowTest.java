@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class SalesforceJwtBearerTokenFlowIT extends CamelTestSupport {
+public class SalesforceJwtBearerTokenFlowTest extends CamelTestSupport {
 
     @Test
     public void shouldLoginUsingJwtBearerToken() {

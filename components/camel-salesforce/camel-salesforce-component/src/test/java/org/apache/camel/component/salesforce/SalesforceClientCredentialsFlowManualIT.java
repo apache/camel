@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class SalesforceClientCredentialsFlowIT extends CamelTestSupport {
+public class SalesforceClientCredentialsFlowManualIT extends CamelTestSupport {
 
     @Test
     public void shouldLoginUsingJwtBearerToken() {
