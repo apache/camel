@@ -19,10 +19,10 @@ that zxing offers.
 
 == Dependencies
 
-To use the barcode data format in your camel routes you need to add the
+To use the barcode data format in your camel routes, you need to add
 a dependency on *camel-barcode* which implements this data format.
 
-If you use maven you could just add the following to your pom.xml,
+If you use maven, you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
 the download page for the latest versions).
 
@@ -43,9 +43,9 @@ include::partial$dataformat-options.adoc[]
 
 == Using the Java DSL
 
-First you have to initialize the barcode data fomat class. You can use
-the default constructor, or one of parameterized (see JavaDoc). The
-default values are:
+First, you have to initialize the barcode data format class.
+You can use the default constructor, or one of parameterized (see JavaDoc).
+The default values are:
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -99,10 +99,9 @@ image::ROOT:qr-code.png[image]
 
 === Unmarshalling
 
-The unmarshaller is generic. For unmarshalling you can use any
-BarcodeDataFormat instance. If you've two instances, one for
-(generating) QR-Code and one for PDF417, it doesn't matter which one
-will be used.
+The unmarshaller is generic.
+For unmarshalling, you can use any BarcodeDataFormat instance.
+If you've two instances, one for (generating) QR-Code and one for PDF417, it doesn't matter which one will be used.
 
 [source,java]
 --------------------------------------------------------------------
@@ -112,8 +111,8 @@ from("file://barcode_in?noop=true")
 --------------------------------------------------------------------
 
 If you'll paste the QR-Code image above into the 'barcode_in' folder,
-you should find '`This is a testmessage!`' inside the mock. You can find
-the barcode data format as header variable:
+you should find _`This is a testmessage!`_ inside the mock.
+You can find the barcode data format as header variable:
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
