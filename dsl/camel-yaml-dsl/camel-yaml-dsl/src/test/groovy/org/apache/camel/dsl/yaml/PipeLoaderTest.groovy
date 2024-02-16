@@ -33,9 +33,9 @@ class PipeLoaderTest extends YamlTestSupport {
         context.start()
     }
 
-    def "Pipe from kamelet to kamelet"() {
+    def "Pipe from kamelet to kamelet with pipe.yaml extension"() {
         when:
-            loadBindings('''
+            loadBindingsExt("pipe.yaml", '''
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:

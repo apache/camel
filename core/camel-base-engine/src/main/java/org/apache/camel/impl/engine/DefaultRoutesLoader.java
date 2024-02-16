@@ -231,7 +231,11 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
                 RoutesBuilderLoader.class);
 
         if (answer == null) {
-            answer = loaders.computeIfAbsent(extension, this::resolveService);
+            answer = loaders.values().stream()
+                    // find existing loader that support this extension
+                    .filter(l -> l.isSupportedExtension(extension)).findFirst()
+                    // or resolve loader from classpath
+                    .orElse(loaders.computeIfAbsent(extension, this::resolveService));
         }
 
         return answer;
@@ -247,8 +251,20 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
         final CamelContext ecc = getCamelContext();
         final FactoryFinder finder = ecc.getCamelContextExtension().getBootstrapFactoryFinder(RoutesBuilderLoader.FACTORY_PATH);
 
+        // the marker files are generated with dot as dash
+        String sanitized = extension.replace(".", "-");
         RoutesBuilderLoader answer
-                = ResolverHelper.resolveService(getCamelContext(), finder, extension, RoutesBuilderLoader.class).orElse(null);
+                = ResolverHelper.resolveService(getCamelContext(), finder, sanitized, RoutesBuilderLoader.class).orElse(null);
+
+        // if it's a multi-extension then fallback to parent
+        if (answer == null && extension.contains(".")) {
+            String single = FileUtil.onlyExt(extension, true);
+            answer = ResolverHelper.resolveService(getCamelContext(), finder, single, RoutesBuilderLoader.class).orElse(null);
+            if (answer != null && !answer.isSupportedExtension(extension)) {
+                // okay we cannot support this extension as fallback
+                answer = null;
+            }
+        }
 
         if (answer != null) {
             CamelContextAware.trySetCamelContext(answer, getCamelContext());

@@ -147,6 +147,16 @@ class YamlTestSupport extends Specification implements HasCamelContext {
         )
     }
 
+    def loadBindingsExt(String ext, String... resources) {
+        int index = 0
+
+        PluginHelper.getRoutesLoader(context).loadRoutes(
+            resources.collect {
+                it -> ResourceHelper.fromString("binding-${index++}." + ext, it.stripIndent())
+            }
+        )
+    }
+
     def withMock(
             String uri,
             @DelegatesTo(MockEndpoint) Closure<?> closure) {

@@ -930,6 +930,15 @@ Running integration with the following configuration:
 ...
 ----
 
+IMPORTANT: You cannot use both a set version via `camel version set` and also a version specified via `--camel-version` option,
+i.e the following is not possible:
+
+[source,bash]
+----
+camel version set 4.0.1
+camel run * --camel-version=4.3.0
+----
+
 If you want to unset the version, you can use the `--reset` option:
 
 [source,bash]
@@ -3363,6 +3372,16 @@ camel run *
 ----
 
 The user configuration file is stored in `~/.camel-jbang-user.properties`
+
+IMPORTANT: You cannot use both a set version via `camel config set` and also a version specified via `--camel-version` option,
+i.e the following is not possible:
+
+[source,bash]
+----
+camel config set camel-version=4.0.1
+camel run * --camel-version=4.3.0
+----
+
 
 === Set and unset configuration
 

@@ -35,6 +35,9 @@ public @interface JiraIssue {
     class JiraIssueCondition implements ExecutionCondition {
         @Override
         public ConditionEvaluationResult evaluateExecutionCondition(ExtensionContext context) {
+            if (context.getTestInstance().isEmpty()) {
+                return ConditionEvaluationResult.enabled("unable to verify version");
+            }
             final JBangTestSupport currTestClass = (JBangTestSupport) context.getTestInstance().get();
             if (currTestClass == null) {
                 return ConditionEvaluationResult.enabled("unable to verify version");

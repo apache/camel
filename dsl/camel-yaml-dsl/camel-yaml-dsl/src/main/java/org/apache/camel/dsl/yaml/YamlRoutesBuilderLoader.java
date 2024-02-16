@@ -19,6 +19,7 @@ package org.apache.camel.dsl.yaml;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -96,8 +98,13 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeseri
 public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
     public static final String EXTENSION = "yaml";
+    public static final String[] SUPPORTED_EXTENSION = { EXTENSION, "camel.yaml", "pipe.yaml" };
+    private static final String DEPRECATED_EXTENSION = "camelk.yaml";
 
     private static final Logger LOG = LoggerFactory.getLogger(YamlRoutesBuilderLoader.class);
+
+    private final AtomicBoolean deprecatedWarnLogged = new AtomicBoolean();
+    private final AtomicBoolean deprecatedBindingWarnLogged = new AtomicBoolean();
 
     // API versions for Camel-K Integration and Pipe
     // we are lenient so lets just assume we can work with any of the v1 even if they evolve
@@ -118,6 +125,18 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
     YamlRoutesBuilderLoader(String extension) {
         super(extension);
+    }
+
+    @Override
+    public boolean isSupportedExtension(String extension) {
+        // this builder can support multiple extensions
+        if (DEPRECATED_EXTENSION.equals(extension)) {
+            if (deprecatedWarnLogged.compareAndSet(false, true)) {
+                LOG.warn("File extension camelk.yaml is deprecated. Use camel.yaml instead.");
+            }
+            return true;
+        }
+        return Arrays.asList(SUPPORTED_EXTENSION).contains(extension);
     }
 
     protected RouteBuilder builder(final YamlDeserializationContext ctx, final Node root) {
@@ -330,7 +349,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             if (integration) {
                 target = preConfigureIntegration(root, ctx, target, preParse);
             } else if (binding || pipe) {
-                if (binding) {
+                if (binding && deprecatedBindingWarnLogged.compareAndSet(false, true)) {
                     LOG.warn("CamelK kind=KameletBinding is deprecated. Use CamelK kind=Pipe instead.");
                 }
                 target = preConfigurePipe(root, ctx, target, preParse);
