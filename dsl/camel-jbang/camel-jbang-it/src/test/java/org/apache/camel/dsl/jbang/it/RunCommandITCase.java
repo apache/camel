@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang;
+package org.apache.camel.dsl.jbang.it;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
@@ -27,10 +27,13 @@ import java.util.Date;
 
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.apache.camel.dsl.jbang.it.support.JiraIssue;
+import org.apache.camel.test.infra.cli.common.CliProperties;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.junit.Assume;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIf;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -138,6 +141,7 @@ public class RunCommandITCase extends JBangTestSupport {
 
     @ParameterizedTest
     @ValueSource(strings = { "4.0.0", "4.2.0" })
+    @DisabledIfSystemProperty(named = CliProperties.FORCE_RUN_VERSION, matches = ".+", disabledReason = "Due to CAMEL-20426")
     public void runSpecificVersionTest(String version) {
         initFileInDataFolder("cheese.xml");
         final String pid = executeBackground(String.format("run %s/cheese.xml --camel-version=%s", mountPoint(), version));
@@ -156,6 +160,7 @@ public class RunCommandITCase extends JBangTestSupport {
 
     @Test
     @EnabledOnOs(LINUX)
+    @DisabledIf(value = "java.awt.GraphicsEnvironment#isHeadless")
     public void runFromClipboardTest() throws IOException {
         Assume.assumeTrue(execInHost("command -v ssh").contains("ssh"));
         Assume.assumeTrue(execInHost("command -v sshpass").contains("sshpass"));

@@ -61,6 +61,8 @@ public interface CliService extends BeforeAllCallback, AfterAllCallback, BeforeE
 
     String executeBackground(String command);
 
+    String executeGenericCommand(String command);
+
     /**
      * Copy a file inside the container
      *

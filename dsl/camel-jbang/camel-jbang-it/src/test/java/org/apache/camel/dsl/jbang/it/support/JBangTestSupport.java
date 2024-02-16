@@ -25,7 +25,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.PosixFilePermission;
 import java.time.Duration;
+import java.util.EnumSet;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -62,8 +64,9 @@ public abstract class JBangTestSupport {
 
     @BeforeEach
     protected void beforeEach(TestInfo testInfo) throws IOException {
-        Assertions.assertThat(DATA_FOLDER).as("%s need to be set", CliProperties.DATA_FOLDER).isNotNull();
+        Assertions.assertThat(DATA_FOLDER).as("%s need to be set", CliProperties.DATA_FOLDER).isNotBlank();
         containerDataFolder = Files.createDirectory(Paths.get(DATA_FOLDER, containerService.id())).toAbsolutePath().toString();
+        Files.setPosixFilePermissions(Paths.get(containerDataFolder), EnumSet.allOf(PosixFilePermission.class));
         logger.debug("running {}#{} using data folder {}", getClass().getName(), testInfo.getDisplayName(), getDataFolder());
     }
 
@@ -246,5 +249,9 @@ public abstract class JBangTestSupport {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected String makeTheFileWriteable(String containerPath) {
+        return containerService.executeGenericCommand("chmod 777 " + containerPath);
     }
 }
