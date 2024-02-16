@@ -61,8 +61,9 @@ public class MongoDbProducer extends DefaultProducer {
         bind(MongoDbOperation.findDistinct, createDoDistinct());
         bind(MongoDbOperation.findAll, createDoFindAll());
         bind(MongoDbOperation.findById, createDoFindById());
-        bind(MongoDbOperation.findOneAndUpdate, createDoFindOneAndUpdate());
+        bind(MongoDbOperation.findOneAndDelete, createDoFindOneAndDelete());
         bind(MongoDbOperation.findOneAndReplace, createDoFindOneAndReplace());
+        bind(MongoDbOperation.findOneAndUpdate, createDoFindOneAndUpdate());
         bind(MongoDbOperation.findOneByQuery, createDoFindOneByQuery());
         bind(MongoDbOperation.getColStats, createDoGetColStats());
         bind(MongoDbOperation.getDbStats, createDoGetDbStats());
@@ -714,6 +715,31 @@ public class MongoDbProducer extends DefaultProducer {
                 return dbCol.findOneAndReplace(filter, replacement, options);
             } catch (InvalidPayloadException e) {
                 throw new CamelMongoDbException("Invalid payload for findOneAndReplace", e);
+            }
+        };
+    }
+
+    private Function<Exchange, Object> createDoFindOneAndDelete() {
+        return exchange -> {
+            try {
+                FindOneAndDeleteOptions options = exchange.getIn().getHeader(OPTIONS, FindOneAndDeleteOptions.class);
+                if (options == null) {
+                    options = new FindOneAndDeleteOptions();
+                    Bson sort = exchange.getIn().getHeader(SORT_BY, Bson.class);
+                    if (sort != null) {
+                        options.sort(sort);
+                    }
+                    Bson projection = exchange.getIn().getHeader(FIELDS_PROJECTION, Bson.class);
+                    if (projection != null) {
+                        options.projection(projection);
+                    }
+                }
+
+                MongoCollection<Document> dbCol = calculateCollection(exchange);
+                Bson filter = exchange.getIn().getMandatoryBody(Bson.class);
+                return dbCol.findOneAndDelete(filter, options);
+            } catch (InvalidPayloadException e) {
+                throw new CamelMongoDbException("Invalid payload for findOneAndDelete", e);
             }
         };
     }

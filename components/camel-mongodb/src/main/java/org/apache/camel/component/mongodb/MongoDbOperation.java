@@ -20,6 +20,7 @@ public enum MongoDbOperation {
 
     // read operations
     findById,
+    findOneAndDelete,
     findOneAndReplace,
     findOneAndUpdate,
     findOneByQuery,
