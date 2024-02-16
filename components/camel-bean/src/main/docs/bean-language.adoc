@@ -14,9 +14,9 @@
 The Bean language is used for calling a method on an existing Java bean.
 
 Camel adapts to the method being called via xref:manual::bean-binding.adoc[Bean Binding].
-The binding process will for example automatic convert the message payload to the parameter
-of type of the first parameter in the method. The binding process has a lot more features so
-it is recommended to read the xref:manual::bean-binding.adoc[Bean Binding] documentation for mor details.
+The binding process will, for example, automatically convert the message payload to the parameter
+of type of the first parameter in the method.
+The binding process has a lot more features, so it is recommended to read the xref:manual::bean-binding.adoc[Bean Binding] documentation for mor details.
 
 == Bean Method options
 
@@ -30,18 +30,25 @@ In the given route below, we call a Java Bean Method with `method`, where "myBea
 is the id of the bean to use (lookup from xref:manual::registry.adoc[Registry]),
 and "isGoldCustomer" is the name of the method to call.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:topic:OrdersTopic")
   .filter().method("myBean", "isGoldCustomer")
     .to("activemq:BigSpendersQueue");
 ----
++
+[TIP]
+=====
+It is also possible to omit the method name. In this case, then Camel would choose the best suitable
+method to use. This process is complex, so it is good practice to specify the method name.
+=====
 
-TIP: It is also possible to omit the method name, then Camel would have to choose the best suitable
-method to use; this process is a complex, so it is good practice to specify the method name,
-
-And in XML DSL
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -52,6 +59,7 @@ And in XML DSL
   </filter>
 </route>
 ----
+====
 
 The bean could be implemented as follows:
 
@@ -65,7 +73,7 @@ public class MyBean {
 ----
 
 How this method uses `Exchange` in the method signature. You would often not do that,
-and use non Camel types. For example by using `String` then Camel will automatically
+and use non-Camel types. For example, by using `String` then Camel will automatically
 convert the message body to this type when calling the method:
 
 [source,java]
@@ -102,7 +110,7 @@ from("activemq:topic:OrdersTopic")
   .to("activemq:BigSpendersQueue");
 ----
 
-The 1st parameter can also be an existing instance of a Bean such as:
+The first parameter can also be an existing instance of a Bean such as:
 
 [source,java]
 ----
