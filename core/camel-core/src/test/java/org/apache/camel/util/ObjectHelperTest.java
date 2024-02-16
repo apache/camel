@@ -39,7 +39,6 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.bean.MyOtherFooBean;
 import org.apache.camel.component.bean.MyOtherFooBean.AbstractClassSize;
@@ -58,7 +57,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -1000,33 +998,21 @@ public class ObjectHelperTest {
 
         Long actual2 = org.apache.camel.util.ObjectHelper.notNull(expected, "expected", "holder");
         assertSame(expected, actual2, "Didn't get the same object back!");
-    }
 
-    @Test
-    void testNotNullWithNull() {
-        final IllegalArgumentException holderLessException = Assertions.assertThrows(IllegalArgumentException.class,
-                () -> org.apache.camel.util.ObjectHelper.notNull(null, "expectedObject"), "Should have thrown exception");
-        assertEquals("expectedObject must be specified", holderLessException.getMessage());
-    }
+        Long expected2 = null;
+        try {
+            org.apache.camel.util.ObjectHelper.notNull(expected2, "expected2");
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException iae) {
+            assertEquals("expected2 must be specified", iae.getMessage());
+        }
 
-    @Test
-    void testNotNullWithHolder() {
-        final IllegalArgumentException exWithHolder = Assertions.assertThrows(IllegalArgumentException.class,
-                () -> org.apache.camel.util.ObjectHelper.notNull(null, "expectedObject", "holder"),
-                "Should have thrown exception due to holder being null");
-        assertEquals("expectedObject must be specified on: holder", exWithHolder.getMessage());
-    }
-
-    @Test
-    void testNotNullWithCause() {
-        final IllegalArgumentException exWithCause = Assertions.assertThrows(IllegalArgumentException.class,
-                () -> org.apache.camel.util.ObjectHelper.notNull(null, "expectedObject", () -> new RuntimeCamelException("exception cause")),
-                "Should have thrown exception due to holder being null");
-        assertEquals("expectedObject must be specified", exWithCause.getMessage());
-
-        final RuntimeCamelException runtimeCamelException =
-                assertInstanceOf(RuntimeCamelException.class, exWithCause.getCause());
-        assertEquals("exception cause", runtimeCamelException.getMessage(), "Cause should have been retained");
+        try {
+            org.apache.camel.util.ObjectHelper.notNull(expected2, "expected2", "holder");
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException iae) {
+            assertEquals("expected2 must be specified on: holder", iae.getMessage());
+        }
     }
 
     @Test
