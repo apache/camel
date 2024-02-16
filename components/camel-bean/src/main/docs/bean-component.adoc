@@ -23,8 +23,7 @@ The Bean component binds beans to Camel message exchanges.
 bean:beanName[?options]
 ----
 
-Where *beanName* can be any string which is used to look up the bean in
-the Registry
+Where `beanName` can be any string used to look up the bean in the Registry
 
 // component-configure options: START
 
@@ -45,7 +44,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Examples
 
-A *bean:* endpoint cannot be defined as the input to the route; i.e. you
+A *bean:* endpoint cannot be defined as the input to the route; i.e., you
 cannot consume from it, you can only route from some inbound message
 Endpoint to the bean endpoint as output, such as the *direct* endpoint as input.
 
@@ -63,16 +62,20 @@ public class MyBean {
 }
 ----
 
-Then the bean can be called in a Camel route by the fully qualified classname:
+Then the bean can be called in a Camel route by the fully qualified class name:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:hello")
    .to("bean:com.foo.MyBean");
 ----
 
-And in XML DSL:
-
+XML::
++
 [source,xml]
 ----------------------------
 <route>
@@ -80,38 +83,42 @@ And in XML DSL:
    <to uri="bean:com.foo.MyBean"/>
 </route>
 ----------------------------
+====
 
 What happens is that when the exchange is routed to the MyBean, then Camel
 will use the Bean Binding to invoke the bean, in this case the _saySomething_ method,
 by converting the `Exchange` in body to the `String`
 type and storing the output of the method back to the Exchange again.
 
-TIP: The bean component can also call a bean by _bean id_ by looking up the bean
+[TIP]
+====
+The bean component can also call a bean by _bean id_ by looking up the bean
 in the xref:manual::registry.adoc[Registry] instead of using the class name.
+====
 
 == Java DSL specific bean syntax
 
 Java DSL comes with syntactic sugar for the xref:bean-component.adoc[Bean]
 component. Instead of specifying the bean explicitly as the endpoint
-(i.e. `to("bean:beanName")`) you can use the following syntax:
+(i.e., `to("bean:beanName")`) you can use the following syntax:
 
 [source,java]
 -------------------------------------------------------
-// Send message to the bean endpoint
-// and invoke method resolved using Bean Binding.
+// Send a message to the bean endpoint
+// and invoke method using Bean Binding.
 from("direct:start").bean("beanName");
 
-// Send message to the bean endpoint
+// Send a message to the bean endpoint
 // and invoke given method.
 from("direct:start").bean("beanName", "methodName");
 -------------------------------------------------------
 
-Instead of passing name of the reference to the bean (so that Camel will
-lookup for it in the xref:manual::registry.adoc[Registry]), you can specify the bean itself:
+Instead of passing the name of the reference to the bean (so that Camel will
+look up for it in the xref:manual::registry.adoc[Registry]), you can specify the bean itself:
 
 [source,java]
 ---------------------------------------------------------------
-// Send message to the given bean instance.
+// Send a message to the given bean instance.
 from("direct:start").bean(new ExampleBean());
 
 // Explicit selection of bean method to be invoked.
@@ -136,13 +143,10 @@ from("direct:start")
 
 == Bean Binding
 
-How bean methods to be invoked are chosen (if they are not specified
-explicitly through the *method* parameter) and how parameter values are
-constructed from the Message are all defined by the
-xref:manual::bean-binding.adoc[Bean Binding] mechanism which is used throughout
-all the various xref:manual::bean-integration.adoc[Bean Integration] mechanisms in Camel.
+The xref:manual::bean-binding.adoc[Bean Binding] mechanism defines how methods to be invoked are chosen (if they are not specified
+explicitly through the *method* parameter) and how parameter values are constructed from the Message.
+These are used throughout all the various xref:manual::bean-integration.adoc[Bean Integration] mechanisms in Camel.
 
 See also related xref:languages:bean-language.adoc[Bean Language].
-
 
 include::spring-boot:partial$starter.adoc[]
