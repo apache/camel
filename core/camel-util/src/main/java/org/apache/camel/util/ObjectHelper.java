@@ -157,6 +157,23 @@ public final class ObjectHelper {
     }
 
     /**
+     * Asserts whether the value is <b>not</b> <tt>null</tt>
+     *
+     * @param  value                    the value to test
+     * @param  name                     the key that resolved the value
+     * @param  exceptionSupplier        a supplier for a custom exception to be added as the cause and provide contextual information
+     * @return                          the passed {@code value} as is
+     * @throws IllegalArgumentException is thrown if assertion fails
+     */
+    public static <T> T notNull(T value, String name, Supplier<? extends Exception> exceptionSupplier) {
+        if (value == null) {
+            throw new IllegalArgumentException(name + " must be specified", exceptionSupplier.get());
+        }
+
+        return value;
+    }
+
+    /**
      * Asserts that the given {@code value} is neither {@code null} nor an emptyString.
      *
      * @param  value                    the value to test
