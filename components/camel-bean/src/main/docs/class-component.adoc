@@ -16,8 +16,8 @@
 *{component-header}*
 
 The Class component binds beans to Camel message exchanges. It works
-in the same way as the xref:bean-component.adoc[Bean] component but instead of
-looking up beans from a Registry it creates the bean
+in the same way as the xref:bean-component.adoc[Bean] component, but instead of
+looking up beans from a Registry, it creates the bean
 based on the class name.
 
 == URI format
@@ -26,8 +26,7 @@ based on the class name.
 class:className[?options]
 ----
 
-Where *className* is the fully qualified class name to create and use as
-bean.
+Where `className` is the fully qualified class name to create and use as bean.
 
 
 // component-configure options: START
@@ -50,8 +49,8 @@ include::partial$component-endpoint-headers.adoc[]
 == Using
 
 You simply use the *class* component just as the xref:bean-component.adoc[Bean]
-component but by specifying the fully qualified classname instead. +
- For example to use the `MyFooBean` you have to do as follows:
+component but by specifying the fully qualified class name instead.
+For example to use the `MyFooBean` you have to do as follows:
 
 [source,java]
 -------------------------------------------------------------------------------------------------
@@ -73,7 +72,7 @@ from("direct:start")
 == Setting properties on the created instance
 
 In the endpoint uri you can specify properties to set on the created
-instance, for example if it has a `setPrefix` method:
+instance, for example, if it has a `setPrefix` method:
 
 [source,java]
 ---------------------------------------------------------------------------------
@@ -92,13 +91,13 @@ from("direct:start")
     .to("mock:result");
 --------------------------------------------------------------------------------
 
-Which will lookup a bean from the Registry with the
+Which will look up a bean from the Registry with the
 id `foo` and invoke the `setCool` method on the created instance of the
 `MyPrefixBean` class.
 
 [TIP]
 ====
-See more details at the xref:bean-component.adoc[Bean] component as the *class*
+See more details on the xref:bean-component.adoc[Bean] component as the *class*
 component works in much the same way.
 ====
 
