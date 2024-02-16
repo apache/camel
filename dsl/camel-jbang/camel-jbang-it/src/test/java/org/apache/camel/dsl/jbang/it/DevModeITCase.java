@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang;
+package org.apache.camel.dsl.jbang.it;
 
 import java.io.IOException;
 import java.net.URI;
@@ -42,6 +42,7 @@ public class DevModeITCase extends JBangTestSupport {
         executeBackground(String.format("run %s/cheese.xml --dev", mountPoint()));
         checkLogContains("cheese", DEFAULT_MSG);
         final Path routeFile = Path.of(getDataFolder(), "cheese.xml");
+        makeTheFileWriteable(String.format("%s/cheese.xml", mountPoint()));
         Files.write(routeFile,
                 Files.readAllLines(routeFile).stream()
                         .map(line -> line.replace("${routeId}", "custom"))

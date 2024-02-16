@@ -104,9 +104,19 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
 
     @Override
     public String execute(String command) {
+        return executeGenericCommand(String.format("camel %s", command));
+    }
+
+    @Override
+    public String executeBackground(String command) {
+        return StringUtils.substringAfter(execute(command.concat(" --background")), "PID:").trim();
+    }
+
+    @Override
+    public String executeGenericCommand(String command) {
         try {
-            LOG.debug("executing camel {}", command);
-            Container.ExecResult execResult = container.execInContainer("/bin/bash", "-c", "camel ".concat(command));
+            LOG.debug("executing {}", command);
+            Container.ExecResult execResult = container.execInContainer("/bin/bash", "-c", command);
             if (execResult.getExitCode() != 0) {
                 Assertions.fail(String.format("command %s failed with output %s and error %s", command, execResult.getStdout(),
                         execResult.getStderr()));
@@ -120,11 +130,6 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
             Assertions.fail(String.format("command %s failed", command), e);
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public String executeBackground(String command) {
-        return StringUtils.substringAfter(execute(command.concat(" --background")), "PID:").trim();
     }
 
     @Override

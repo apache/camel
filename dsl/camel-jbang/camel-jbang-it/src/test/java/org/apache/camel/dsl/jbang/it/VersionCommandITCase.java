@@ -14,25 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang;
+package org.apache.camel.dsl.jbang.it;
 
 import org.apache.camel.dsl.jbang.it.support.InVersion;
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
+import org.apache.camel.test.infra.cli.common.CliProperties;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 public class VersionCommandITCase extends JBangTestSupport {
 
     @Test
+    @DisabledIfSystemProperty(named = CliProperties.FORCE_RUN_VERSION, matches = ".+")
     public void versionCommandTest() {
         Assertions.assertThat(execute("version").trim())
                 .contains("Camel JBang version: " + version());
         execute("version set 3.20.2");
         Assertions.assertThat(execute("version").trim())
-                .hasLineCount(4)
                 .contains("Camel JBang version: " + version())
                 .contains("User configuration:")
                 .contains("camel-version = 3.20.2");
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named = CliProperties.FORCE_RUN_VERSION, matches = ".+")
+    public void versionCommandTestWithCustomVersion() {
+        Assertions.assertThat(execute("version").trim())
+                .contains("User configuration:")
+                .contains("camel-version = " + version());
     }
 
     @Test
