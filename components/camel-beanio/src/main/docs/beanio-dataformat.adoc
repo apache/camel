@@ -15,7 +15,7 @@ The BeanIO Data Format uses
 https://beanio.github.io/[BeanIO] to handle flat payloads (such as XML, CSV,
 delimited, or fixed length formats).
 
-BeanIO is configured using a mappings XML file where you define the mapping from the flat format to Objects
+BeanIO is configured using a mapping XML file where you define the mapping from the flat format to Objects
 (POJOs). This mapping file is mandatory to use.
 
 == Options
@@ -30,52 +30,36 @@ An example of a
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-beanio/src/test/resources/org/apache/camel/dataformat/beanio/mappings.xml[mapping
 file is here].
 
-=== Using Java DSL
+To use the `BeanIODataFormat` you need to configure the data format with the mapping file, as well the name of the stream.
 
-To use the `BeanIODataFormat` you need to configure the data format with
-the mapping file, as well the name of the stream.
+This can be done as shown below. The streamName is `employeeFile`.
 
-In Java DSL this can be done as shown below. The streamName is "employeeFile".
-
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 DataFormat format = new BeanIODataFormat(
         "org/apache/camel/dataformat/beanio/mappings.xml",
         "employeeFile");
 
-// a route which uses the bean io data format to format a CSV data
+// a route which uses the bean io data format to format the CSV data
 // to java objects
 from("direct:unmarshal")
         .unmarshal(format)
-        // and then split the message body so we get a message for each row
+        // and then split the message body, so we get a message for each row
         .split(body())
         .to("mock:beanio-unmarshal");
 
-// convert list of java objects back to flat format
+// convert a list of java objects back to flat format
 from("direct:marshal")
         .marshal(format)
         .to("mock:beanio-marshal");
 ----
 
-Then we have two routes. The first route is for transforming CSV data
-into a `List<Employee>` Java objects. Which we then split, so the mock endpoint receives a message for each row.
-
-The 2nd route is for the reverse operation, to transform a `List<Employee>` into a stream of CSV data.
-
-The CSV data could for example be as below:
-
-[source,text]
-----
-Joe,Smith,Developer,75000,10012009
-Jane,Doe,Architect,80000,01152008
-Jon,Anderson,Manager,85000,03182007
-----
-
-=== Using XML DSL
-
-To use the BeanIO data format in XML, you need to configure it using the
-`<beanio>` XML tag as shown below. The routes are similar to the example above.
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -97,13 +81,30 @@ To use the BeanIO data format in XML, you need to configure it using the
     <to uri="mock:beanio-marshal"/>
 </route>
 ----
+To use the BeanIO data format in XML, you need to configure it using the
+`<beanio>` XML tag as shown below. The routes are similar to the example above.
+====
+
+The first route is for transforming CSV data into a `List<Employee>` Java objects.
+Which we then split, so the mock endpoint receives a message for each row.
+
+The second route is for the reverse operation, to transform a `List<Employee>` into a stream of CSV data.
+
+The CSV data could, for example, be as below:
+
+[source,text]
+----
+Joe,Smith,Developer,75000,10012009
+Jane,Doe,Architect,80000,01152008
+Jon,Anderson,Manager,85000,03182007
+----
 
 == Dependencies
 
-To use BeanIO in your Camel routes you need to add a dependency on
+To use BeanIO in your Camel routes, you need to add a dependency on
 *camel-beanio* which implements this data format.
 
-If you use Maven you can just add the following to your pom.xml,
+If you use Maven, you can just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
 the download page for the latest versions).
 
