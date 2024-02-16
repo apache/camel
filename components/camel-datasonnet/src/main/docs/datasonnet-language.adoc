@@ -20,11 +20,11 @@ Predicate in a xref:eips:filter-eip.adoc[Message
 Filter] or as an Expression for a
 xref:eips:recipientList-eip.adoc[Recipient List].
 
-To use a DataSonnet expression use the following Java code:
+To use a DataSonnet expression, use the following Java code:
 
 [source,java]
 ---------------------------------------
-datasonnet("someDSExpression")
+datasonnet("someDSExpression");
 ---------------------------------------
 
 == DataSonnet Options
@@ -37,16 +37,20 @@ include::partial$language-options.adoc[]
 
 Here is a simple example using a DataSonnet expression as a predicate in a Message Filter:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ------------------------------------------------------------------------------------------------
-// lets route if a line item is over $100
+// let's route if a line item is over $100
 from("queue:foo")
     .filter(datasonnet("ds.arrays.firstWith(body.lineItems, function(item) item > 100) != null"))
-    .to("queue:bar")
+    .to("queue:bar");
 ------------------------------------------------------------------------------------------------
 
-And the XML DSL:
-
+XML::
++
 [source,xml]
 -----------------------------------------------------------------------------
 <route>
@@ -57,19 +61,25 @@ And the XML DSL:
     </filter>
 </route>
 -----------------------------------------------------------------------------
+====
+
 
 Here is an example of a simple DataSonnet expression as a transformation EIP. This example will transform an XML body with
 `lineItems` into JSON while filtering out lines that are under 100.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ------------------------------------------------------------------------------------------------
 from("queue:foo")
     .transform(datasonnet("ds.filter(body.lineItems, function(item) item > 100)", String.class, "application/xml", "application/json"))
-    .to("queue:bar")
+    .to("queue:bar");
 ------------------------------------------------------------------------------------------------
 
-And the XML DSL:
-
+XML::
++
 [source,xml]
 -----------------------------------------------------------------------------
 <route>
@@ -82,29 +92,39 @@ And the XML DSL:
     </filter>
 </route>
 -----------------------------------------------------------------------------
+====
 
-== Setting result type
+
+== Setting a result type
 
 The xref:datasonnet-language.adoc[DataSonnet] expression will return a `com.datasonnet.document.Document` by default. The
-document preserves the content type metadata along with the contents of the result of the transformation. In predicates,
-however, the Document will be automatically unwrapped and the boolean content will be returned. Similarly any times you
-want the content in a specific result type like a String. To do this you have to instruct the
+document preserves the content type metadata along with the contents of the transformation result. In predicates,
+however, the Document will be automatically unwrapped and the boolean content will be returned. Similarly, any time you
+want the content in a specific result type like a String. To do this, you have to instruct the
 xref:datasonnet-language.adoc[DataSonnet] which result type to return.
 
-In Java DSL:
-
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-datasonnet("body.foo", String.class)
+datasonnet("body.foo", String.class);
 ----
 
-In XML DSL you use the *resultType* attribute to provide a fully
-qualified classname:
-
+XML::
++
 [source,xml]
 ----
 <datasonnet resultType="java.lang.String">body.foo</datasonnet>
 ----
++
+[NOTE]
+=====
+In XML DSL you use the `resultType` attribute to provide a fully qualified class name.
+=====
+
+====
 
 If the expression results in an array, or an object, you can instruct the expression to return you `List.class`
 or `Map.class`, respectively. However, you must also set the output media type to `application/x-java-object`.
@@ -114,8 +134,8 @@ retaining the content metadata through a route execution is valuable.
 
 == Specifying Media Types
 
-Traditionally the input and output media types are specified through the
-https://datasonnet.s3-us-west-2.amazonaws.com/docs-ci/primary/master/datasonnet/1.0-SNAPSHOT/headers.html[DataSonnet Header]
+Traditionally, the input and output media types are specified through the
+https://datasonnet.s3-us-west-2.amazonaws.com/docs-ci/primary/master/datasonnet/1.0-SNAPSHOT/headers.html[DataSonnet Header].
 The xref:datasonnet-language.adoc[DataSonnet] expression provides convenience options for specifying the body and output
 media types without the need for a Header, this is useful if the transformation is a one-liner, for example.
 
@@ -123,8 +143,8 @@ The DataSonnet expression will look for a body media type in the following order
 
 1. If the body is a `Document` it will use the metadata in the object
 2. If the bodyMediaType parameter was provided in the DSL, it will use its value
-3. A "CamelDatasonnetBodyMediaType" exchange property
-4. A "Content-Type" message header
+3. A `CamelDatasonnetBodyMediaType` exchange property
+4. A `Content-Type` message header
 5. The DataSonnet Header payload media type directive
 6. `application/x-java-object`
 
@@ -145,7 +165,7 @@ exchange:
 |===
 |Function |Argument |Type |Description
 
-|cml.properties |key for property |String |To lookup a property using the
+|cml.properties |key for property |String |To look up a property using the
 xref:ROOT:properties-component.adoc[Properties] component (property placeholders).
 
 |cml.header |the header name |String |Will return the message header.
@@ -155,6 +175,10 @@ xref:ROOT:properties-component.adoc[Properties] component (property placeholders
 
 Here's an example showing some of these functions in use:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ------------------------------------------------------------------------------------------------
 from("direct:in")
@@ -162,8 +186,8 @@ from("direct:in")
     .to("mock:camel");
 ------------------------------------------------------------------------------------------------
 
-And the XML DSL:
-
+XML::
++
 [source,xml]
 -----------------------------------------------------------------------------
 <route>
@@ -174,22 +198,23 @@ And the XML DSL:
     <to uri="mock:camel"/>
 </route>
 -----------------------------------------------------------------------------
+====
 
 == Loading script from external resource
 
-You can externalize the script and have Camel load it from a resource
+You can externalize the script and have Apache Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`. +
 This is done using the following syntax: `"resource:scheme:location"`,
-eg to refer to a file on the classpath you can do:
+e.g., to refer to a file on the classpath you can do:
 
 [source,java]
 -------------------------------------------------------------------
-.setHeader("myHeader").datasonnet("resource:classpath:mydatasonnet.ds")
+.setHeader("myHeader").datasonnet("resource:classpath:mydatasonnet.ds");
 -------------------------------------------------------------------
 
 == Dependencies
 
-To use scripting languages in your camel routes you need to add a
+To use scripting languages in your camel routes, you need to add a
 dependency on *camel-datasonnet*.
 
 If you use Maven you could just add the following to your `pom.xml`,
