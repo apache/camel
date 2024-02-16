@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.aws2.kinesis.transform;
 
+import java.util.Map;
+
 import org.apache.camel.Message;
 import org.apache.camel.component.aws2.kinesis.Kinesis2Constants;
 import org.apache.camel.component.cloudevents.CloudEvent;
@@ -25,11 +27,9 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
 
-import java.util.Map;
-
 /**
- * Data type transformer converts AWS Kinesis get records response to CloudEvent v1_0 data format. The data type sets Camel
- * specific CloudEvent headers with values extracted from AWS Kinesis get object response.
+ * Data type transformer converts AWS Kinesis get records response to CloudEvent v1_0 data format. The data type sets
+ * Camel specific CloudEvent headers with values extracted from AWS Kinesis get object response.
  */
 @DataTypeTransformer(name = "aws2-kinesis:application-cloudevents",
                      description = "Adds CloudEvent headers to the Camel message with AWS Kinesis get records response details")
