@@ -40,12 +40,13 @@ include::partial$component-endpoint-options.adoc[]
 
 == Body content
 
-For the startCase operation, the input variables are retrieved from the body message. This one has to contains a Map<String,Serializable>.
+For the startCase operation, the input variables are retrieved from the body message.
+This one has to contain a `Map<String,Serializable>`.
 
 
 == Examples
 
-The following example start a new case in Bonita:
+The following example starts a new case in Bonita:
 
 [source,java]
 ----------------------------------------------------------------------
@@ -54,10 +55,10 @@ from("direct:start").to("bonita:startCase?hostname=localhost&amp;port=8080&amp;p
 
 == Dependencies
 
-To use Bonita in your Camel routes you need to add a dependency on
+To use Bonita in your Camel routes, you need to add a dependency on
 *camel-bonita*, which implements the component.
 
-If you use Maven you can just add the following to your pom.xml,
+If you use Maven, you can just add the following to your pom.xml,
 substituting the version number for the latest and greatest release (see
 the download page for the latest versions).
 
