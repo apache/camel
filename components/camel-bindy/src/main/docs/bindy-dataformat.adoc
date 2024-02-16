@@ -14,11 +14,11 @@
 The goal of this component is to allow the parsing/binding of
 non-structured data (or to be more precise non-XML data) +
  to/from Java Beans that have binding mappings defined with annotations.
-Using Bindy, you can bind data from sources such as :
+Using Bindy, you can bind data from sources such as:
 
 * CSV records,
 * Fixed-length records,
-* FIX messages,
+* _FIX messages_,
 * or almost any other non-structured data
 
 to one or many Plain Old Java Object (POJO). Bindy converts the data
@@ -45,17 +45,17 @@ decimal or grouping separators.
 
 *Format supported*
 
-This first release only support comma separated values fields and key
-value pair fields (e.g. : FIX messages).
+This first release only supports comma separated values fields and key
+value pair fields (e.g.: _FIX messages_).
 
 To work with camel-bindy, you must first define your model in a package
-(e.g. com.acme.model) and for each model class (e.g. Order, Client,
-Instrument, ...) add the required annotations (described hereafter) to
+(e.g. `com.acme.model`) and for each model class (e.g., `Order`, `Client`,
+`Instrument`, ...) add the required annotations (described hereafter) to
 the Class or field.
 
 *Multiple models*
 
-As you configure bindy using class names instead of package names
+As you configure bindy using class names, instead of package names,
 you can put multiple models in the same package.
 
 == Options
@@ -65,16 +65,16 @@ include::partial$dataformat-options.adoc[]
 
 == Annotations
 
-The annotations created allow to map different concept of your model to
+The annotations created allow mapping different concept of your model to
 the POJO like:
 
-* Type of record (CSV, key value pair (e.g. FIX message), fixed length
+* Type of record (CSV, key value pair (e.g., _FIX message_), fixed length
 ...),
-* Link (to link object in another object),
+* Link (to link an object in another object),
 * DataField and their properties (int, type, ...),
 * KeyValuePairField (for key = value format like we have in FIX
 financial messages),
-* Section (to identify header, body and footer section),
+* Section (to identify a header, body and footer section),
 * OneToMany,
 * BindyConverter,
 * FormatFactories
@@ -83,9 +83,9 @@ This section will describe them.
 
 === 1. CsvRecord
 
-The CsvRecord annotation is used to identified the root class of the
+The CsvRecord annotation is used to identify the root class of the
 model. It represents a record = "a line of a CSV file" and can be linked
-to several children model classes.
+to several children's model classes.
 
 [width="100%",cols="15%s,15%,60%",options="header",]
 |===
@@ -146,7 +146,7 @@ columns definition
 |===
 // annotation options: END
 
-*case 1 : separator = ','*
+*case 1:separator = ','*
 
 The separator used to segregate the fields in the CSV record is `,` :
 
@@ -162,7 +162,7 @@ public Class Order {
 }
 ----
 
-*case 2 : separator = ';'*
+*case 2:separator = ';'*
 
 Compare to the previous case, the separator here is `;` instead of `,` :
 
@@ -178,7 +178,7 @@ public Class Order {
 }
 ----
 
-*case 3 : separator = '|'*
+*case 3:separator = '|'*
 
 Compare to the previous case, the separator here is `|` instead of `;` :
 
@@ -194,7 +194,7 @@ public Class Order {
 }
 ----
 
-*case 4 : separator = '\",\"'*
+*case 4:separator = '\",\"'*
 
 *Applies for Camel 2.8.2 or older*
 
@@ -202,11 +202,13 @@ When the field to be parsed of the CSV record contains `,` or `;` which
 is also used as separator, we should find another strategy
 to tell camel bindy how to handle this case. To define the field
 containing the data with a comma, you will use single or double quotes
-as delimiter (e.g : '10', 'Street 10, NY', 'USA' or "10", "Street 10,
+as delimiter (e.g.: '10', 'Street 10, NY', 'USA' or "10", "Street 10,
 NY", "USA").
 
-NOTE: In this case, the first and last character of the line which
-are a single or double quotes will be removed by bindy.
+[NOTE]
+====
+In this case, bindy will remove the first and last character of the line which is a single or double quotes.
+====
 
 ----
 "10","J","Pauline"," M","XD12345678","Fortis Dynamic 15,15","2500","USD","08-01-2009"
@@ -221,9 +223,8 @@ public Class Order {
 ----
 
 Bindy automatically detects if the
-record is enclosed with either single or double quotes and automatic
-remove those quotes when unmarshalling from CSV to Object. Therefore do
-*not* include the quotes in the separator, but simply do as below:
+record is enclosed with either single or double quotes and automatically removes those quotes when unmarshalling from CSV to Object. Therefore, do
+*not* include the quotes in the separator, but do as below:
 
 ----
 "10","J","Pauline"," M","XD12345678","Fortis Dynamic 15,15","2500","USD","08-01-2009"
@@ -249,7 +250,7 @@ public Class Order {
 }
 ----
 
-*case 5 : separator & skipFirstLine*
+*case 5:separator & skipFirstLine*
 
 The feature is interesting when the client wants to have in the first
 line of the file, the name of the data fields :
@@ -269,10 +270,10 @@ public Class Order {
 }
 ----
 
-*case 6 : generateHeaderColumns*
+*case 6:generateHeaderColumns*
 
-To add at the first line of the CSV generated, the attribute
-generateHeaderColumns must be set to true in the annotation like this :
+To include at the first line of the CSV generated, the attribute
+`generateHeaderColumns` must be set to true in the annotation like this :
 
 [source,java]
 ----
@@ -282,19 +283,19 @@ public Class Order {
 }
 ----
 
-As a result, Bindy during the unmarshaling process will generate CSV
-like this :
+As a result, Bindy during the unmarshalling process will generate CSV
+like this:
 
 ----
 order id, client id, first name, last name, isin code, instrument name, quantity, currency, date
 10, J, Pauline, M, XD12345678, Fortis Dynamic 15/15, 2500, USD, 08-01-2009
 ----
 
-*case 7 : carriage return*
+*case 7: carriage return*
 
 If the platform where camel-bindy will run is not Windows but Macintosh
 or Unix, then you can change the crlf property like this. Three values
-are available : WINDOWS, UNIX or MAC
+are available: `WINDOWS`, `UNIX` or `MAC`.
 
 [source,java]
 ----
@@ -317,7 +318,7 @@ public Class Order {
 }
 ----
 
-*case 8 : isOrdered*
+*case 8: isOrdered*
 
 Sometimes, the order to follow during the creation of the CSV record
 from the model is different from the order used during the parsing.
@@ -339,12 +340,15 @@ public Class Order {
 }
 ----
 
-NOTE: `pos` is used to parse the file stream, while `position` is used
+[NOTE]
+====
+`pos` is used to parse the file stream, while `position` is used
 to generate the CSV.
+====
 
 === 2. Link
 
-The link annotation will allow to link objects together.
+The link annotation will allow linking objects together.
 
 [width="100%",cols="15%s,15%,60%",options="header",]
 |===
@@ -366,7 +370,7 @@ The link annotation will allow to link objects together.
 
 Only one-to-one relation is allowed as of the current version.
 
-E.g : If the model class Client is linked to the Order class, then use
+E.g.: If the model class Client is linked to the Order class, then use
 annotation Link in the Order class like this :
 
 *Property Link*
@@ -469,7 +473,7 @@ HALF_DOWN,HALF_EVEN, UNNECESSARY e.g : Number = 123456.789, Precision = 2, Round
 |===
 // annotation options: END
 
-*case 1 : pos*
+*case 1: pos*
 
 This parameter/attribute represents the position of the field in the CSV
 record.
@@ -490,7 +494,7 @@ public class Order {
 }
 ----
 
-As you can see in this example the position starts at `1` but continues
+As you can see in this example, the position starts at `1` but continues
 at `5` in the class Order. The numbers from `2` to `4` are defined in
 the class Client (see here after).
 
@@ -511,9 +515,9 @@ public class Client {
 }
 ----
 
-*case 2 : pattern*
+*case 2: pattern*
 
-The pattern allows to enrich or validates the format of your data
+The pattern allows enriching or validates the format of your data
 
 *Pattern*
 
@@ -543,7 +547,7 @@ public class Order {
 }
 ----
 
-*case 3 : precision*
+*case 3: precision*
 
 The precision is helpful when you want to define the decimal part of
 your number.
@@ -578,13 +582,13 @@ public class Order {
 }
 ----
 
-*case 4 : Position is different in output*
+*case 4: Position is different in output*
 
 The position attribute will inform bindy how to place the field in the
 CSV record generated. By default, the position used corresponds to the
 position defined with the attribute `pos`. If the position is different
-(that means that we have an asymetric processus comparing marshaling
-from unmarshaling) then we can use `position` to indicate this.
+(that means that we have an asymmetric process comparing marshaling
+from unmarshalling) then we can use `position` to indicate this.
 
 Here is an example:
 
@@ -620,9 +624,9 @@ public class Order {
 This attribute of the annotation `@DataField` must be used in combination
 with attribute `isOrdered = true` of the annotation `@CsvRecord`.
 
-*case 5 : required*
+*case 5: required*
 
-If a field is mandatory, simply use the attribute `required` set to
+If a field is mandatory, use the attribute `required` set to
 true.
 
 *Required*
@@ -653,10 +657,10 @@ by the parser with the following information :
 Some fields are missing (optional or mandatory), line :
 ----
 
-*case 6 : trim*
+*case 6: trim*
 
 If a field has leading and/or trailing spaces which should be removed
-before they are processed, simply use the attribute `trim` set to
+before they are processed, use the attribute `trim` set to
 true.
 
 *Trim*
@@ -680,7 +684,7 @@ public class Order {
 }
 ----
 
-*case 7 : defaultValue*
+*case 7: defaultValue*
 
 If a field is not defined then uses the value indicated by the
 `defaultValue` attribute.
@@ -706,7 +710,7 @@ public class Order {
 }
 ----
 
-*case 8 : columnName*
+*case 8: columnName*
 
 Specifies the column name for the property only if `@CsvRecord` has annotation `generateHeaderColumns = true`.
 
@@ -731,13 +735,13 @@ This attribute is only applicable to optional fields.
 
 === 4. FixedLengthRecord
 
-The FixedLengthRecord annotation is used to identified the root class of
+The FixedLengthRecord annotation is used to identify the root class of
 the model. It represents a record = "a line of a file/message containing
 data fixed length (number of characters) formatted" and can be linked to several children model
 classes. This format is a bit particular because data of a field can be
 aligned to the right or to the left.
 
-When the size of the data does not fill completely the length of the
+When the size of the data does not completely fill the length of the
 field, we can then add 'pad' characters.
 
 [width="100%",cols="15%s,15%,60%",options="header",]
@@ -792,10 +796,9 @@ the primary record (e.g., not the header or footer).
 
 A record may not be both a header/footer and a primary fixed-length record.
 
-*case 1 : Simple fixed length record*
+*case 1: Simple fixed length record*
 
-This simple example shows how to design the model to parse/format a
-fixed message
+This example shows how to design the model to parse/format a fixed message:
 
 ----
 10A9PaulineMISINXD12345678BUYShare2500.45USD01-08-2009
@@ -843,7 +846,7 @@ public static class Order {
 }
 ----
 
-*case 2 : Fixed length record with alignment and padding*
+*case 2: Fixed length record with alignment and padding*
 
 This more elaborated example show how to define the alignment for a
 field and how to assign a padding character which is `' '` here:
@@ -894,7 +897,7 @@ public static class Order {
 }
 ----
 
-*case 3 : Field padding*
+*case 3: Field padding*
 
 Sometimes, the default padding defined for record cannot be applied to
 the field as we have a number format where we would like to pad with
@@ -1003,9 +1006,9 @@ The `pos` value(s) in a fixed-length record may
 optionally be defined using ordinal, sequential values instead of
 precise column numbers.
 
-*case 5 : Fixed length record with record-defined field length*
+*case 5: Fixed length record with record-defined field length*
 
-Occasionally a fixed-length record may contain a field that define the
+Occasionally, a fixed-length record may contain a field that defines the
 expected length of another field within the same record. In the
 following example the length of the `instrumentNumber` field value is
 defined by the value of `instrumentNumberLen` field in the record.
@@ -1059,7 +1062,7 @@ public static class Order {
 }
 ----
 
-*case 6 : Fixed length record with header and footer*
+*case 6: Fixed length record with header and footer*
 
 Bindy will discover fixed-length header and footer records that are
 configured as part of the model – provided that the annotated classes
@@ -1135,7 +1138,7 @@ public class OrderFooter {
 }
 ----
 
-*case 7 : Skipping content when parsing a fixed length record*
+*case 7: Skipping content when parsing a fixed length record*
 
 It is common to integrate with systems that provide fixed-length records
 containing more information than needed for the target use case. It is
@@ -1169,23 +1172,23 @@ public static class Order {
 
 === 5. Message
 
-The Message annotation is used to identified the class of your model who
+The Message annotation is used to identify the class of your model who
 will contain key value pairs fields. This kind of format is used mainly
 in Financial Exchange Protocol Messages (FIX). Nevertheless, this
 annotation can be used for any other format where data are identified by
 keys. The key pair values are separated each other by a separator which
-can be a special character like a tab delimitor (unicode representation
-: `\u0009`) or a start of heading (unicode representation : `\u0001`)
+can be a special character like a tab delimiter (unicode representation
+: `\u0009`) or a start of heading (unicode representation: `\u0001`)
 
 [NOTE]
 ====
 *FIX information*
 
-More information about FIX can be found on this web site :
+More information about FIX can be found on this website:
 http://www.fixprotocol.org/[http://www.fixprotocol.org/]. To work with
-FIX messages, the model must contain a Header and Trailer classes linked
-to the root message class which could be a Order class. This is not
-mandatory but will be very helpful when you will use camel-bindy in
+_FIX messages_, the model must contain a Header and Trailer classes linked
+to the root message class which could be an `Order` class. This is not
+mandatory but will be very helpful when you use camel-bindy in
 combination with camel-fix which is a Fix gateway based on quickFix
 project http://www.quickfixj.org/[http://www.quickfixj.org/].
 ====
@@ -1224,7 +1227,7 @@ model and must be declared one time.
 |===
 // annotation options: END
 
-*case 1 : separator = 'u0001'*
+*case 1:separator = 'u0001'*
 
 The separator used to segregate the key value pair fields in a FIX
 message is the ASCII `01` character or in unicode format `\u0001`. This
@@ -1250,7 +1253,7 @@ public class Order {
 *Look at test cases*
 
 The ASCII character like tab, ... cannot be displayed in WIKI page. So,
-have a look to the test case of camel-bindy to see exactly how the FIX
+have a look at the test case of camel-bindy to see exactly how the FIX
 message looks like (https://github.com/apache/camel/blob/main/components/camel-bindy/src/test/data/fix/fix.txt[src/test/data/fix/fix.txt]) and the Order, Trailer,
 Header classes
 (https://github.com/apache/camel/blob/main/components/camel-bindy/src/test/java/org/apache/camel/dataformat/bindy/model/fix/simple/Order.java[src/test/java/org/apache/camel/dataformat/bindy/model/fix/simple/Order.java]).
@@ -1295,7 +1298,7 @@ must be different
 |===
 // annotation options: END
 
-*case 1 : tag*
+*case 1:tag*
 
 This parameter represents the key of the field in the message:
 
@@ -1330,10 +1333,10 @@ public class Order {
 }
 ----
 
-*case 2 : Different position in output*
+*case 2: Different position in output*
 
-If the tags/keys that we will put in the FIX message must be sorted
-according to a predefine order, then use the attribute `position` of the
+If the tags/keys that we will put in the _FIX message_ must be sorted
+according to a predefined order, then use the attribute `position` of the
 annotation `@KeyValuePairField`.
 
 *FIX message - Tag - sort*
@@ -1357,8 +1360,8 @@ public class Order {
 
 === 7. Section
 
-In FIX message of fixed length records, it is common to have different
-sections in the representation of the information : header, body and
+In _FIX message_ of fixed length records, it is common to have different
+sections in the representation of the information:header, body and
 section. The purpose of the annotation `@Section` is to inform bindy about
 which class of the model represents the header (= section 1), body (=
 section 2) and footer (= section 3)
@@ -1383,7 +1386,7 @@ Only one attribute/parameter exists for this annotation.
 |===
 // annotation options: END
 
-*case 1 : Section*
+*case 1:Section*
 
 Definition of the header section:
 
@@ -1443,7 +1446,7 @@ public class Trailer {
 
 === 8. OneToMany
 
-The purpose of the annotation `@OneToMany` is to allow to work with a
+The purpose of the annotation `@OneToMany` is to allow working with a
 `List<?>` field defined a POJO class or from a record containing
 repetitive groups.
 
@@ -1451,12 +1454,12 @@ repetitive groups.
 ====
 *Restrictions OneToMany*
 
-Be careful, the one to many of bindy does not allow to handle
+Be careful, the one to many of bindy does not allow handling
 repetitions defined on several levels of the hierarchy
 
 The relation OneToMany ONLY WORKS in the following cases :
 
-* Reading a FIX message containing repetitive groups (= group of
+* Reading a _FIX message_ containing repetitive groups (= group of
 tags/keys)
 * Generating a CSV with repetitive data
 ====
@@ -1479,7 +1482,7 @@ tags/keys)
 |===
 // annotation options: END
 
-*case 1 : Generating CSV with repetitive data*
+*case 1: Generating CSV with repetitive data*
 
 Here is the CSV output that we want :
 
@@ -1490,10 +1493,13 @@ Claus,Ibsen,Camel in Action 3,2013,35
 Claus,Ibsen,Camel in Action 4,2014,35
 ----
 
-NOTE: The repetitive data concern the title of the book and its
+[NOTE]
+====
+The repetitive data concern the title of the book and its
 publication date while first, last name and age are common.
+====
 
-and the classes used to modeling this. The Author class contains a List
+And the classes used to modeling this. The Author class contains a List
 of Book.
 
 *Generate CSV with repetitive data*
@@ -1528,7 +1534,7 @@ public class Book {
 
 Very simple isn't it !!!
 
-*case 2 : Reading FIX message containing group of tags/keys*
+*case 2: Reading FIX message containing group of tags/keys*
 
 Here is the message that we would like to process in our model :
 
@@ -1576,14 +1582,14 @@ public class Security {
     @KeyValuePairField(tag = 48) // Fund code
     private String securityCode;
 
-    @KeyValuePairField(tag = 54) // Movement type ( 1 = Buy, 2 = sell)
+    @KeyValuePairField(tag = 54) // Movement type (1 = Buy, 2 = sell)
     private String side;
 }
 ----
 
 === 9. BindyConverter
 
-The purpose of the annotation `@BindyConverter` is define a converter
+The purpose of the annotation `@BindyConverter` is to define a converter
 to be used on field level. The provided class must implement the
 Format interface.
 
@@ -1685,14 +1691,14 @@ FormattingOptions:
 * ZonedDateTime
 
 The DefaultFormatFactory can be overridden by providing an instance of
-FactoryRegistry in the registry in use (e.g. Spring or JNDI).
+FactoryRegistry in the registry in use (e.g., Spring or JNDI).
 
 == Using the Java DSL
 
 The next step instantiates the DataFormat _bindy_ class
 associated with this record type and providing a class as a parameter.
 
-For example the following uses the class `BindyCsvDataFormat` (which
+For example, the following uses the class `BindyCsvDataFormat` (which
 corresponds to the class associated with the CSV record type) which is
 configured with _com.acme.model.MyModel.class_ to initialize the model objects
 configured in this package.
@@ -1713,7 +1719,7 @@ BindyCsvDataFormat bindy = new BindyCsvDataFormat(com.acme.model.MyModel.class);
 bindy.setLocale("us");
 ----
 
-Or to use the platform default locale then use "default" as the locale
+Or to use the platform default locale, then use "default" as the locale
 name.
 
 [source,java]
@@ -1733,7 +1739,7 @@ from("file://inbox")
 ----
 
 Alternatively, you can use a named reference to a data format which can
-then be defined in your Registry e.g. your
+then be defined in your registry, e.g., your
 Spring XML file:
 
 [source,java]
@@ -1743,17 +1749,17 @@ from("file://inbox")
   .to("direct:handleOrders");
 ----
 
-The Camel route will pick-up files in the inbox directory, unmarshall
+The Camel route will pick up files in the inbox directory, unmarshall
 CSV records into a collection of model objects and send the collection +
  to the route referenced by `handleOrders`.
 
 The collection returned is a *List of Map* objects. Each Map within the
-list contains the model objects that were marshalled out of each line of
+list contains the model objects marshalled out of each line of
 the CSV. The reason behind this is that _each line can correspond to
-more than one object_. This can be confusing when you simply expect one
+more than one object_. This can be confusing when you expect one
 object to be returned per line.
 
-Each object can be retrieve using its class name.
+Each object can be retrieved using its class name.
 
 [source,java]
 ----
@@ -1763,12 +1769,12 @@ int modelCount = 0;
 for (Map<String, Object> model : unmarshaledModels) {
   for (String className : model.keySet()) {
      Object obj = model.get(className);
-     LOG.info("Count : {}, {}", modelCount, obj.toString());
+     LOG.info("Count: {}, {}", modelCount, obj.toString());
   }
  modelCount++;
 }
 
-LOG.info("Total CSV records received by the csv bean : {}", modelCount);
+LOG.info("Total CSV records received by the csv bean: {}", modelCount);
 ----
 
 Assuming that you want to extract a single Order object from this map
@@ -1794,9 +1800,9 @@ from("file://inbox")
 
 Take care of the fact that Bindy uses CHARSET_NAME property or the CHARSET_NAME header as define in the
 Exchange interface to do a characterset conversion of the inputstream received for unmarshalling.
-In some producers (e.g. file-endpoint) you can define a characterset. The characterset conversion
-can already been done by this producer. Sometimes you need to remove this property or header from the
-exchange before sending it to the unmarshal. If you don't remove it the conversion might be done twice
+In some producers, (e.g., file-endpoint) you can define a characterset. This producer
+can already do the character set conversion. Sometimes you need to remove this property or header from the
+exchange before sending it to the unmarshal. If you don't remove it, the conversion might be done twice,
 which might lead to unwanted results.
 
 [source,java]
@@ -1823,7 +1829,7 @@ from("direct:handleOrders")
 
 This is really easy to use Spring as your favorite DSL language to
 declare the routes to be used for camel-bindy. The following example
-shows two routes where the first will pick-up records from files,
+shows two routes where the first will pick up records from files,
 unmarshal the content and bind it to their model. The result is then
 send to a pojo (doing nothing special) and place them into a queue.
 
@@ -1844,7 +1850,7 @@ content to generate a file containing the CSV record.
        http://camel.apache.org/schema/spring
        http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <!-- Queuing engine - ActiveMq - work locally in mode virtual memory -->
+    <!-- Queuing engine - ActiveMq - works locally in mode virtual memory -->
     <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
         <property name="brokerURL" value="vm://localhost:61616"/>
     </bean>
@@ -1872,16 +1878,16 @@ content to generate a file containing the CSV record.
 
 [NOTE]
 ====
-Please verify that your model classes implements serializable otherwise
+Please verify that your model classes implement serializable otherwise
 the queue manager will raise an error.
 ====
 
 == Dependencies
 
-To use Bindy in your camel routes you need to add the a dependency on
+To use Bindy in your camel routes, you need to add a dependency on
 *camel-bindy* which implements this data format.
 
-If you use maven you could just add the following to your pom.xml,
+If you use maven, you could add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
 the download page for the latest versions).
 
