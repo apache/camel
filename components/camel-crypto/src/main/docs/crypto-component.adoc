@@ -14,8 +14,8 @@
 
 *{component-header}*
 
-With Camel cryptographic endpoints and Java's Cryptographic extension it
-is easy to create Digital Signatures for Exchanges.
+With Camel cryptographic endpoints and Java's Cryptographic extension, it
+is possible to create Digital Signatures for Exchanges.
 Camel provides a pair of flexible endpoints which get used in concert to
 create a signature for an exchange in one part of the exchange's
 workflow and then verify the signature in a later part of the workflow.
@@ -43,9 +43,9 @@ closely guarded and used to 'sign' the message while the other, public
 key, is shared around to anyone interested in verifying the signed
 messages. Messages are signed by using the private key to encrypting a
 digest of the message. This encrypted digest is transmitted along with
-the message. On the other side the verifier recalculates the message
+the message. On the other side, the verifier recalculates the message
 digest and uses the public key to decrypt the digest in the
-signature. If both digests match the verifier knows only the holder of
+signature. If both digests match, the verifier knows only the holder of
 the private key could have created the signature.
 
 Camel uses the Signature service from the Java Cryptographic Extension
@@ -61,7 +61,7 @@ http://en.wikipedia.org/wiki/Digital_signature[Digital_signatures]
 
 == URI format
 
-As mentioned Camel provides a pair of crypto endpoints to create and
+As mentioned, Camel provides a pair of crypto endpoints to create and
 verify signatures
 
 ----------------------------
@@ -72,14 +72,14 @@ crypto:verify:name[?options]
 * `crypto:sign` creates the signature and stores it in the Header keyed
 by the constant
 `org.apache.camel.component.crypto.DigitalSignatureConstants.SIGNATURE`,
-i.e. `"CamelDigitalSignature"`.
+i.e., `"CamelDigitalSignature"`.
 * `crypto:verify` will read in the contents of this header and do the
 verification calculation.
 
-In order to correctly function, the sign and verify process needs a pair
+To correctly function, the sign and verify process needs a pair
 of keys to be shared, signing requiring a `PrivateKey` and verifying a
 `PublicKey` (or a `Certificate` containing one). Using the JCE it is
-very simple to generate these key pairs but it is usually most secure to
+very simple to generate these key pairs, but it is usually most secure to
 use a KeyStore to house and share your keys. The DSL is very flexible
 about how keys are supplied and provides a number of mechanisms.
 
@@ -175,7 +175,7 @@ public class KeystoreConfig {
 }
 ----
 
-Again in Spring a ref is used to lookup an actual keystore instance.
+Again in Spring, a ref is used to look up an actual keystore instance.
 
 === Changing JCE Provider and Algorithm
 
@@ -203,18 +203,18 @@ In case you need to update the size of the buffer...
 
 === Supplying Keys dynamically.
 
-When using a Recipient list or similar EIP the recipient of an exchange
+When using a Recipient list or similar EIP, the recipient of an exchange
 can vary dynamically. Using the same key across all recipients may be
 neither feasible nor desirable. It would be useful to be able to specify
 signature keys dynamically on a per-exchange basis. The exchange could
 then be dynamically enriched with the key of its target recipient prior
-to signing. To facilitate this the signature mechanisms allow for keys
+to signing. To facilitate this, the signature mechanisms allow for keys
 to be supplied dynamically via the message headers below
 
 * `DigitalSignatureConstants.SIGNATURE_PRIVATE_KEY`, `"CamelSignaturePrivateKey"`
 * `DigitalSignatureConstants.SIGNATURE_PUBLIC_KEY_OR_CERT`, `"CamelSignaturePublicKeyOrCert"`
 
-Even better would be to dynamically supply a keystore alias. Again the
+Even better would be to dynamically supply a keystore alias. Again, the
 alias can be supplied in a message header
 
 * `DigitalSignatureConstants.KEYSTORE_ALIAS`, `"CamelSignatureKeyStoreAlias"`
