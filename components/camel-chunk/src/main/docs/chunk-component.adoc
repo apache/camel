@@ -29,8 +29,7 @@ chunk:templateName[?options]
 Where *templateName* is the classpath-local URI of the template to
 invoke.
 
-You can append query options to the URI in the following
-format, `?option=value&option=value&...`
+You can append query options to the URI in the following format: `?option=value&option=value&...`
 
 
 // component-configure options: START
@@ -47,7 +46,7 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-Chunk component will look for a specific template in _themes_ folder
+Chunk component will look for a specific template in the _themes_ folder
 with extensions _.chtml_ or _.cxml. _If you need to specify a different
 folder or extensions, you will need to use the specific options listed
 above.
@@ -83,7 +82,7 @@ a `Map`). The `Exchange` is transferred as:
 
 Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
-headers is set then Camel uses this over the endpoint configured
+headers is set, then Camel uses this over the endpoint configured
 resource. This allows you to provide a dynamic template at runtime.
 
 // component headers: START
@@ -92,7 +91,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Samples
 
-For example you could use something like:
+For example, you could use something like:
 
 [source,java]
 --------------------------
@@ -104,7 +103,7 @@ To use a Chunk template to formulate a response for a message for InOut
 message exchanges (where there is a `JMSReplyTo` header).
 
 If you want to use InOnly and consume the message and send it to another
-destination you could use:
+destination, you could use:
 
 [source,java]
 -----------------------------
@@ -131,13 +130,13 @@ from("direct:in").
 to("chunk:file_example?themeFolder=template&themeSubfolder=subfolder&extension=chunk");
 ---------------------------------------------------------------------------------------
 
-In this example Chunk component will look for the file
-_file_example.chunk_ in the folder _template/subfolder._
+In this example, the Chunk component will look for the file
+`file_example.chunk` in the folder `template/subfolder`.
 
 == The Email Sample
 
-In this sample we want to use Chunk templating for an order confirmation
-email. The email template is laid out in Chunk as:
+In this sample, we want to use Chunk templating for an order confirmation email.
+The email template is laid out in Chunk as:
 
 [source,text]
 ----------------------------------------------
