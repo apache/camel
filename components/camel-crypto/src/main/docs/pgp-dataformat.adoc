@@ -74,10 +74,10 @@ setting directly on the PGPDataFormat.
 setting directly on the PGPDataFormat.
 
 |`CamelPGPDataFormatNumberOfEncryptionKeys` |`Integer` |number of public keys used for encrypting the
-symmectric key, set by PGPDataFormat during encryptiion process
+symmetric key, set by PGPDataFormat during the encryption process
 
 |`CamelPGPDataFormatNumberOfSigningKeys` |`Integer` |number of private keys used for creating
-signatures, set by PGPDataFormat during signing process
+signatures, set by PGPDataFormat during the signing process
 |=======================================================================
 
 == Encrypting with PGPDataFormat
@@ -90,14 +90,19 @@ The following sample performs signing + encryption, and then signature
 verification + decryption. It uses the same keyring for both signing and
 encryption, but you can obviously use different keys:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:pgp-encrypt")
     .marshal().pgp("file:pubring.gpg", "alice@example.com")
     .unmarshal().pgp("file:secring.gpg", "alice@example.com", "letmein");
 ----
-Or using Spring:
 
+Spring XML::
++
 [source,xml]
 ----
 <route>
@@ -107,7 +112,9 @@ Or using Spring:
 </route>
 ----
 
-=== To work with the previous example you need the following
+====
+
+=== Working with the previous example
 
 * A public keyring file which contains the public keys used to encrypt
 the data
@@ -118,7 +125,7 @@ data
 === Managing your keyring
 
 To manage the keyring, I use the command line tools, I find this to be
-the simplest approach in managing the keys. There are also Java
+the simplest approach to managing the keys. There are also Java
 libraries available from
 http://www.bouncycastle.org/java.html[http://www.bouncycastle.org/java.html]
 if you would prefer to do it that way.
@@ -135,13 +142,13 @@ Create your keyring, entering a secure password
 -------------
 gpg --gen-key
 -------------
-If you need to import someone elses public key so that you can encrypt a file for them.
+If you need to import someone else's public key so that you can encrypt a file for them.
 
 [source,bash]
 --------------------------
 gpg --import <filename.key
 --------------------------
-If you are using GnuPG versions prior to 2.1, the key formats are stored in different files that can be used for the example. You can check if the required files exist by running the following command:
+If you are using GnuPG versions prior to 2.1, the key formats are stored in different files that can be used, for example. You can check if the required files exist by running the following command:
 
 [source,bash]
 -----------------------------------------------
@@ -165,7 +172,7 @@ gpg --export-secret-keys > secring.gpg
 
 A PGP Data Formatter can decrypt/verify messages which have been
 encrypted by different public keys or signed by different private keys.
-Just provide the corresponding private keys in the secret keyring, the
+Provide the corresponding private keys in the secret keyring, the
 corresponding public keys in the public keyring, and the passphrases in
 the passphrase accessor.
 
@@ -179,11 +186,11 @@ PGPPassphraseAccessor passphraseAccessor = new PGPPassphraseAccessorDefault(user
 
 PGPDataFormat pgpVerifyAndDecrypt = new PGPDataFormat();
 pgpVerifyAndDecrypt.setPassphraseAccessor(passphraseAccessor);
-// the method getSecKeyRing() provides the secret keyring as byte array containing the private keys
-pgpVerifyAndDecrypt.setEncryptionKeyRing(getSecKeyRing()); // alternatively you can use setKeyFileName(keyfileName)
-// the method getPublicKeyRing() provides the public keyring as byte array containing the public keys
-pgpVerifyAndDecrypt.setSignatureKeyRing((getPublicKeyRing());  // alternatively you can use setSignatureKeyFileName(signatgureKeyfileName)
-// it is not necessary to specify the encryption or signer  User Id
+// the method getSecKeyRing() provides the secret keyring as a byte array containing the private keys
+pgpVerifyAndDecrypt.setEncryptionKeyRing(getSecKeyRing()); // alternatively, you can use setKeyFileName(keyfileName)
+// the method getPublicKeyRing() provides the public keyring as a byte array containing the public keys
+pgpVerifyAndDecrypt.setSignatureKeyRing((getPublicKeyRing());  // alternatively, you can use setSignatureKeyFileName(signatgureKeyfileName)
+// it is not necessary to specify the encryption or signer User Id
  
 from("direct:start")
          ...     
@@ -192,7 +199,7 @@ from("direct:start")
 ------------------------------------------------------------------------------------------------------------------------------------------
 
 * The functionality is especially useful to support the key exchange. If
-you want to exchange the private key for decrypting you can accept for a
+you want to exchange the private key for decrypting, you can accept for a
 period of time messages which are either encrypted with the old or new
 corresponding public key. Or if the sender wants to exchange his signer
 private key, you can accept for a period of time, the old or new signer
@@ -201,14 +208,14 @@ key.
 public key which was used to encrypt the data. This Key ID can be used
 to locate the private key in the secret keyring to decrypt the data. The
 same mechanism is also used to locate the public key for verifying a
-signature. Therefore you no longer must specify User IDs for the
-unmarshaling.
+signature. Therefore, you no longer must specify User IDs for the
+unmarshalling.
 
 == Restricting the Signer Identities during PGP Signature Verification
 
-If you verify a signature you not only want to verify the correctness of
-the signature but you also want check that the signature comes from a
-certain identity or a specific set of identities. Therefore it is
+If you verify a signature, you not only want to verify the correctness of
+the signature, but you also want to check that the signature comes from a
+certain identity or a specific set of identities. Therefore, it is
 possible to restrict the number of public keys from the public keyring
 which can be used for the verification of a signature.  
 
@@ -225,7 +232,7 @@ which can be used for the verification of a signature.
  pgpVerifyWithSpecificKeysAndDecrypt.setPassword("my password"); // for decrypting with private key
  pgpVerifyWithSpecificKeysAndDecrypt.setKeyFileName(keyfileName);
  pgpVerifyWithSpecificKeysAndDecrypt.setSignatureKeyFileName(signatgureKeyfileName);
- pgpVerifyWithSpecificKeysAndDecrypt.setSignatureKeyUserids(expectedSigUserIds); // if you have only one signer identity then you can also use setSignatureKeyUserid("expected Signer")
+ pgpVerifyWithSpecificKeysAndDecrypt.setSignatureKeyUserids(expectedSigUserIds); // if you have only one signer identity, then you can also use setSignatureKeyUserid("expected Signer")
  
 from("direct:start")
          ...     
@@ -233,16 +240,16 @@ from("direct:start")
         ...      
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-* If the PGP content has several signatures the verification is
+* If the PGP content has several signatures, the verification is
 successful as soon as one signature can be verified.
-* If you do not want to restrict the signer identities for verification
-then do not specify the signature key User IDs. In this case all public
+* If you do not want to restrict the signer identities for verification,
+then do not specify the signature key User IDs. In this case, all public
 keys in the public keyring are taken into account.
 
 == Several Signatures in One PGP Data Format
 
 The PGP specification allows that one PGP data format can contain
-several signatures from different keys. Since Camel 2.13.3 it is
+several signatures from different keys. Since Camel 2.13.3, it's been
 possible to create such kind of PGP content via specifying signature
 User IDs which relate to several private keys in the secret keyring.
 
@@ -254,7 +261,7 @@ User IDs which relate to several private keys in the secret keyring.
  pgpSignAndEncryptSeveralSignerKeys.setKeyUserid(keyUserid); // for encrypting, you can also use setKeyUserids if you want to encrypt with several keys
  pgpSignAndEncryptSeveralSignerKeys.setKeyFileName(keyfileName);
  pgpSignAndEncryptSeveralSignerKeys.setSignatureKeyFileName(signatgureKeyfileName);
- pgpSignAndEncryptSeveralSignerKeys.setSignaturePassword("sdude"); // here we assume that all private keys have the same password, if this is not the case then you can use setPassphraseAccessor
+ pgpSignAndEncryptSeveralSignerKeys.setSignaturePassword("sdude"); // here we assume that all private keys have the same password, if this is not the case, then you can use setPassphraseAccessor
 
  List<String> signerUserIds = new ArrayList<String>();
  signerUserIds.add("company old key");
@@ -267,11 +274,11 @@ from("direct:start")
         ...      
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-== Support of Sub-Keys and Key Flags in PGP Data Format Marshaler
+== Support for Sub-Keys and Key Flags in PGP Data Format Marshaller
 
 An https://tools.ietf.org/html/rfc4880#section-12.1[OpenPGP V4 key] can
 have a primary key and sub-keys. The usage of the keys is indicated by
-the so called https://tools.ietf.org/html/rfc4880#section-5.2.3.21[Key
+the so-called https://tools.ietf.org/html/rfc4880#section-5.2.3.21[Key
 Flags]. For example, you can have a primary key with two sub-keys; the
 primary key shall only be used for certifying other keys (Key Flag
 0x01), the first sub-key  shall only be used for signing (Key Flag
@@ -281,12 +288,12 @@ these Key Flags of the primary key and sub-keys in order to determine
 the right key for signing and encryption. This is necessary because the
 primary key and its sub-keys have the same User IDs.
 
-== Support of Custom Key Accessors
+== Support for Custom Key Accessors
 
 You can implement custom key accessors for encryption/signing. The
 above PGPDataFormat class selects in a certain predefined way the keys
 which should be used for signing/encryption or verifying/decryption. If
-you have special requirements how your keys should be selected you
+you have special requirements for how your keys should be selected, you
 should use the
 https://github.com/apache/camel/blob/main/components/camel-crypto/src/main/java/org/apache/camel/converter/crypto/PGPKeyAccessDataFormat.java[PGPKeyAccessDataFormat]
 class instead and implement the interfaces
