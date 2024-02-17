@@ -8,7 +8,7 @@
     "firstVersion": "4.3.0",
     "label": "container,cloud",
     "javaType": "org.apache.camel.component.kubernetes.cronjob.KubernetesCronJobComponent",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
     "version": "4.5.0-SNAPSHOT",

@@ -4,7 +4,7 @@
 :artifactid: camel-smb
 :description: Receive files from SMB (Server Message Block) shares.
 :since: 4.3
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
 

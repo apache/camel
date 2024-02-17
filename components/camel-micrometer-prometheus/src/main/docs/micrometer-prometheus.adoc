@@ -4,7 +4,7 @@
 :artifactid: camel-micrometer-prometheus
 :description: Camel Micrometer Prometheus for Camel Main
 :since: 4.3
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 
 *Since Camel {since}*

@@ -4,7 +4,7 @@
 :artifactid: camel-elasticsearch-rest-client
 :description: Perform queries and other operations on Elasticsearch or OpenSearch (uses low-level client).
 :since: 4.3
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
