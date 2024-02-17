@@ -59,7 +59,8 @@ include::partial$component-endpoint-headers.adoc[]
 
 Using collections and scopes is supported only for Couchbase Server 7.0 and later.
 
-This component is currently using Java SDK 3.x so it might be not compatible with older Couchbase servers anymore. See the compatibility https://docs.couchbase.com/java-sdk/current/project-docs/compatibility.html[page].
+This component is currently using Java SDK 3.x, so it might be not compatible with older Couchbase servers anymore.
+Check the compatibility https://docs.couchbase.com/java-sdk/current/project-docs/compatibility.html[page] for details.
 
  * The value formerly interpreted as a bucket-name is now interpreted as a username. The username must correspond to a user defined on the cluster that is being accessed.
  * The value formerly interpreted as a bucket-password is now interpreted as the password of the defined user.
