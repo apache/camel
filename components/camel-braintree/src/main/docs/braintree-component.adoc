@@ -15,14 +15,10 @@
 *{component-header}*
 
 The Braintree component provides access to
-https://www.braintreepayments.com/[Braintree Payments] trough through
-theirs https://developers.braintreepayments.com/start/hello-server/java[Java
-SDK].
+https://www.braintreepayments.com/[Braintree Payments] through their https://developers.braintreepayments.com/start/hello-server/java[Java SDK].
 
-All client applications need API credential in order to process
-payments. In order to use camel-braintree with your account, you'll need
-to create a new
-https://www.braintreepayments.com/get-started[Sandbox] or https://www.braintreepayments.com/signup[Production]
+All client applications need API credential to process payments.
+To use camel-braintree with your account, you'll need to create a new https://www.braintreepayments.com/get-started[Sandbox] or https://www.braintreepayments.com/signup[Production]
 account.
 
 
@@ -54,8 +50,18 @@ include::partial$component-endpoint-options.adoc[]
 
 == Examples
 
-*OSGi Blueprint*
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct://GENERATE")
+    .to("braintree://sclientToken/generate");
+----
 
+OSGi Blueprint::
++
 [source,xml]
 ----
 <?xml version="1.0"?>
@@ -91,6 +97,13 @@ include::partial$component-endpoint-options.adoc[]
 
 </blueprint>
 ----
++
+[NOTE]
+=====
+Starting from Camel 4, OSGI Blueprint is considered a *legacy* DSL. Users are strongly advised to migrate to the modern XML IO DSL.
+=====
+
+====
 
 == More Information
 
