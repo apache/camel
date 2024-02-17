@@ -60,6 +60,7 @@ public class KnativeHttpConsumer extends DefaultConsumer {
     private final KnativeResource resource;
     private final Supplier<Router> router;
     private final HeaderFilterStrategy headerFilterStrategy;
+    private volatile String path;
 
     private String basePath;
     private Route route;
@@ -78,6 +79,10 @@ public class KnativeHttpConsumer extends DefaultConsumer {
         this.headerFilterStrategy = new KnativeHttpHeaderFilterStrategy();
         this.filter = KnativeHttpSupport.createFilter(this.configuration.getCloudEvent(), resource);
         this.preallocateBodyBuffer = true;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public String getBasePath() {
@@ -107,7 +112,7 @@ public class KnativeHttpConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         if (route == null) {
-            String path = resource.getPath();
+            path = resource.getPath();
             if (ObjectHelper.isEmpty(path)) {
                 path = "/";
             }

@@ -87,7 +87,8 @@ public class KnativeEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        final KnativeResource service = lookupServiceDefinition(Knative.EndpointKind.sink);
+        KnativeResource service = lookupServiceDefinition(Knative.EndpointKind.sink);
+
         final Processor ceProcessor = cloudEventProcessor.producer(this, service);
         final Producer producer
                 = getComponent().getOrCreateProducerFactory().createProducer(this, createTransportConfiguration(service),
@@ -107,6 +108,7 @@ public class KnativeEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         KnativeResource service = lookupServiceDefinition(Knative.EndpointKind.source);
+
         Processor ceProcessor = cloudEventProcessor.consumer(this, service);
         Processor replyProcessor
                 = configuration.isReplyWithCloudEvent() ? cloudEventProcessor.producer(this, service) : null;
@@ -125,6 +127,9 @@ public class KnativeEndpoint extends DefaultEndpoint {
         Consumer consumer = getComponent().getOrCreateConsumerFactory().createConsumer(this,
                 createTransportConfiguration(service), service, pipeline);
 
+        // signal that this path is exposed for knative
+        String path = service.getPath();
+
         PropertyBindingSupport.build()
                 .withCamelContext(camelContext)
                 .withProperties(configuration.getTransportOptions())
@@ -134,13 +139,7 @@ public class KnativeEndpoint extends DefaultEndpoint {
                 .bind();
 
         configureConsumer(consumer);
-
         return consumer;
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     public Knative.Type getType() {
