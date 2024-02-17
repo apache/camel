@@ -14,7 +14,7 @@
 The Crypto Data Format integrates the Java
 Cryptographic Extension into Camel, allowing simple and flexible
 encryption and decryption of messages using Camel's familiar marshall
-and unmarshal formatting mechanism. It assumes marshalling to mean
+and unmarshal formatting mechanism. It assumes marshaling to mean
 encryption to cyphertext and unmarshalling to mean decryption back to
 the original plaintext. This data format implements only symmetric
 (shared-key) encryption and decyption.
@@ -28,8 +28,8 @@ include::partial$dataformat-options.adoc[]
 
 == Basic Usage
 
-At its most basic all that is required to encrypt/decrypt an exchange is a shared secret key.
-If one or more instances of the Crypto data format are configured with this key the format can
+At its most basic, all that is required to encrypt/decrypt an exchange is a shared secret key.
+If one or more instances of the Crypto data format are configured with this key, the format can
 be used to encrypt the payload in one route (or part of one) and decrypted in another.
 For example, using the Java DSL as follows:
 
@@ -69,7 +69,7 @@ In Spring the dataformat is configured first and then used in routes
 
 == Specifying the Encryption Algorithm
 
-Changing the algorithm is a matter of supplying the JCE algorithm name. If you change the algorithm you will need to use a compatible key.
+Changing the algorithm is a matter of supplying the JCE algorithm name. If you change the algorithm, you will need to use a compatible key.
 
 [source,java]
 ----------------------------------------------------------
@@ -93,7 +93,7 @@ A list of the available algorithms in Java 17 is available via the https://docs.
 
 Some crypto algorithms, particularly block algorithms, require configuration with an initial block of data known as an Initialization Vector.
 In the JCE this is passed as an AlgorithmParameterSpec when the Cipher is initialized.
-To use such a vector with the CryptoDataFormat you can configure it with a byte[] containing the required data e.g.
+To use such a vector with the CryptoDataFormat, you can configure it with a byte[] containing the required data, e.g.
 
 [source,java]
 ----------------------------------------------------------
@@ -120,6 +120,10 @@ or with spring, suppling a reference to a byte[]
 The same vector is required in both the encryption and decryption phases. As it is not necessary to keep the IV a secret, the DataFormat allows for it to be inlined into the encrypted data and subsequently read out in the decryption phase to initialize the Cipher. To inline the IV set the `Inline` flag.
 
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----------------------------------------------------------
 KeyGenerator generator = KeyGenerator.getInstance("DES");
@@ -139,8 +143,8 @@ from("direct:inline")
     .to("mock:unencrypted");
 ----------------------------------------------------------
 
-or with spring.
-
+Spring XML::
++
 [source,xml]
 ----------------------------------------------------------
 <crypto id="inline" algorithm="DES/CBC/PKCS5Padding" keyRef="desKey" initVectorRef="initializationVector"
@@ -148,7 +152,9 @@ or with spring.
 <crypto id="inline-decrypt" algorithm="DES/CBC/PKCS5Padding" keyRef="desKey" inline="true" />
 ----------------------------------------------------------
 
-For more information of the use of Initialization Vectors, consult
+====
+
+For more information about the use of Initialization Vectors, consult
 
 * http://en.wikipedia.org/wiki/Initialization_vector
 * http://www.herongyang.com/Cryptography/
@@ -156,8 +162,12 @@ For more information of the use of Initialization Vectors, consult
 
 
 == Hashed Message Authentication Codes (HMAC)
-To avoid attacks against the encrypted data while it is in transit the CryptoDataFormat can also calculate a Message Authentication Code for the encrypted exchange contents based on a configurable MAC algorithm. The calculated HMAC is appended to the stream after encryption. It is separated from the stream in the decryption phase. The MAC is recalculated and verified against the transmitted version to ensure nothing was tampered with in transit. For more information on Message Authentication Codes see http://en.wikipedia.org/wiki/HMAC
+To avoid attacks against the encrypted data while it is in transit, the CryptoDataFormat can also calculate a Message Authentication Code for the encrypted exchange contents based on a configurable MAC algorithm. The calculated HMAC is appended to the stream after encryption. It is separated from the stream in the decryption phase. The MAC is recalculated and verified against the transmitted version to ensure nothing was tampered with in transit. For more information on Message Authentication Codes see http://en.wikipedia.org/wiki/HMAC
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----------------------------------------------------------
 KeyGenerator generator = KeyGenerator.getInstance("DES");
@@ -172,15 +182,21 @@ from("direct:hmac")
     .to("mock:unencrypted");
 ----------------------------------------------------------
 
-or with spring.
-
+Spring XML::
++
 [source,xml]
 ----------------------------------------------------------
 <crypto id="hmac" algorithm="DES" keyRef="desKey" shouldAppendHMAC="true" />
 ----------------------------------------------------------
 
-By default the HMAC is calculated using the HmacSHA1 mac algorithm though this can be easily changed by supplying a different algorithm name. See here for how to check what algorithms are available through the configured security providers
+====
 
+By default, the HMAC is calculated using the HmacSHA1 mac algorithm, though this can be easily changed by supplying a different algorithm name. See here for how to check what algorithms are available through the configured security providers
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----------------------------------------------------------
 KeyGenerator generator = KeyGenerator.getInstance("DES");
@@ -196,30 +212,35 @@ from("direct:hmac-algorithm")
     .to("mock:unencrypted");
 ----------------------------------------------------------
 
-or with spring.
-
+Spring XML::
++
 [source,xml]
 ----------------------------------------------------------
 <crypto id="hmac-algorithm" algorithm="DES" keyRef="desKey" macAlgorithm="HmacMD5" shouldAppendHMAC="true" />
 ----------------------------------------------------------
 
+====
 
 == Supplying Keys Dynamically
 
-When using a Recipient list or similar EIP the recipient of an exchange can vary dynamically.
-Using the same key across all recipients may neither be feasible or desirable. It would be useful to be able to specify
-keys dynamically on a per exchange basis. The exchange could then be dynamically enriched with the key of its target
-recipient before being processed by the data format. To facilitate this the DataFormat allows for keys to be supplied
+When using a Recipient list or similar EIP, the recipient of an exchange can vary dynamically.
+Using the same key across all recipients may neither be feasible nor desirable. It would be useful to be able to specify
+keys dynamically on a per-exchange basis. The exchange could then be dynamically enriched with the key of its target
+recipient before being processed by the data format. To facilitate this, the DataFormat allows for keys to be supplied
 dynamically via the message headers below
 
 * CryptoDataFormat.KEY "CamelCryptoKey"
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----------------------------------------------------------
 CryptoDataFormat cryptoFormat = new CryptoDataFormat("DES", null);
 /**
  * Note: the header containing the key should be cleared after
- * marshalling to stop it from leaking by accident and
+ * marshaling to stop it from leaking by accident and
  * potentially being compromised. The processor version below is
  * arguably better as the key is left in the header when you use
  * the DSL leaks the fact that camel encryption was used.
@@ -237,17 +258,18 @@ from("direct:key-in-header-decrypt").unmarshal(cryptoFormat).process(new Process
 }).to("mock:unencrypted");
 ----------------------------------------------------------
 
-or with spring:
-
+Spring XML::
++
 [source,xml]
 ----------------------------------------------------------
 <crypto id="nokey" algorithm="DES" />
 ----------------------------------------------------------
 
+====
 
 == Dependencies
 
-To use the xref:ROOT:crypto-component.adoc[Crypto] dataformat in your camel routes you
+To use the xref:ROOT:crypto-component.adoc[Crypto] dataformat in your camel routes, you
 need to add the following dependency to your pom.
 
 [source,xml]
