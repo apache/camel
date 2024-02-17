@@ -43,7 +43,7 @@ The component allows you to marshal a Java Map (or any other message
 type that can be converted in a Map) into a
 CSV payload.
 
-Considering the following body 
+Considering the following body:
 
 [source,java]
 -------------------------------------------------------
@@ -52,8 +52,12 @@ body.put("foo", "abc");
 body.put("bar", 123);
 -------------------------------------------------------
 
-and this Java route definition 
+and this route definition:
 
+[tabs]
+====
+Java::
++
 [source,java]
 -------------------------------------------------------
 from("direct:start")
@@ -61,8 +65,8 @@ from("direct:start")
     .to("mock:result");
 -------------------------------------------------------
 
-or this XML route definition 
-
+XML::
++
 [source,xml]
 -------------------------------------------------------
 <route>
@@ -74,6 +78,7 @@ or this XML route definition
 </route>
 -------------------------------------------------------
 
+====
 
 then it will produce 
 
@@ -83,7 +88,7 @@ abc,123
 
 == Unmarshalling a CSV message into a Java List
 
-Unmarshalling will transform a CSV messsage into a Java List with CSV
+Unmarshalling will transform a CSV message into a Java List with CSV
 file lines (containing another List with all the field values).
 
 An example: we have a CSV file with names of persons, their IQ and their
@@ -122,7 +127,7 @@ for (List<String> line : data) {
 *Since Camel 2.1*
 
 If you have multiple rows of data you want to be marshalled into CSV
-format you can now store the message payload as a
+format, you can now store the message payload as a
 `List<Map<String, Object>>` object where the list contains a Map for
 each row.
 
@@ -154,7 +159,7 @@ public void doHandleCsvData(List<List<String>> csvData)
 ------------------------------------------------------------------------------------------------
 
 == Marshaling with a pipe as delimiter
-Considering the following body
+Considering the following body:
 
 [source,java]
 -------------------------------------------------------
@@ -164,8 +169,12 @@ body.put("bar", 123);
 ------------------------------------------------------- 
 
 
-and this Java route definition 
+And this Java route definition:
 
+[tabs]
+====
+Java::
++
 [source,java]
 -------------------------------------------------------
 from("direct:start")
@@ -173,8 +182,8 @@ from("direct:start")
     .to("mock:result")
 ------------------------------------------------------- 
 
-or this XML route definition 
-
+XML::
++
 [source,xml]
 -------------------------------------------------------
 <route>
@@ -186,7 +195,9 @@ or this XML route definition
 </route>
 ------------------------------------------------------- 
 
-then it will produce 
+====
+
+Then it will produce:
 
 -------------------------------------------------------
 abc|123
@@ -271,6 +282,22 @@ Usign the Spring/XML DSL:
 You can instruct the CSV Data Format to skip the
 first line which contains the CSV headers. Using the Spring/XML DSL:
 
+[tabs]
+====
+Java::
++
+[source,java]
+--------------------------------------------
+CsvDataFormat csv = new CsvDataFormat();
+csv.setSkipFirstLine(true);
+
+from("direct:start")
+  .unmarshal(csv)
+.to("bean:myCsvHandler?method=doHandleCsv");
+--------------------------------------------
+
+XML::
++
 [source,xml]
 ---------------------------------------------------
 <route>
@@ -282,35 +309,17 @@ first line which contains the CSV headers. Using the Spring/XML DSL:
 </route>
 ---------------------------------------------------
 
-Or the Java DSL:
+====
 
-[source,java]
---------------------------------------------
-CsvDataFormat csv = new CsvDataFormat();
-csv.setSkipFirstLine(true);
 
-from("direct:start")
-  .unmarshal(csv)
-.to("bean:myCsvHandler?method=doHandleCsv");
---------------------------------------------
 
 == Unmarshaling with a pipe as delimiter
 
-Using the Spring/XML DSL:
 
-[source,xml]
----------------------------------------------------
-<route>
-  <from uri="direct:start" />
-  <unmarshal>
-    <csv delimiter="|" />
-  </unmarshal>
-  <to uri="bean:myCsvHandler?method=doHandleCsv" />
-</route>
----------------------------------------------------
-
-Or the Java DSL:
-
+[tabs]
+====
+Java::
++
 [source,java]
 ----------------------------------------------------
 CsvDataFormat csv = new CsvDataFormat();
@@ -322,7 +331,9 @@ from("direct:start")
   .unmarshal(csv)
   .to("bean:myCsvHandler?method=doHandleCsv");
 ----------------------------------------------------
-
++
+Or, possibly:
++
 [source,java]
 ----------------------------------------------
 CsvDataFormat csv = new CsvDataFormat();
@@ -333,17 +344,21 @@ from("direct:start")
   .to("bean:myCsvHandler?method=doHandleCsv");
 ----------------------------------------------
 
-[source,java]
-----------------------------------------------
-CsvDataFormat csv = new CsvDataFormat();
-CSVConfig csvConfig = new CSVConfig();
-csvConfig.setDelimiter(";");
-csv.setConfig(csvConfig);
+Spring XML::
++
+[source,xml]
+---------------------------------------------------
+<route>
+  <from uri="direct:start" />
+  <unmarshal>
+    <csv delimiter="|" />
+  </unmarshal>
+  <to uri="bean:myCsvHandler?method=doHandleCsv" />
+</route>
+---------------------------------------------------
 
-from("direct:start")
-  .unmarshal(csv)
-  .to("bean:myCsvHandler?method=doHandleCsv");
-----------------------------------------------
+====
+
 
 *Issue in CSVConfig*
 
@@ -355,14 +370,14 @@ CSVConfig csvConfig = new CSVConfig();
 csvConfig.setDelimiter(';');
 --------------------------------------
 
-doesn't work. You have to set the delimiter as a String!
+This doesn't work. You have to set the delimiter as a String!
 
 == Dependencies
 
-To use CSV in your Camel routes you need to add a dependency on
+To use CSV in your Camel routes, you need to add a dependency on
 *camel-csv*, which implements this data format.
 
-If you use Maven you can just add the following to your pom.xml,
+If you use Maven, you can add the following to your pom.xml,
 substituting the version number for the latest and greatest release (see
 the download page for the latest versions).
 
