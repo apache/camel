@@ -73,7 +73,9 @@ public class DefaultJolokiaPlatformHttpPlugin extends ServiceSupport implements 
 
     @Override
     public void doStop() {
-        serviceManager.stop();
+        if (serviceManager != null) {
+            serviceManager.stop();
+        }
     }
 
     @Override
@@ -93,7 +95,7 @@ public class DefaultJolokiaPlatformHttpPlugin extends ServiceSupport implements 
             }
         } catch (IOException e) {
             jolokiaLogHandler.error("Error while accessing access restrictor at " + pLocation +
-                                    ". Denying all access to MBeans for security reasons. Exception: " + e,
+                            ". Denying all access to MBeans for security reasons. Exception: " + e,
                     e);
             return new DenyAllRestrictor();
         }
