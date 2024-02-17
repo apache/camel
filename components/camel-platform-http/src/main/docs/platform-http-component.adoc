@@ -15,7 +15,7 @@
 *{component-header}*
 
 The Platform HTTP is used to allow Camel to use the existing HTTP server from the runtime.
-For example when running Camel on Spring Boot, Quarkus, or other runtimes.
+For example, when running Camel on Spring Boot, Quarkus, or other runtimes.
 
 Maven users will need to add the following dependency to their `pom.xml` for this component:
 
@@ -31,11 +31,15 @@ Maven users will need to add the following dependency to their `pom.xml` for thi
 
 == Platform HTTP Provider
 
-To use Platform HTTP a provider (engine) is required to be available on the classpath.
+To use Platform HTTP, a provider (engine) is required to be available on the classpath.
 The purpose is to have drivers for different runtimes such as Quarkus, or Spring Boot.
 
-To use Quarkus:
+To use it with different runtimes:
 
+[tabs]
+====
+Quarkus::
++
 [source,xml]
 ----
 <dependency>
@@ -46,8 +50,8 @@ To use Quarkus:
 </dependency>
 ----
 
-And for Spring Boot:
-
+Spring Boot::
++
 [source,xml]
 ----
 <dependency>
@@ -57,6 +61,8 @@ And for Spring Boot:
     <!-- use the same version as your Camel version -->
 </dependency>
 ----
+====
+
 
 // component-configure options: START
 
@@ -75,6 +81,6 @@ include::spring-boot:partial$starter.adoc[]
 
 == Implementing a reverse proxy
 
-Platform HTTP component can act as a reverse proxy, in that case some headers are populated from the absolute URL received on the request line of the HTTP request. Those headers are specific to the underlining platform.
+Platform HTTP component can act as a reverse proxy. In that case, some headers are populated from the absolute URL received on the request line of the HTTP request. Those headers are specific to the underlining platform.
 
 At this moment, this feature is only supported for Quarkus implemented in `camel-platform-http-vertx` component.
