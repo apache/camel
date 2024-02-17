@@ -21,8 +21,8 @@ has the following features:
 
 * As a consumer, monitors couch changesets for inserts, updates and
 deletes and publishes these as messages into camel routes.
-* As a producer, can save, update, delete (by using CouchDbMethod with DELETE value)
-documents and get documents by id (by using CouchDbMethod with GET value) into couch.
+* As a producer, can save, update, delete (by using `CouchDbMethod` with `DELETE` value)
+documents and get documents by id (by using `CouchDbMethod` with GET value) into CouchDB.
 * Can support as many endpoints as required, eg for multiple databases
 across multiple instances.
 * Ability to have events trigger for only deletes, only inserts/updates
@@ -30,7 +30,10 @@ or all (default).
 * Headers set for sequenceId, document revision, document id, and HTTP
 method type.
 
-NOTE: CouchDB 3.x is not supported.
+[NOTE]
+====
+CouchDB 3.x is not supported.
+====
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -52,7 +55,7 @@ couchdb:http://hostname[:port]/database?[options]
 -------------------------------------------------
 
 Where *hostname* is the hostname of the running couchdb instance. Port
-is optional and if not specified then defaults to 5984.
+is optional and if not specified, then defaults to 5984.
 
 
 // component-configure options: START
@@ -75,25 +78,28 @@ include::partial$component-endpoint-headers.adoc[]
 Headers are set by the consumer once the message is received. The
 producer will also set the headers for downstream processors once the
 insert/update has taken place. Any headers set prior to the producer are
-ignored. That means for example, if you set CouchDbId as a header, it
+ignored. That means, for example, if you set CouchDbId as a header, it
 will not be used as the id for insertion, the id of the document will
 still be used.
 
 == Message Body
 
 The component will use the message body as the document to be inserted.
-If the body is an instance of String, then it will be marshalled into a
+If the body is an instance of String, then it will be marshaled into a
 GSON object before insert. This means that the string must be valid JSON
 or the insert / update will fail. If the body is an instance of a
-com.google.gson.JsonElement then it will be inserted as is. Otherwise
-the producer will throw an exception of unsupported body type.
+`com.google.gson.JsonElement` then it will be inserted as is. Otherwise,
+the producer will throw an unsupported body type exception.
 
-NOTE: To update a CouchDB document, it's _id and _rev field must be part of the json payload routed to CouchDB by Camel.
+[NOTE]
+====
+To update a CouchDB document, its `id` and `rev` field must be part of the json payload routed to CouchDB by Camel.
+====
 
 == Samples
 
-For example if you wish to consume all inserts, updates and deletes from
-a CouchDB instance running locally, on port 9999 then you could use the
+For example, if you wish to consume all inserts, updates and deletes from
+a CouchDB instance running locally, on port 9999, then you could use the
 following:
 
 [source,java]
@@ -101,15 +107,14 @@ following:
 from("couchdb:http://localhost:9999").process(someProcessor);
 -------------------------------------------------------------
 
-If you were only interested in deletes, then you could use the following
+If you were only interested in deleting, then you could use the following:
 
 [source,java]
 ---------------------------------------------------------------------------
 from("couchdb:http://localhost:9999?updates=false").process(someProcessor);
 ---------------------------------------------------------------------------
 
-If you wanted to insert a message as a document, then the body of the
-exchange is used
+If you want to insert a message as a document, then the body of the exchange is used:
 
 [source,java]
 ----------------------------------------------------------------------------------------
