@@ -271,6 +271,14 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     boolean hasService(Object object);
 
     /**
+     * Finds the first service matching the filter
+     *
+     * @param  filter the filter
+     * @return        the service if found or null if none found
+     */
+    Service hasService(java.util.function.Predicate<Service> filter);
+
+    /**
      * Has the given service type already been added to this CamelContext?
      *
      * @param  type the class type

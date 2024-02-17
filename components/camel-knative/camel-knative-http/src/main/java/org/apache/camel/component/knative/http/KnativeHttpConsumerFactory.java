@@ -78,8 +78,6 @@ public class KnativeHttpConsumerFactory extends ServiceSupport implements CamelC
     /**
      * Resolve router from given Camel context if not explicitly set. KnativeHttpConsumer implementation usually calls
      * this method to retrieve the router during service startup phase.
-     *
-     * @return
      */
     private Router lookupRouter() {
         if (router == null) {

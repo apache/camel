@@ -38,6 +38,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -1352,6 +1353,11 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public <T> Set<T> hasServices(Class<T> type) {
         return internalServiceManager.hasServices(type);
+    }
+
+    @Override
+    public Service hasService(Predicate<Service> filter) {
+        return internalServiceManager.getServices().stream().filter(filter).findFirst().orElse(null);
     }
 
     @Override
