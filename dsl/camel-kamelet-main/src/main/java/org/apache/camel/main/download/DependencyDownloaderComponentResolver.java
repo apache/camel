@@ -20,17 +20,11 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.Service;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
-import org.apache.camel.component.platform.http.main.MainHttpServer;
 import org.apache.camel.component.stub.StubComponent;
 import org.apache.camel.impl.engine.DefaultComponentResolver;
-import org.apache.camel.main.HttpServerConfigurationProperties;
-import org.apache.camel.main.MainConstants;
-import org.apache.camel.main.MainHttpServerFactory;
-import org.apache.camel.main.util.CamelJBangSettingsHelper;
 import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.tooling.model.ComponentModel;
 
@@ -75,25 +69,8 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
             sc.setShadow(true);
             sc.setShadowPattern(stubPattern);
         }
-        if (answer instanceof PlatformHttpComponent || name.equals("knative")) {
-            // set up a default http server on configured port if not already done
-            MainHttpServer server = camelContext.hasService(MainHttpServer.class);
-            if (server == null) {
-                // need to capture that we use a http-server
-                HttpServerConfigurationProperties config = new HttpServerConfigurationProperties(null);
-                CamelJBangSettingsHelper.writeSettingsIfNotExists("camel.jbang.platform-http.port",
-                        String.valueOf(config.getPort()));
-                if (!silent) {
-                    try {
-                        // enable http server if not silent
-                        MainHttpServerFactory factory = resolveMainHttpServerFactory(camelContext);
-                        Service httpServer = factory.newHttpServer(config);
-                        camelContext.addService(httpServer, true, true);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
+        if (answer instanceof PlatformHttpComponent) {
+            MainHttpServerFactory.setupHttpServer(camelContext, silent);
         }
         if (answer == null) {
             List<String> suggestion = SuggestSimilarHelper.didYouMean(catalog.findComponentNames(), name);
@@ -118,18 +95,6 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
 
         // we are stubbing but need to accept the following
         return ACCEPTED_STUB_NAMES.contains(name);
-    }
-
-    private static MainHttpServerFactory resolveMainHttpServerFactory(CamelContext camelContext) throws Exception {
-        // lookup in service registry first
-        MainHttpServerFactory answer = camelContext.getRegistry().findSingleByType(MainHttpServerFactory.class);
-        if (answer == null) {
-            answer = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
-                    .newInstance(MainConstants.PLATFORM_HTTP_SERVER, MainHttpServerFactory.class)
-                    .orElseThrow(() -> new IllegalArgumentException(
-                            "Cannot find MainHttpServerFactory on classpath. Add camel-platform-http-main to classpath."));
-        }
-        return answer;
     }
 
 }

@@ -94,6 +94,7 @@ public class ListService extends ProcessWatchCommand {
                         fetchServices(root, row, "netty", rows);
                         fetchServices(root, row, "mina", rows);
                         fetchServices(root, row, "mllp", rows);
+                        fetchServices(root, row, "knative", rows);
                     }
                 });
 
@@ -126,7 +127,16 @@ public class ListService extends ProcessWatchCommand {
                     jo = (JsonObject) o;
                     row.component = component;
                     row.protocol = jo.getString("protocol");
-                    row.service = row.protocol + ":" + jo.getString("host") + ":" + jo.getInteger("port");
+                    String p = row.protocol + ":";
+                    if (p.startsWith("http")) {
+                        // we want double slashes for http protocols
+                        p = p + "//";
+                    }
+                    row.service = p + jo.getString("host") + ":" + jo.getInteger("port");
+                    String path = jo.getString("path");
+                    if (path != null) {
+                        row.service += "/" + path;
+                    }
                     rows.add(row);
                 }
             }

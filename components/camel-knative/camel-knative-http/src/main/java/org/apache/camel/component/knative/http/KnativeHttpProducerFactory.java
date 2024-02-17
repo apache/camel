@@ -35,6 +35,13 @@ public class KnativeHttpProducerFactory extends ServiceSupport implements CamelC
     private WebClientOptions vertxHttpClientOptions;
     private CamelContext camelContext;
 
+    public KnativeHttpProducerFactory() {
+    }
+
+    public KnativeHttpProducerFactory(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
     public Vertx getVertx() {
         return vertx;
     }

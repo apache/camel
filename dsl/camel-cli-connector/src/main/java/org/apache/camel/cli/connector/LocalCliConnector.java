@@ -1112,6 +1112,14 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 root.put("mllp", json);
             }
         }
+        // knative is optional
+        dc = PluginHelper.getDevConsoleResolver(camelContext).lookupDevConsole("knative");
+        if (dc.isPresent()) {
+            JsonObject json = (JsonObject) dc.get().call(DevConsole.MediaType.JSON);
+            if (json != null) {
+                root.put("knative", json);
+            }
+        }
 
         return root;
     }

@@ -52,9 +52,10 @@ import io.vertx.ext.web.impl.Utils;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.NonManagedService;
 import org.apache.camel.StartupListener;
 import org.apache.camel.StaticService;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.platform.http.HttpEndpointModel;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.component.platform.http.main.jolokia.JolokiaHttpRequestHandlerSupport;
@@ -83,7 +84,8 @@ import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MainHttpServer extends ServiceSupport implements CamelContextAware, StaticService, NonManagedService {
+@ManagedResource(description = "Camel Main Embedded HTTP server")
+public class MainHttpServer extends ServiceSupport implements CamelContextAware, StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MainHttpServer.class);
 
@@ -119,6 +121,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         this.configuration = configuration;
     }
 
+    @ManagedAttribute(description = "Whether dev console is enabled (/q/dev)")
     public boolean isDevConsoleEnabled() {
         return devConsoleEnabled;
     }
@@ -130,10 +133,12 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         this.devConsoleEnabled = devConsoleEnabled;
     }
 
+    @ManagedAttribute(description = "Whether health check is enabled (q/health)")
     public boolean isHealthCheckEnabled() {
         return healthCheckEnabled;
     }
 
+    @ManagedAttribute(description = "Whether Jolokia is enabled (q/jolokia)")
     public boolean isJolokiaEnabled() {
         return jolokiaEnabled;
     }
@@ -152,6 +157,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         this.jolokiaEnabled = jolokiaEnabledEnabled;
     }
 
+    @ManagedAttribute(description = "Whether metrics is enabled (q/metric)")
     public boolean isMetricsEnabled() {
         return metricsEnabled;
     }
@@ -163,6 +169,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         this.metricsEnabled = metricsEnabled;
     }
 
+    @ManagedAttribute(description = "Whether file upload is enabled (only for development) (q/upload)")
     public boolean isUploadEnabled() {
         return uploadEnabled;
     }
@@ -174,6 +181,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         this.uploadEnabled = uploadEnabled;
     }
 
+    @ManagedAttribute(description = "Directory for upload.")
     public String getUploadSourceDir() {
         return uploadSourceDir;
     }
@@ -185,6 +193,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         this.uploadSourceDir = uploadSourceDir;
     }
 
+    @ManagedAttribute(description = "HTTP server port number")
     public int getPort() {
         return configuration.getBindPort();
     }
@@ -193,6 +202,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         configuration.setBindPort(port);
     }
 
+    @ManagedAttribute(description = "HTTP server hostname")
     public String getHost() {
         return configuration.getBindHost();
     }
@@ -201,6 +211,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         configuration.setBindHost(host);
     }
 
+    @ManagedAttribute(description = "HTTP server base path")
     public String getPath() {
         return configuration.getPath();
     }
@@ -209,6 +220,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         configuration.setPath(path);
     }
 
+    @ManagedAttribute(description = "HTTP server maximum body size")
     public Long getMaxBodySize() {
         return configuration.getMaxBodySize();
     }
@@ -225,6 +237,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         configuration.setSslContextParameters(sslContextParameters);
     }
 
+    @ManagedAttribute(description = "HTTP server using global SSL context parameters")
     public boolean isUseGlobalSslContextParameters() {
         return configuration.isUseGlobalSslContextParameters();
     }

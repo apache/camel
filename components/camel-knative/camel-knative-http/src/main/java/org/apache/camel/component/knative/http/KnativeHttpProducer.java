@@ -34,6 +34,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.knative.spi.KnativeResource;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -43,6 +45,7 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@ManagedResource(description = "Managed KnativeHttpProducer")
 public class KnativeHttpProducer extends DefaultAsyncProducer {
     private static final Logger LOGGER = LoggerFactory.getLogger(KnativeHttpProducer.class);
 
@@ -68,23 +71,25 @@ public class KnativeHttpProducer extends DefaultAsyncProducer {
         this.headerFilterStrategy = new KnativeHttpHeaderFilterStrategy();
     }
 
+    @ManagedAttribute(description = "Url for calling the Knative HTTP service")
+    public String getUrl() {
+        return uri;
+    }
+
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (exchange.getMessage().getBody() == null) {
             exchange.setException(new IllegalArgumentException("body must not be null"));
             callback.done(true);
-
             return true;
         }
 
         final byte[] payload;
-
         try {
             payload = exchange.getMessage().getMandatoryBody(byte[].class);
         } catch (InvalidPayloadException e) {
             exchange.setException(e);
             callback.done(true);
-
             return true;
         }
 
@@ -153,17 +158,15 @@ public class KnativeHttpProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doInit() throws Exception {
+        super.doInit();
         this.uri = getUrl(serviceDefinition);
         this.host = getHost(serviceDefinition);
         this.client = WebClient.create(vertx, clientOptions);
-
-        super.doInit();
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-
         if (this.client != null) {
             LOGGER.debug("Shutting down client: {}", client);
             this.client.close();
@@ -194,7 +197,6 @@ public class KnativeHttpProducer extends DefaultAsyncProducer {
 
     private String getHost(KnativeResource definition) {
         String url = getUrl(definition);
-
         try {
             return new URL(url).getHost();
         } catch (MalformedURLException e) {
