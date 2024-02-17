@@ -15,8 +15,7 @@
 
 *{component-header}*
 
-The Dataformat component allows to use xref:manual::data-format.adoc[Data
-Format] as a Camel Component.
+The Data Format component allows using xref:manual::data-format.adoc[Data Format] as a Camel Component.
 
 == URI format
 
@@ -25,11 +24,10 @@ Format] as a Camel Component.
 dataformat:name:(marshal|unmarshal)[?options]
 ----
 
-Where *name* is the name of the Data Format. And
-then followed by the operation which must either be `marshal` or
-`unmarshal`. The options is used for configuring the xref:manual::data-format.adoc[Data
-Format] in use. See the Data Format documentation
-for which options it support.
+Where *name* is the name of the Data Format.
+And then followed by the operation which must either be `marshal` or `unmarshal`.
+The options are used for configuring the xref:manual::data-format.adoc[Data Format] in use.
+See the Data Format documentation for which options it supports.
 
 == DataFormat Options
 
@@ -53,9 +51,12 @@ include::partial$component-endpoint-options.adoc[]
 
 == Samples
 
-For example to use the xref:dataformats:jaxb-dataformat.adoc[JAXB] xref:manual::data-format.adoc[Data
-Format] we can do as follows:
+For example, to use the xref:dataformats:jaxb-dataformat.adoc[JAXB] xref:manual::data-format.adoc[Data Format], we can do as follows:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:My.Queue").
@@ -63,8 +64,8 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 ----
 
-And in XML DSL you do:
-
+XML::
++
 [source,xml]
 ----
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
@@ -75,6 +76,6 @@ And in XML DSL you do:
   </route>
 </camelContext>
 ----
-
+====
 
 include::spring-boot:partial$starter.adoc[]
