@@ -61,12 +61,32 @@ include::partial$component-endpoint-options.adoc[]
 
 The component can be used to trigger events at specified times, as in the following example:
 
+
+[tabs]
+====
+Java::
++
 [source,java]
 ---------------------------------------------------------
 from("cron:tab?schedule=0/1+*+*+*+*+?")
 .setBody().constant("event")
 .log("${body}");
 ---------------------------------------------------------
+
+XML::
++
+[source,xml]
+-------------
+<route>
+    <from uri="cron:tab?schedule=0/1+*+*+*+*+?"/>
+    <setBody>
+      <constant>event</constant>
+    </setBody>
+    <to uri="log:info"/>
+</route>
+-------------
+
+====
 
 The schedule expression `0/3{plus}10{plus}*{plus}*{plus}*{plus}?` can be also written as `0/3 10 * * * ?` and triggers an event every three seconds only in the tenth minute of each hour.
 
@@ -86,19 +106,5 @@ Other valid examples of schedule expressions are:
 
 - `0/2 * * * ?` (Five parts, an event every two minutes)
 - `0 0/2 * * * MON-FRI 2030` (Seven parts, an event every two minutes only in the year 2030)
-
-Routes can also be written using the XML DSL.
-
-[source,xml]
--------------
-<route>
-    <from uri="cron:tab?schedule=0/1+*+*+*+*+?"/>
-    <setBody>
-      <constant>event</constant>
-    </setBody>
-    <to uri="log:info"/>
-</route>
--------------
-
 
 include::spring-boot:partial$starter.adoc[]
