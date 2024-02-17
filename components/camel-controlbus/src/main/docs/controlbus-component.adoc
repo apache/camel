@@ -27,24 +27,22 @@ Control Bus uses the same messaging mechanism used by the application
 data, but uses separate channels to transmit data that is relevant to
 the management of components involved in the message flow.
 
-In Camel you can manage and monitor using JMX, or
-by using a Java API from the `CamelContext`, or from the
-`org.apache.camel.api.management` package, +
- or use the event notifier.
+In Camel, you can manage and monitor the application:
 
-The ControlBus component provides easy management of Camel
-applications based on the xref:controlbus-component.adoc[Control Bus] EIP
-pattern. 
-For example, by sending a message to an endpoint
-you can control the lifecycle of routes, or gather performance
-statistics.
+* using JMX.
+* by using a Java API from the `CamelContext`.
+* from the `org.apache.camel.api.management` package.
+* using the event notifier.
+* using the ControlBus component.
+
+The ControlBus component provides easy management of Camel applications based on the xref:controlbus-component.adoc[Control Bus] EIP pattern.
+For example, by sending a message to an endpoint, you can control the lifecycle of routes, or gather performance statistics.
 
 ----
 controlbus:command[?options]
 ----
 
-Where *command* can be any string to identify which type of command to
-use.
+Where `command` can be any string to identify which type of command to use.
 
 == Commands
 
@@ -76,9 +74,8 @@ include::partial$component-endpoint-options.adoc[]
 
 == Using route command
 
-The route command allows you to do common tasks on a given route very
-easily, for example to start a route, you can send an empty message to
-this endpoint:
+The route command allows you to do common tasks on a given route very easily.
+For example, to start a route, you can send an empty message to this endpoint:
 
 [source,java]
 ----
@@ -95,22 +92,19 @@ String status = template.requestBody("controlbus:route?routeId=foo&action=status
 [[ControlBus-Gettingperformancestatistics]]
 == Getting performance statistics
 
-This requires JMX to be enabled (is by default) then you can get the
-performance statics per route, or for the
-CamelContext. For example to get the statics for
-a route named foo, we can do:
+This requires JMX to be enabled (it is enabled by default) then you can get the
+performance statics per route, or for the CamelContext.
+For example, to get the statics for a route named foo, we can use:
 
 [source,java]
 ----
 String xml = template.requestBody("controlbus:route?routeId=foo&action=stats", null, String.class);
 ----
 
-The returned statics is in XML format. Its the same data you can get
-from JMX with the `dumpRouteStatsAsXml` operation on the
-`ManagedRouteMBean`.
+The returned statics is in XML format.
+It is the same data you can get from JMX with the `dumpRouteStatsAsXml` operation on the `ManagedRouteMBean`.
 
-To get statics for the entire CamelContext you
-just omit the routeId parameter as shown below:
+To get statics for the entire `CamelContext` you just omit the routeId parameter as shown below:
 
 [source,java]
 ----
@@ -119,18 +113,16 @@ String xml = template.requestBody("controlbus:route?action=stats", null, String.
 
 == Using Simple language
 
-You can use the xref:languages:simple-language.adoc[Simple] language with the control bus,
-for example to stop a specific route, you can send a message to the
-`"controlbus:language:simple"` endpoint containing the following
-message:
+You can use the xref:languages:simple-language.adoc[Simple] language with the control bus.
+For example, to stop a specific route, you can send a message to the `"controlbus:language:simple"` endpoint containing the following message:
 
 [source,java]
 ----
 template.sendBody("controlbus:language:simple", "${camelContext.getRouteController().stopRoute('myRoute')}");
 ----
 
-As this is a void operation, no result is returned. However, if you want
-the route status you can do:
+As this is a void operation, no result is returned.
+However, if you want the route status, you can use:
 
 [source,java]
 ----
@@ -142,7 +134,7 @@ routes. The `language` command allows you to execute a language script
 that has stronger powers such as xref:languages:groovy-language.adoc[Groovy] or to some
 extend the xref:languages:simple-language.adoc[Simple] language.
 
-For example to shutdown Camel itself you can do:
+For example, to shut down Apache Camel itself, you can do:
 
 [source,java]
 ----
