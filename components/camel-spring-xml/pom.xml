@@ -652,7 +652,6 @@
                         <configuration>
                             <excludes>
                                 <exclude>${platform.skip.tests}</exclude>
-                                <exclude>**/*IntegrationTest.java</exclude>
                             </excludes>
                         </configuration>
                     </plugin>

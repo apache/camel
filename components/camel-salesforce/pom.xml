@@ -47,6 +47,7 @@
         <sourcecheckExcludesComma>
             ${sourcecheckExcludes},
         </sourcecheckExcludesComma>
+        <skipITs>true</skipITs>
     </properties>
-    
+
 </project>

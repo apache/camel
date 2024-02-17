@@ -307,6 +307,9 @@
     <profiles>
         <profile>
             <id>integration</id>
+            <properties>
+                <skipITs>false</skipITs>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -462,7 +465,7 @@ https://developer.salesforce.com/page/Force.com_Migration_Tool]]></message>
                                     <reuseForks>true</reuseForks>
                                     <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
                                     <includes>
-                                        <include>**/*IntegrationTest.java</include>
+                                        <include>**/*ManualIT.java</include>
                                     </includes>
                                     <excludedGroups>standalone</excludedGroups>
                                     <forkedProcessExitTimeoutInSeconds>240</forkedProcessExitTimeoutInSeconds>
@@ -478,7 +481,7 @@ https://developer.salesforce.com/page/Force.com_Migration_Tool]]></message>
                                     <childDelegation>false</childDelegation>
                                     <useFile>true</useFile>
                                     <includes>
-                                        <include>**/*IntegrationTest.java</include>
+                                        <include>**/*ManualIT.java</include>
                                     </includes>
                                     <groups>standalone</groups>
                                 </configuration>
