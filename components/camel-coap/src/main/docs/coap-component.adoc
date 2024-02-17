@@ -17,7 +17,7 @@
 Camel-CoAP is an http://camel.apache.org/[Apache Camel] component that
 allows you to work with CoAP, a lightweight REST-type protocol for machine-to-machine operation. 
 http://coap.technology/[CoAP], Constrained Application Protocol is a specialized web transfer protocol 
-for use with constrained nodes and constrained networks and it is based on RFC 7252.
+for use with constrained nodes and constrained networks, and it is based on RFC 7252.
 
 Camel supports the DTLS, TCP and TLS protocols via the following URI schemes:
 
@@ -32,7 +32,7 @@ Camel supports the DTLS, TCP and TLS protocols via the following URI schemes:
 
 There are a number of different configuration options to configure TLS. For both DTLS (the "coaps" uri scheme)
 and TCP + TLS (the "coaps+tcp" uri scheme), it is possible to use a "sslContextParameters" parameter, from 
-which the camel-coap component will extract the required truststore / keystores etc to set up TLS. In addition,
+which the camel-coap component will extract the required truststore / keystores etc. to set up TLS. In addition,
 the DTLS protocol supports two alternative configuration mechanisms. To use a pre-shared key, configure a 
 pskStore, and to work with raw public keys, configure privateKey + publicKey objects.
 
