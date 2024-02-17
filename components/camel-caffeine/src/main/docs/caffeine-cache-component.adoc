@@ -34,8 +34,7 @@ their `pom.xml` for this component:
 caffeine-cache://cacheName[?options]
 -----------------------------
 
-You can append query options to the URI in the following
-format, `?option=value&option=#beanRef&...`
+You can append query options to the URI in the following format: `?option=value&option=#beanRef&...`.
 
 // component-configure options: START
 
@@ -78,17 +77,13 @@ protected RouteBuilder createRouteBuilder() throws Exception {
 }
 ------------------------------------------------------------
 
-In this way you'll work always on the same cache in the registry.
+In this way, you'll work always on the same cache in the registry.
 
-== Check operation result
+== Checking the operation result
 
-Each time you'll use an operation on the cache you'll have two different headers to check for status:
+Each time you'll use an operation on the cache, you'll have two different headers to check for status:
 
-[source,java]
-------------------------------------------------------------
-CaffeineConstants.ACTION_HAS_RESULT
-CaffeineConstants.ACTION_SUCCEEDED
-------------------------------------------------------------
-
+* `CaffeineConstants.ACTION_HAS_RESULT`
+* `CaffeineConstants.ACTION_SUCCEEDED`
 
 include::spring-boot:partial$starter.adoc[]
