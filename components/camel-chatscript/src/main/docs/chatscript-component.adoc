@@ -14,11 +14,10 @@
 
 *{component-header}*
 
-The ChatScript component allows you to interact with ChatScript Server and have conversations. This component is stateless and relies on ChatScript to maintain chat history.
+The ChatScript component allows you to interact with https://github.com/ChatScript/ChatScript[ChatScript Server] and have conversations. This component is stateless and relies on ChatScript to maintain chat history.
 
-Original ChatScript is available here : https://github.com/bwilcox-1234/ChatScript
+This component expects a JSON with the following fields:
 
-This component expects a JSON having the following fields:
 [source,json]
 ----
 {
@@ -28,8 +27,10 @@ This component expects a JSON having the following fields:
 }
 ----
 
-Refer `ChatScriptMessage.java` and samples
-
+[NOTE]
+====
+Refer to the file https://github.com/apache/camel/blob/main/components/camel-chatscript/src/main/java/org/apache/camel/component/chatscript/ChatScriptMessage.java[`ChatScriptMessage.java`] for details and samples.
+====
 
 
 // component-configure options: START
