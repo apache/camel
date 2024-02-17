@@ -11,9 +11,8 @@
 
 *Since Camel {since}*
 
-The Zip File Data Format is a message compression
-and de-compression format. Messages can be marshalled (compressed) to
-Zip files containing a single entry, and Zip files containing a single
+The Zip File Data Format is a message compression and decompression format.
+Messages can be marshaled (compressed) to Zip files containing a single entry, and Zip files containing a single
 entry can be unmarshalled (decompressed) to the original file contents.
 This data format supports ZIP64, as long as Java 7 or later is being used.
 
@@ -25,7 +24,7 @@ include::partial$dataformat-options.adoc[]
 
 == Marshal
 
-In this example we marshal a regular text/XML payload to a compressed
+In this example, we marshal a regular text/XML payload to a compressed
 payload using Zip file compression, and send it to an ActiveMQ queue
 called MY_QUEUE.
 
@@ -41,7 +40,7 @@ incoming `CamelFileName` message header, which is the standard message
 header used by the file component. Additionally, the
 outgoing `CamelFileName` message header is automatically set to the
 value of the incoming `CamelFileName` message header, with the ".zip"
-suffix. So for example, if the following route finds a file named
+suffix. So, for example, if the following route finds a file named
 "test.txt" in the input directory, the output will be a Zip file named
 "test.txt.zip" containing a single Zip entry named "test.txt":
 
@@ -52,10 +51,10 @@ from("file:input/directory?antInclude=*/.txt")
     .to("file:output/directory");
 ----
 
-If there is no incoming `CamelFileName` message header (for example, if
+If there is no incoming `CamelFileName` message header, (for example, if
 the file component is not the consumer), then the
-message ID is used by default, and since the message ID is normally a
-unique generated ID, you will end up with filenames like
+message ID is used by default.
+Since the message ID is normally a unique generated ID, you will end up with filenames like
 `ID-MACHINENAME-2443-1211718892437-1-0.zip`. If you want to override
 this behavior, then you can set the value of the `CamelFileName` header
 explicitly in your route:
@@ -84,7 +83,7 @@ from("activemq:queue:MY_QUEUE")
     .process(new UnZippedMessageProcessor());
 ----
 
-If the zip file has more then one entry, the usingIterator option of
+If the zip file has more than one entry, the usingIterator option of
 ZipFileDataFormat to be true, and you can use splitter to do the further
 work.
 
@@ -110,7 +109,10 @@ from("file:src/test/resources/org/apache/camel/dataformat/zipfile?delay=1000&noo
     .end();
 ----
 
-IMPORTANT: You cannot use ZipSplitter in _parallel_ mode with the splitter.
+[IMPORTANT]
+====
+You *cannot* use ZipSplitter in _parallel_ mode with the splitter.
+====
 
 == Aggregate
 
@@ -119,7 +121,7 @@ IMPORTANT: You cannot use ZipSplitter in _parallel_ mode with the splitter.
 Please note that this aggregation strategy requires eager completion check to work properly.
 ====
 
-In this example we aggregate all text files found in the input directory
+In this example, we aggregate all text files found in the input directory
 into a single Zip file that is stored in the output directory. 
 
 [source,java]
@@ -146,10 +148,10 @@ from("file:input/directory?antInclude=*/.txt")
 
 == Dependencies
 
-To use Zip files in your camel routes you need to add a dependency on
+To use Zip files in your camel routes, you need to add a dependency on
 *camel-zipfile* which implements this data format.
 
-If you use Maven you can just add the following to your `pom.xml`,
+If you use Maven you can add the following to your `pom.xml`,
 substituting the version number for the latest & greatest release (see
 the download page for the latest versions).
 
