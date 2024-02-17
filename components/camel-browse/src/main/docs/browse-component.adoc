@@ -15,18 +15,16 @@
 
 *{component-header}*
 
-The Browse component provides a simple
-BrowsableEndpoint which can be useful for
-testing, visualisation tools or debugging. The exchanges sent to the
-endpoint are all available to be browsed.
+The Browse component provides a simple BrowsableEndpoint which can be useful for testing, visualization tools or debugging.
+The exchanges sent to the endpoint are all available to be browsed.
 
 == URI format
 
 -------------------------
-browse:someName[?options]
+browse:someId[?options]
 -------------------------
 
-Where *someName* can be any string to uniquely identify the endpoint.
+Where _someId_ can be any string to uniquely identify the endpoint.
 
 
 // component-configure options: START
