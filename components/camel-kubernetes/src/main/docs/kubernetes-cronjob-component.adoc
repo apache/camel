@@ -4,7 +4,7 @@
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes CronJob.
 :since: 4.3
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

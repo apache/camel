@@ -4,7 +4,7 @@
 :artifactid: camel-joor
 :description: Evaluates a Java (Java compiled once at runtime) expression.
 :since: 4.3
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: joor

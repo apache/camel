@@ -8,7 +8,7 @@
     "firstVersion": "4.3.0",
     "label": "search",
     "javaType": "org.apache.camel.component.elasticsearch.rest.client.ElasticsearchRestClientComponent",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-elasticsearch-rest-client",
     "version": "4.5.0-SNAPSHOT",
