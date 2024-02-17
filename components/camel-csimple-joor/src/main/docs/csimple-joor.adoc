@@ -11,10 +11,10 @@
 
 *Since Camel {since}*
 
-The csimple (compiled simple) expression language can either be source code generated and compiled together
+The CSimple (compiled simple) expression language can either be source code generated and compiled together
 with your application using the regular Java compiler. Or compiled at runtime using jOOR during bootstrap.
 
-This module includes the jOOR compiler for the csimple language for runtime compilation.
+This module includes the jOOR compiler for the CSimple language for runtime compilation.
 
 To use this, just include `camel-csimple-joor` in the classpath.
 
@@ -34,7 +34,7 @@ it works with exploded classpath.
 To use scripting languages in your camel routes you need to add a
 dependency on *camel-csimple-joor*.
 
-If you use Maven you could just add the following to your `pom.xml`,
+If you use Maven you could add the following to your `pom.xml`,
 substituting the version number for the latest and greatest release (see
 the download page for the latest versions).
 
