@@ -41,13 +41,13 @@ xj:templateName?transformDirection=XML2JSON|JSON2XML[&options]
 ====
 *More documentation*
 
-The XJ component extends the XSLT component and therefore it supports all options provided by the XSLT
+The XJ component extends the XSLT component, and therefore it supports all options provided by the XSLT
 component as well. At least look at the XSLT component documentation how to configure the xsl template.
 ====
 
 The *transformDirection* option is mandatory and must be either XML2JSON or JSON2XML.
 
-The *templateName* parameter allows to use _identify transforma_ by specifying the name `identity`.
+The *templateName* parameter allows using _identify transforma_ by specifying the name `identity`.
 
 
 
@@ -74,7 +74,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 The following route does an "identity" transform of the message because no xslt stylesheet is given. In the context of
 xml to xml transformations, "Identity" transform means that the output document is just a copy of the input document.
-In case of XJ it means it transforms the json document to an equivalent xml representation.
+In the case of XJ, it means it transforms the json document to an equivalent xml representation.
 
 [source,java]
 ----
@@ -106,7 +106,7 @@ The input:
 }
 ----
 
-will output
+Will output:
 
 [source,xml]
 ----
@@ -131,7 +131,7 @@ will output
 
 As can be seen in the output above, XJ writes some metadata in the resulting xml that can be used in further processing:
 
-* XJ metadata nodes are always in the "http://camel.apache.org/component/xj" namespace.
+* XJ metadata nodes are always in the `http://camel.apache.org/component/xj` namespace.
 * JSON key names are placed in the xj:name attribute.
 * The parsed JSON type can be found in the xj:type attribute. The above example already contains all possible types.
 * Generated XML elements are always named "object".
@@ -165,7 +165,7 @@ Now we can apply a stylesheet, e.g.:
 </xsl:stylesheet>
 ----
 
-to the above sample by specifying the template on the endpoint:
+To the above sample by specifying the template on the endpoint:
 
 [source,java]
 ----
@@ -173,7 +173,7 @@ from("direct:start").
   to("xj:com/example/json2xml.xsl?transformDirection=JSON2XML");
 ----
 
-and get the following output:
+And get the following output:
 
 [source,xml]
 ----
@@ -192,7 +192,7 @@ and get the following output:
 
 === Converting XML to JSON
 
-Based on the explanations above an "identity" transform will be performed when no stylesheet is given:
+Based on the explanations above, an _identity_ transform will be performed when no stylesheet is given:
 
 [source,java]
 ----
@@ -245,15 +245,15 @@ will result in
 }
 ----
 
-You may have noted that the input xml and output json is very similar to the examples above when converting from json to xml
+You may have noted that the input xml and output json are very similar to the examples above when converting from json to xml,
 although nothing special is done here. We only transformed an arbitrary XML document to json.
 XJ uses the following rules by default:
 
-* The XML root element can be named somehow, it will always end in a json root object declaration '{}'
+* The XML root element can be named somehow, it will always end in a json root object declaration `{}`
 * The json key name is the name of the xml element
-* If there is an name clash as in "<roles>" above where two "<entry>" elements exists a json array will be generated.
+* If there is a name clash as in `<roles>` above where two `<entry>` elements exist a json array will be generated.
 * XML elements with text-only-child-nodes will result in the usual key/string-value pair. Mixed content elements
-results in key/child-object pair as seen in "<state>" above.
+result in a key/child-object pair as seen in `<state>` above.
 
 Now we can apply again a stylesheet, e.g.:
 
@@ -354,7 +354,7 @@ and get the following output:
 }
 ----
 
-Note, this transformation resulted in exactly the same json document as we used as input to the json2xml conversion.
+Note, this transformation resulted in exactly the same json document as we used as input to the _json2xml_ conversion.
 What did the stylesheet do? We just gave some hints to XJ on how to write the json document. The following XML
 document is that what is passed to XJ after xsl transformation:
 
@@ -382,7 +382,7 @@ document is that what is passed to XJ after xsl transformation:
 In the stylesheet we just provided the minimal required type hints to get the same result.
 The supported type hints are exactly the same as XJ writes to a XML document when converting from json to xml.
 
-In the end that means that we can feed back in the result document from the json to xml transformation sample above:
+In the end, that means that we can feed back in the result document from the json to xml transformation sample above:
 
 [source,xml]
 ----
@@ -428,9 +428,11 @@ and get the same output again:
 ----
 
 As seen in the example above:
+
 * xj:type lets you specify exactly the desired output type
-* xj:name lets you overrule the json key name. This is required when you want to generate key names which contains chars
-that aren't allowed in XML element names.
+* xj:name lets you overrule the json key name.
+
+This is required when you want to generate key names that contain chars that aren't allowed in XML element names.
 
 === Available type hints
 
@@ -443,7 +445,7 @@ that aren't allowed in XML element names.
 | int | Generate a json number without fractional part
 | float | Generate a json number with fractional part
 | boolean | Generate a json boolean
-| null | Generate an empty value, using the word null
+| null | Generate an empty value using the word null
 |===
 
 
