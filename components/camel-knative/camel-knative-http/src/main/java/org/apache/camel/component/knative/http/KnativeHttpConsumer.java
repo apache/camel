@@ -39,6 +39,8 @@ import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.knative.spi.KnativeResource;
 import org.apache.camel.component.knative.spi.KnativeTransportConfiguration;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -52,6 +54,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.CollectionHelper.appendEntry;
 
+@ManagedResource(description = "Managed KnativeHttpConsumer")
 public class KnativeHttpConsumer extends DefaultConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(KnativeHttpConsumer.class);
 
@@ -81,10 +84,12 @@ public class KnativeHttpConsumer extends DefaultConsumer {
         this.preallocateBodyBuffer = true;
     }
 
+    @ManagedAttribute(description = "Path for accessing the Knative service")
     public String getPath() {
         return path;
     }
 
+    @ManagedAttribute(description = "Base path")
     public String getBasePath() {
         return basePath;
     }
@@ -93,6 +98,7 @@ public class KnativeHttpConsumer extends DefaultConsumer {
         this.basePath = basePath;
     }
 
+    @ManagedAttribute(description = "Maximum body size")
     public BigInteger getMaxBodySize() {
         return maxBodySize;
     }
@@ -101,6 +107,7 @@ public class KnativeHttpConsumer extends DefaultConsumer {
         this.maxBodySize = maxBodySize;
     }
 
+    @ManagedAttribute(description = "Preallocate body buffer")
     public boolean isPreallocateBodyBuffer() {
         return preallocateBodyBuffer;
     }
