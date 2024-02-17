@@ -50,7 +50,7 @@ The following example starts a new case in Bonita:
 
 [source,java]
 ----------------------------------------------------------------------
-from("direct:start").to("bonita:startCase?hostname=localhost&amp;port=8080&amp;processName=TestProcess&amp;username=install&amp;password=install")
+from("direct:start").to("bonita:startCase?hostname=localhost&amp;port=8080&amp;processName=TestProcess&amp;username=install&amp;password=install");
 ----------------------------------------------------------------------
 
 == Dependencies
@@ -58,11 +58,11 @@ from("direct:start").to("bonita:startCase?hostname=localhost&amp;port=8080&amp;p
 To use Bonita in your Camel routes, you need to add a dependency on
 *camel-bonita*, which implements the component.
 
-If you use Maven, you can just add the following to your pom.xml,
+If you use Maven, you can add the following to your pom.xml,
 substituting the version number for the latest and greatest release (see
 the download page for the latest versions).
 
-[source,java]
+[source,xml]
 -------------------------------------
 <dependency>
   <groupId>org.apache.camel</groupId>
