@@ -15,13 +15,13 @@ The embedded HTTP server is using VertX from the `camel-platform-http-vertx` dep
 
 == Enabling
 
-The HTTP server for `camel-main` (is default disabled), and you need to explicit enable this
+The HTTP server for `camel-main` is disabled by default, and you need to explicitly enable this
 by setting `camel.server.enabled=true` in application.properties.
 
-== Auto detection from classpath
+== Auto-detection from classpath
 
-To use this implementation all you need to do is to add the `camel-platform-http-main` dependency to the classpath,
-and the platform http component should auto-detect this.
+To use this implementation all you need to do is to add the `camel-platform-http-main` dependency to the classpath.
+Then, the platform http component should auto-detect this.
 
 == See More
 
