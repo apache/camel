@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-The Caffeine Loadcache component enables you to perform caching operations using
+The Caffeine LoadCache component enables you to perform caching operations using
 the LoadingCache from Caffeine.
 
 Maven users will need to add the following dependency to
@@ -36,8 +36,7 @@ their `pom.xml` for this component:
 caffeine-loadcache://cacheName[?options]
 -----------------------------
 
-You can append query options to the URI in the following
-format, `?option=value&option=#beanRef&...`
+You can append query options to the URI in the following format: `?option=value&option=#beanRef&...`
 
 
 // component-configure options: START
