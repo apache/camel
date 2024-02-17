@@ -290,7 +290,7 @@ public class CamelLogAction extends ActionBaseCommand {
         // only sort if there are multiple Camels running
         if (names.size() > 1) {
             // sort lines
-            final Map<String, String> lastTimestamp = new HashMap<>();
+            final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
             lines.sort((l1, l2) -> {
                 l1 = unescapeAnsi(l1);
                 l2 = unescapeAnsi(l2);
@@ -302,12 +302,22 @@ public class CamelLogAction extends ActionBaseCommand {
                 String t2 = StringHelper.after(l2, "| ");
                 t2 = StringHelper.before(t2, "  ");
 
-                if (t1 == null) {
-                    t1 = lastTimestamp.get(n1);
+                // there may be a stacktrace and no timestamps
+                if (t1 != null) {
+                    try {
+                        sdf.parse(t1);
+                    } catch (ParseException e) {
+                        t1 = null;
+                    }
                 }
-                if (t2 == null) {
-                    t2 = lastTimestamp.get(n2);
+                if (t2 != null) {
+                    try {
+                        sdf.parse(t2);
+                    } catch (ParseException e) {
+                        t2 = null;
+                    }
                 }
+
                 if (t1 == null && t2 == null) {
                     return 0;
                 } else if (t1 == null) {
@@ -315,8 +325,6 @@ public class CamelLogAction extends ActionBaseCommand {
                 } else if (t2 == null) {
                     return 1;
                 }
-                lastTimestamp.put(n1, t1);
-                lastTimestamp.put(n2, t2);
                 return t1.compareTo(t2);
             });
         }
