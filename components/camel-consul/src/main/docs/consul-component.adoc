@@ -19,7 +19,7 @@ The Consul component is a component for integrating your application with https:
 Maven users will need to add the following dependency to their pom.xml
 for this component:
 
-[source,java]
+[source,xml]
 -------------------------------------------------
     <dependency>
         <groupId>org.apache.camel</groupId>
@@ -73,14 +73,17 @@ The `apiEndpoint` denotes the type of https://www.consul.io/api-docs[consul api]
 
 As an example, we will show how to use the `ConsulAgentProducer` to register a service by means of the Consul agent api.
 
-Registering and deregistering are examples for possible actions against the Consul agent api.
+Registering and unregistering are examples for possible actions against the Consul agent api.
 
 The desired action can be defined by setting the header `ConsulConstants.CONSUL_ACTION` to a value from the `ConsulXXXActions` interface of the respective Consul api. E.g.  `ConsulAgentActions` contains the actions for the agent api.
 
 If you set `CONSUL_ACTION` to `ConsulAgentActions.REGISTER`, the agent action `REGISTER` will be executed.
 
-TIP: Which producer action invokes which consul api is defined by the respective producer.
-E.g. the `ConsulAgentProducer` maps `ConsulAgentActions.REGISTER` to an invocation of `AgentClient.register`.
+[TIP]
+====
+Which producer action invoked by which consul api is defined by the respective producer.
+E.g., the `ConsulAgentProducer` maps `ConsulAgentActions.REGISTER` to an invocation of `AgentClient.register`.
+====
 
 [source,java]
 ----
