@@ -14,14 +14,14 @@
 
 *{component-header}*
 
-The Box component provides access to all of the Box.com APIs accessible
-using https://github.com/box/box-java-sdk/[https://github.com/box/box-java-sdk]. It
-allows producing messages to upload and download files, create, edit,
+The Box component provides access to all the Box.com APIs accessible
+using https://github.com/box/box-java-sdk/[Box Java SDK].
+It allows producing messages to upload and download files, create, edit,
 and manage folders, etc. It also supports APIs that allow polling for
 updates to user accounts and even changes to enterprise accounts, etc.
 
 Box.com requires the use of OAuth2.0 for all client application
-authentication. In order to use camel-box with your account, you'll need
+authentications. To use camel-box with your account, you'll need
 to create a new application within Box.com at
 https://developer.box.com/[https://developer.box.com].
 The Box application's client id and secret will allow access to Box APIs
