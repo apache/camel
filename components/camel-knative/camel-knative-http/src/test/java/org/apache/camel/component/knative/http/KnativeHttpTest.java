@@ -46,7 +46,6 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -107,16 +106,6 @@ public class KnativeHttpTest {
     // Tests
     //
     // **************************
-
-    @Test
-    void testCreateComponent() {
-        context.start();
-
-        assertThat(context.getComponent("knative")).isInstanceOfSatisfying(KnativeComponent.class, c -> {
-            assertThat(c.getProducerFactory()).isInstanceOf(KnativeHttpProducerFactory.class);
-            assertThat(c.getConsumerFactory()).isInstanceOf(KnativeHttpConsumerFactory.class);
-        });
-    }
 
     void doTestKnativeSource(CloudEvent ce, String basePath, String path) throws Exception {
         KnativeComponent component = configureKnativeComponent(

@@ -34,6 +34,13 @@ public class KnativeHttpConsumerFactory extends ServiceSupport implements CamelC
     private Router router;
     private CamelContext camelContext;
 
+    public KnativeHttpConsumerFactory() {
+    }
+
+    public KnativeHttpConsumerFactory(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
     public Router getRouter() {
         return router;
     }

@@ -21,15 +21,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Consumer;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
 import org.apache.camel.component.cloudevents.CloudEvent;
 import org.apache.camel.component.knative.KnativeComponent;
 import org.apache.camel.component.knative.spi.KnativeEnvironment;
 import org.apache.camel.component.knative.spi.KnativeResource;
-import org.apache.camel.component.knative.spi.KnativeTransportConfiguration;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.component.platform.http.PlatformHttpConstants;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpEngine;
@@ -61,19 +56,18 @@ public final class KnativeHttpTestSupport {
         KnativeComponent component = context.getComponent("knative", KnativeComponent.class);
         component.setCloudEventsSpecVersion(ce.version());
         component.setEnvironment(environment);
-        component.setConsumerFactory(new KnativeHttpConsumerFactory() {
+        component.setConsumerFactory(new KnativeHttpConsumerFactory(context) {
             @Override
-            public Consumer createConsumer(
-                    Endpoint endpoint, KnativeTransportConfiguration config, KnativeResource service, Processor processor) {
+            protected void doBuild() throws Exception {
+                super.doBuild();
                 this.setRouter(VertxPlatformHttpRouter.lookup(context));
-                return super.createConsumer(endpoint, config, service, processor);
             }
         });
-        component.setProducerFactory(new KnativeHttpProducerFactory() {
+        component.setProducerFactory(new KnativeHttpProducerFactory(context) {
             @Override
-            public Producer createProducer(Endpoint endpoint, KnativeTransportConfiguration config, KnativeResource service) {
+            protected void doBuild() throws Exception {
+                super.doBuild();
                 this.setVertx(VertxPlatformHttpRouter.lookup(context).vertx());
-                return super.createProducer(endpoint, config, service);
             }
         });
 

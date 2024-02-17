@@ -90,7 +90,8 @@ public class KnativeEndpoint extends DefaultEndpoint {
         final KnativeResource service = lookupServiceDefinition(Knative.EndpointKind.sink);
         final Processor ceProcessor = cloudEventProcessor.producer(this, service);
         final Producer producer
-                = getComponent().getProducerFactory().createProducer(this, createTransportConfiguration(service), service);
+                = getComponent().getOrCreateProducerFactory().createProducer(this, createTransportConfiguration(service),
+                        service);
 
         PropertyBindingSupport.build()
                 .withCamelContext(getCamelContext())
@@ -121,7 +122,7 @@ public class KnativeEndpoint extends DefaultEndpoint {
                 = PluginHelper.getProcessorFactory(camelContext).createProcessor(camelContext, "Pipeline",
                         new Object[] { list });
 
-        Consumer consumer = getComponent().getConsumerFactory().createConsumer(this,
+        Consumer consumer = getComponent().getOrCreateConsumerFactory().createConsumer(this,
                 createTransportConfiguration(service), service, pipeline);
 
         PropertyBindingSupport.build()

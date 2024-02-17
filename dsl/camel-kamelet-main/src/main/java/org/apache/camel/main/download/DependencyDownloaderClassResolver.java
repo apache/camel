@@ -17,6 +17,8 @@
 package org.apache.camel.main.download;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.engine.DefaultClassResolver;
@@ -25,18 +27,25 @@ import org.apache.camel.util.ObjectHelper;
 
 public final class DependencyDownloaderClassResolver extends DefaultClassResolver {
 
+    private final List<ResourceResolverListener> resourceResolverListeners = new ArrayList<>();
     private final KnownDependenciesResolver knownDependenciesResolver;
     private final DependencyDownloader downloader;
+    private final boolean silent;
 
     public DependencyDownloaderClassResolver(CamelContext camelContext,
-                                             KnownDependenciesResolver knownDependenciesResolver) {
+                                             KnownDependenciesResolver knownDependenciesResolver,
+                                             boolean silent) {
         super(camelContext);
         this.downloader = camelContext.hasService(DependencyDownloader.class);
         this.knownDependenciesResolver = knownDependenciesResolver;
+        this.silent = silent;
+        this.resourceResolverListeners.add(new KNativeHttpServerFactory());
     }
 
     @Override
     public InputStream loadResourceAsStream(String uri) {
+        resourceResolverListeners.forEach(l -> l.onLoadResourceAsStream(uri));
+
         InputStream answer = null;
         try {
             answer = super.loadResourceAsStream(uri);
@@ -91,6 +100,20 @@ public final class DependencyDownloaderClassResolver extends DefaultClassResolve
         }
 
         return answer;
+    }
+
+    private class KNativeHttpServerFactory implements ResourceResolverListener {
+
+        @Override
+        public void onLoadResourceAsStream(String uri) {
+            try {
+                if ("META-INF/services/org/apache/camel/knative/transport/http-consumer".equals(uri)) {
+                    MainHttpServerFactory.setupHttpServer(getCamelContext(), silent);
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+        }
     }
 
 }

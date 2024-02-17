@@ -548,7 +548,7 @@ public class KameletMain extends MainCommandLineSupport {
                     new DependencyDownloaderStrategy(answer));
 
             // download class-resolver
-            ClassResolver classResolver = new DependencyDownloaderClassResolver(answer, knownDeps);
+            ClassResolver classResolver = new DependencyDownloaderClassResolver(answer, knownDeps, silent);
             answer.setClassResolver(classResolver);
             // re-create factory finder with download class-resolver
             FactoryFinderResolver ffr = PluginHelper.getFactoryFinderResolver(answer);
