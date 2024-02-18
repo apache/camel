@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.platform.http.main.jolokia;
+package org.apache.camel.component.platform.http.plugin;
 
 import java.io.IOException;
 
-import org.apache.camel.StaticService;
+import org.apache.camel.CamelContext;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.service.ServiceSupport;
 import org.jolokia.server.core.config.ConfigKey;
 import org.jolokia.server.core.config.StaticConfiguration;
@@ -36,9 +37,10 @@ import org.jolokia.service.serializer.JolokiaSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JolokiaHttpRequestHandlerSupport extends ServiceSupport implements StaticService {
+@JdkService(DefaultJolokiaPlatformHttpPlugin.NAME)
+public class DefaultJolokiaPlatformHttpPlugin extends ServiceSupport implements JolokiaPlatformHttpPlugin {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JolokiaHttpRequestHandlerSupport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultJolokiaPlatformHttpPlugin.class);
 
     private final JolokiaServiceManager serviceManager;
 
@@ -46,7 +48,9 @@ public class JolokiaHttpRequestHandlerSupport extends ServiceSupport implements 
 
     private final LogHandler jolokiaLogHandler;
 
-    public JolokiaHttpRequestHandlerSupport() {
+    private CamelContext camelContext;
+
+    public DefaultJolokiaPlatformHttpPlugin() {
         var config = new StaticConfiguration(ConfigKey.AGENT_ID, NetworkUtil.getAgentId(hashCode(), "vertx"));
         jolokiaLogHandler = new JolokiaLogHandler(LOG);
         var restrictor = createRestrictor(NetworkUtil.replaceExpression(config.getConfig(ConfigKey.POLICY_LOCATION)));
@@ -58,21 +62,24 @@ public class JolokiaHttpRequestHandlerSupport extends ServiceSupport implements 
         serviceManager.addService(new JolokiaSerializer());
         serviceManager.addService(new LocalRequestHandler(1));
 
-        LOG.info("Creating JolokiaHttpRequestHandlerSupport with restrictor {}", restrictor);
+        LOG.info("Creating DefaultJolokiaPlatformHttpPlugin with restrictor {}", restrictor);
     }
 
     @Override
-    public void start() {
+    public void doStart() {
         var jolokiaContext = serviceManager.start();
         requestHandler = new HttpRequestHandler(jolokiaContext);
     }
 
     @Override
-    public void stop() {
-        serviceManager.stop();
+    public void doStop() {
+        if (serviceManager != null) {
+            serviceManager.stop();
+        }
     }
 
-    public HttpRequestHandler getHttpRequestHandler() {
+    @Override
+    public HttpRequestHandler getRequestHandler() {
         return requestHandler;
     }
 
@@ -88,10 +95,25 @@ public class JolokiaHttpRequestHandlerSupport extends ServiceSupport implements 
             }
         } catch (IOException e) {
             jolokiaLogHandler.error("Error while accessing access restrictor at " + pLocation +
-                                    ". Denying all access to MBeans for security reasons. Exception: " + e,
+                            ". Denying all access to MBeans for security reasons. Exception: " + e,
                     e);
             return new DenyAllRestrictor();
         }
+    }
+
+    @Override
+    public String getId() {
+        return NAME;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
     }
 
     private record JolokiaLogHandler(Logger log) implements LogHandler {
@@ -116,4 +138,5 @@ public class JolokiaHttpRequestHandlerSupport extends ServiceSupport implements 
             return log.isDebugEnabled();
         }
     }
+
 }

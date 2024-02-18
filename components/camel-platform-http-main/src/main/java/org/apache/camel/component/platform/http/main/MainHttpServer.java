@@ -18,7 +18,6 @@ package org.apache.camel.component.platform.http.main;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -30,6 +29,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -58,7 +58,8 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.platform.http.HttpEndpointModel;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
-import org.apache.camel.component.platform.http.main.jolokia.JolokiaHttpRequestHandlerSupport;
+import org.apache.camel.component.platform.http.plugin.JolokiaPlatformHttpPlugin;
+import org.apache.camel.component.platform.http.spi.PlatformHttpPluginRegistry;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServer;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServerConfiguration;
@@ -68,6 +69,7 @@ import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
@@ -272,6 +274,18 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
         server = new VertxPlatformHttpServer(configuration);
         camelContext.addService(server);
+
+        PlatformHttpPluginRegistry pluginRegistry
+                = getCamelContext().getCamelContextExtension().getContextPlugin(PlatformHttpPluginRegistry.class);
+        if (pluginRegistry == null && pluginsEnabled()) {
+            pluginRegistry = resolvePlatformHttpPluginRegistry();
+            pluginRegistry.setCamelContext(getCamelContext());
+            getCamelContext().getCamelContextExtension().addContextPlugin(PlatformHttpPluginRegistry.class, pluginRegistry);
+        }
+    }
+
+    private boolean pluginsEnabled() {
+        return jolokiaEnabled;
     }
 
     @Override
@@ -478,17 +492,22 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         platformHttpComponent.addHttpEndpoint("/q/jolokia", null, null);
     }
 
+    protected PlatformHttpPluginRegistry resolvePlatformHttpPluginRegistry() {
+        Optional<PlatformHttpPluginRegistry> result = ResolverHelper.resolveService(
+                getCamelContext(),
+                PlatformHttpPluginRegistry.FACTORY,
+                PlatformHttpPluginRegistry.class);
+        return result.orElse(null);
+    }
+
     private HttpRequestHandler getHttpRequestHandler() {
-        //TODO: make jolokiaService more pluggable
-        //JolokiaHttpRequestHandlerSupport jolokiaService = camelContext.getCamelContextExtension().getContextPlugin(JolokiaHttpRequestHandlerSupport.class);
-        HttpRequestHandler requestHandler;
-        try (JolokiaHttpRequestHandlerSupport jolokiaService = new JolokiaHttpRequestHandlerSupport()) {
-            jolokiaService.start();
-            requestHandler = jolokiaService.getHttpRequestHandler();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return requestHandler;
+        PlatformHttpPluginRegistry registry
+                = camelContext.getCamelContextExtension().getContextPlugin(PlatformHttpPluginRegistry.class);
+        JolokiaPlatformHttpPlugin jolokia
+                = (JolokiaPlatformHttpPlugin) registry.resolvePluginById(JolokiaPlatformHttpPlugin.NAME)
+                        .orElseThrow(() -> new RuntimeException(
+                                "JolokiaPlatformHttpPlugin not found. Please add camel-platform-http-jolokia dependency."));
+        return jolokia.getRequestHandler();
     }
 
     private Map<String, String[]> getParams(MultiMap params) {
