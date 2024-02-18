@@ -179,7 +179,7 @@ keyMap.put("sortKey", AttributeValue.builder().s("1001").build());
 
 from("direct:start")
   .setHeader(Ddb2Constants.OPERATION,  constant(Ddb2Operations.UpdateItem))
-  .setHeader(Ddb2Constants.ITEM,  constant(attributeMap))
+  .setHeader(Ddb2Constants.UPDATE_VALUES,  constant(attributeMap))
   .setHeader(Ddb2Constants.KEY,  constant(keyMap))
   .to("aws2-ddb://" + tableName + "?amazonDDBClient=#client");
 --------------------------------------------------------------------------------
