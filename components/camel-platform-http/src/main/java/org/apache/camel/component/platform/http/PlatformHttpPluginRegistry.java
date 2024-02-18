@@ -48,7 +48,7 @@ public class PlatformHttpPluginRegistry extends ServiceSupport
     private final Set<PlatformHttpPlugin> plugins = new TreeSet<>(Comparator.comparing(PlatformHttpPlugin::getId));
 
     @Override
-    public Optional<PlatformHttpPlugin> resolvePluginById(String id) {
+    public <T extends PlatformHttpPlugin> Optional<T> resolvePluginById(String id, Class<T> type) {
         PlatformHttpPlugin answer = plugins.stream().filter(plugin -> plugin.getId().equals(id)).findFirst()
                 .orElse(getCamelContext().getRegistry().findByTypeWithName(PlatformHttpPlugin.class).get(id));
         if (answer == null) {
@@ -58,7 +58,7 @@ public class PlatformHttpPluginRegistry extends ServiceSupport
         if (answer != null) {
             register(answer);
         }
-        return Optional.ofNullable(answer);
+        return Optional.ofNullable(type.cast(answer));
     }
 
     @Override

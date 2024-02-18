@@ -96,6 +96,8 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
     private CamelContext camelContext;
     private PlatformHttpComponent platformHttpComponent;
+    private PlatformHttpPluginRegistry pluginRegistry;
+    private JolokiaPlatformHttpPlugin jolokiaPlugin;
 
     private VertxPlatformHttpServerConfiguration configuration = new VertxPlatformHttpServerConfiguration();
     private boolean devConsoleEnabled;
@@ -275,29 +277,34 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         server = new VertxPlatformHttpServer(configuration);
         camelContext.addService(server);
 
-        PlatformHttpPluginRegistry pluginRegistry
-                = getCamelContext().getCamelContextExtension().getContextPlugin(PlatformHttpPluginRegistry.class);
+        pluginRegistry = getCamelContext().getCamelContextExtension().getContextPlugin(PlatformHttpPluginRegistry.class);
         if (pluginRegistry == null && pluginsEnabled()) {
             pluginRegistry = resolvePlatformHttpPluginRegistry();
             pluginRegistry.setCamelContext(getCamelContext());
             getCamelContext().getCamelContextExtension().addContextPlugin(PlatformHttpPluginRegistry.class, pluginRegistry);
         }
-    }
-
-    private boolean pluginsEnabled() {
-        return jolokiaEnabled;
+        ServiceHelper.initService(pluginRegistry);
     }
 
     @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
 
-        ServiceHelper.startService(server);
+        ServiceHelper.startService(server, pluginRegistry);
         router = VertxPlatformHttpRouter.lookup(camelContext);
         platformHttpComponent = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
 
         setupConsoles();
         setupStartupSummary();
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownService(pluginRegistry);
+    }
+
+    private boolean pluginsEnabled() {
+        return jolokiaEnabled;
     }
 
     protected void setupConsoles() {
@@ -451,16 +458,20 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
     }
 
     protected void setupJolokia() {
+        // load plugin
+        jolokiaPlugin = pluginRegistry.resolvePluginById(JolokiaPlatformHttpPlugin.NAME, JolokiaPlatformHttpPlugin.class)
+                .orElseThrow(() -> new RuntimeException(
+                        "JolokiaPlatformHttpPlugin not found. Please add camel-platform-http-jolokia dependency."));
+
         Route jolokia = router.route("/q/jolokia/*");
         jolokia.method(HttpMethod.GET);
         jolokia.method(HttpMethod.POST);
 
         Handler<RoutingContext> handler = routingContext -> {
+            HttpRequestHandler requestHandler = jolokiaPlugin.getRequestHandler();
 
             HttpServerRequest req = routingContext.request();
             String remainingPath = Utils.pathOffset(req.path(), routingContext);
-
-            HttpRequestHandler requestHandler = getHttpRequestHandler();
 
             JSONAware json = null;
             try {
@@ -497,17 +508,8 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                 getCamelContext(),
                 PlatformHttpPluginRegistry.FACTORY,
                 PlatformHttpPluginRegistry.class);
-        return result.orElse(null);
-    }
-
-    private HttpRequestHandler getHttpRequestHandler() {
-        PlatformHttpPluginRegistry registry
-                = camelContext.getCamelContextExtension().getContextPlugin(PlatformHttpPluginRegistry.class);
-        JolokiaPlatformHttpPlugin jolokia
-                = (JolokiaPlatformHttpPlugin) registry.resolvePluginById(JolokiaPlatformHttpPlugin.NAME)
-                        .orElseThrow(() -> new RuntimeException(
-                                "JolokiaPlatformHttpPlugin not found. Please add camel-platform-http-jolokia dependency."));
-        return jolokia.getRequestHandler();
+        return result.orElseThrow(() -> new IllegalArgumentException(
+                "Cannot create PlatformHttpPluginRegistry. Make sure camel-platform-http JAR is on classpath."));
     }
 
     private Map<String, String[]> getParams(MultiMap params) {

@@ -31,10 +31,11 @@ public interface PlatformHttpPluginRegistry extends CamelContextAware, StaticSer
     /**
      * Resolve a plugin by id
      *
-     * @param  id the plugin id
-     * @return    the plugin if found
+     * @param  id   the plugin id
+     * @param  type the plugin class type
+     * @return      the plugin if found
      */
-    Optional<PlatformHttpPlugin> resolvePluginById(String id);
+    <T extends PlatformHttpPlugin> Optional<T> resolvePluginById(String id, Class<T> type);
 
     /**
      * Register the plugin into the registry.
