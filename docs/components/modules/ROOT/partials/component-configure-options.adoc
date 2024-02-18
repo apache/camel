@@ -8,28 +8,36 @@ Camel components are configured on two separate levels:
 
 === Configuring Component Options
 
-The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
-For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+At the component level, you set general and shared configurations that are, then, inherited by the endpoints. It is the highest configuration level.
 
-Some components only have a few options, and others may have many. Because components typically have pre configured defaults
-that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+For example, a component may have security settings, credentials for authentication, urls for network connection and so forth.
 
-Configuring components can be done with the xref:manual::component-dsl.adoc[Component DSL],
-in a configuration file (application.properties|yaml), or directly with Java code.
+Some components only have a few options, and others may have many.
+Because components typically have pre-configured defaults that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+You can configure components using:
+
+* the xref:manual::component-dsl.adoc[Component DSL].
+* in a configuration file (`application.properties`, `*.yaml` files, etc).
+* directly in the Java code.
 
 === Configuring Endpoint Options
 
-Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
-configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
-or as a producer (to), or used for both.
+You usually spend more time setting up endpoints because they have many options.
+These options help you customize what you want the endpoint to do.
+The options are also categorized into whether the endpoint is used as a consumer (_from_), as a producer (_to_), or  both.
 
-Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
-the xref:manual::Endpoint-dsl.adoc[Endpoint DSL] and xref:manual::dataformat-dsl.adoc[DataFormat DSL]
+Configuring endpoints is most often done directly in the endpoint URI as _path_ and _query_ parameters.
+You can also use the xref:manual::Endpoint-dsl.adoc[Endpoint DSL] and xref:manual::dataformat-dsl.adoc[DataFormat DSL]
 as a _type safe_ way of configuring endpoints and data formats in Java.
 
-A good practice when configuring options is to use xref:manual::using-propertyplaceholder.adoc[Property Placeholders],
-which allows to not hardcode urls, port numbers, sensitive information, and other settings.
-In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+A good practice when configuring options is to use xref:manual::using-propertyplaceholder.adoc[Property Placeholders].
 
-The following two sections lists all the options, firstly for the component followed by the endpoint.
+Property placeholders provide a few benefits:
+
+* They help prevent using hardcoded urls, port numbers, sensitive information, and other settings.
+* They allow externalizing the configuration from the code.
+* They help the code to become more flexible and reusable.
+
+The following two sections list all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
