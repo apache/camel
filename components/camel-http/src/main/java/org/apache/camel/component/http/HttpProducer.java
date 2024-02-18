@@ -71,11 +71,7 @@ import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.HttpVersion;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
-import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
-import org.apache.hc.core5.http.io.entity.FileEntity;
-import org.apache.hc.core5.http.io.entity.InputStreamEntity;
-import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.io.entity.*;
 import org.apache.hc.core5.http.protocol.BasicHttpContext;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.slf4j.Logger;
@@ -692,7 +688,7 @@ public class HttpProducer extends DefaultProducer {
         Object body = in.getBody();
         try {
             if (body == null) {
-                return null;
+                return NullEntity.INSTANCE;
             } else if (body instanceof HttpEntity entity) {
                 answer = entity;
                 // special optimized for using these 3 type converters for common message payload types
