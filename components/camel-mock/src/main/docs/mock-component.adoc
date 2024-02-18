@@ -16,8 +16,8 @@
 *{component-header}*
 
 Testing of distributed and asynchronous processing is
-notoriously difficult. The xref:mock-component.adoc[Mock],
-and xref:dataset-component.adoc[DataSet] endpoints work great with the
+notoriously challenging. The xref:mock-component.adoc[Mock]
+and xref:dataset-component.adoc[DataSet] endpoints work with the
 Camel Testing Framework to simplify your unit and
 integration testing using
 xref:eips:enterprise-integration-patterns.adoc[Enterprise Integration
@@ -33,10 +33,10 @@ can be asserted in a test case to ensure the system worked as expected.
 
 This allows you to test various things like:
 
-* The correct number of messages are received on each endpoint,
-* The correct payloads are received, in the right order,
-* Messages arrive on an endpoint in order, using some
-Expression to create an order testing function,
+* The correct number of messages is received on each endpoint.
+* The correct payloads are received, in the right order.
+* Messages arrive at an endpoint in order, using some
+Expression to create an order testing function.
 * Messages arrive match some kind of Predicate such
 as that specific headers have certain values, or that parts of the
 messages match some predicate, such as by evaluating an
@@ -45,7 +45,7 @@ Expression.
 
 [NOTE]
 ====
-There is also the xref:others:test-junit5.adoc[Test endpoint] which is a
+There is also the xref:others:test-junit5.adoc[Test endpoint], which is a
 Mock endpoint, but which uses a second endpoint to provide the list of
 expected message bodies and automatically sets up the Mock endpoint
 assertions. In other words, it's a Mock endpoint that automatically sets
@@ -111,7 +111,7 @@ resultEndpoint.expectedMessageCount(2);
 
 // send some messages
 
-// now lets assert that the mock:foo endpoint received 2 messages
+// now let's assert that the mock:foo endpoint received 2 messages
 resultEndpoint.assertIsSatisfied();
 ----
 
@@ -127,7 +127,7 @@ invoked. This can be configured by setting the
 
 When the assertion is satisfied then Camel will stop waiting and
 continue from the `assertIsSatisfied` method. That means if a new
-message arrives on the mock endpoint, just a bit later, that arrival
+message arrives at the mock endpoint, just a bit later. That arrival
 will not affect the outcome of the assertion. Suppose you do want to
 test that no new messages arrives after a period thereafter, then you
 can do that by setting the `setAssertPeriod` method, for example:
@@ -140,7 +140,7 @@ resultEndpoint.expectedMessageCount(2);
 
 // send some messages
 
-// now lets assert that the mock:foo endpoint received 2 messages
+// now let's assert that the mock:foo endpoint received 2 messages
 resultEndpoint.assertIsSatisfied();
 ----
 
@@ -155,7 +155,7 @@ methods are as follows:
 |===
 |Method |Description
 |https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html#expectedMessageCount(int)[expectedMessageCount(int)]
-|To define the expected message count on the endpoint.
+|To define the expected count of messages on the endpoint.
 
 |https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html#expectedMinimumMessageCount(int)[expectedMinimumMessageCount(int)]
 |To define the minimum number of expected messages on the endpoint.
@@ -236,7 +236,7 @@ endpoints in a given route from your unit test, as shown below:
 include::{examplesdir}/core/camel-core/src/test/java/org/apache/camel/processor/interceptor/AdviceWithMockEndpointsTest.java[tags=e1]
 ----
 
-Notice that the mock endpoints is given the URI `mock:<endpoint>`, for
+Notice that the mock endpoint is given the URI `mock:<endpoint>`, for
 example `mock:direct:foo`. Camel logs at `INFO` level the endpoints
 being mocked:
 
@@ -247,11 +247,11 @@ INFO  Adviced endpoint [direct://foo] with mock endpoint [mock:direct:foo]
 [NOTE]
  **Mocked endpoints are without parameters** +
 Endpoints which are mocked will have their parameters stripped off. For
-example the endpoint `log:foo?showAll=true` will be mocked to the
+example, the endpoint `log:foo?showAll=true` will be mocked to the
 following endpoint `mock:log:foo`. Notice the parameters have been
 removed.
 
-Its also possible to only mock certain endpoints using a pattern. For
+It's also possible to only mock certain endpoints using a pattern. For
 example to mock all `log` endpoints you do as shown:
 
 [source,java]
@@ -261,12 +261,12 @@ include::{examplesdir}/core/camel-core/src/test/java/org/apache/camel/processor/
 ----
 
 The pattern supported can be a wildcard or a regular expression. See
-more details about this at Intercept as its the
+more details about this at Intercept as it is the
 same matching function used by Camel.
 
 [NOTE]
 Mind that mocking endpoints causes the messages to be copied when they
-arrive on the mock. +
+arrive at the mock. +
 That means Camel will use more memory. This may not be suitable when you
 send in a lot of messages.
 
@@ -321,7 +321,7 @@ include::{examplesdir}/components/camel-spring-xml/src/test/resources/org/apache
 Then in your unit test you load the new XML file
 (`test-camel-route.xml`) instead of `camel-route.xml`.
 
-To only mock all xref:log-component.adoc[Log] endpoints you can define the pattern
+To only mock all xref:log-component.adoc[Log] endpoints, you can define the pattern
 in the constructor for the bean:
 
 [source,xml]
@@ -333,7 +333,7 @@ in the constructor for the bean:
 
 == Mocking endpoints and skip sending to original endpoint
 
-Sometimes you want to easily mock and skip sending to a certain
+Sometimes you want to easily mock and skip sending to certain
 endpoints. So the message is detoured and send to the mock endpoint
 only. You can now use the `mockEndpointsAndSkip`
 method using AdviceWith. The example below will skip sending to the two endpoints
@@ -359,11 +359,11 @@ The xref:mock-component.adoc[Mock] endpoints will by default keep a copy of ever
 Exchange that it received. So if you test with a lot
 of messages, then it will consume memory. +
 We have introduced two options `retainFirst` and
-`retainLast` that can be used to specify to only keep N'th of the first
+`retainLast` that can be used to specify to only keep Nth of the first
 and/or last Exchanges.
 
-For example in the code below, we only want to retain a copy of the
-first 5 and last 5 Exchanges the mock receives.
+For example, in the code below, we only want to retain a copy of the
+first five and last five Exchanges the mock receives.
 
 [source,java]
 ----
@@ -381,9 +381,9 @@ the retained copies of the Exchanges. So in the
 example above, the list will contain 10 Exchanges;
 the first five, and the last five. +
 The `retainFirst` and `retainLast` options also have limitations on
-which expectation methods you can use. For example the `expectedXXX`
+which expectation methods you can use. For example, the `expectedXXX`
 methods that work on message bodies, headers, etc. will only operate on
-the retained messages. In the example above they can test only the
+the retained messages. In the example above, they can test only the
 expectations on the 10 retained messages.
 
 == Testing with arrival times
@@ -396,13 +396,13 @@ as a property on the Exchange.
 Date time = exchange.getProperty(Exchange.RECEIVED_TIMESTAMP, Date.class);
 ----
 
-You can use this information to know when the message arrived on the
+You can use this information to know when the message arrived at the
 mock. But it also provides foundation to know the time interval between
-the previous and next message arrived on the mock. You can use this to
+the previous and next message arrived at the mock. You can use this to
 set expectations using the `arrives` DSL on the xref:mock-component.adoc[Mock]
 endpoint.
 
-For example to say that the first message should arrive between 0-2
+For example, to say that the first message should arrive between 0 and 2
 seconds before the next you can do:
 
 [source,java]
@@ -410,23 +410,23 @@ seconds before the next you can do:
 mock.message(0).arrives().noLaterThan(2).seconds().beforeNext();
 ----
 
-You can also define this as that 2nd message (0 index based) should
-arrive no later than 0-2 seconds after the previous:
+You can also define this as that second message (0 index based) should
+arrive no later than 0 and 2 seconds after the previous:
 
 [source,java]
 ----
 mock.message(1).arrives().noLaterThan(2).seconds().afterPrevious();
 ----
 
-You can also use between to set a lower bound. For example suppose that
-it should be between 1-4 seconds:
+You can also use between to set a lower bound. For example, suppose that
+it should be between 1 and 4 seconds:
 
 [source,java]
 ----
 mock.message(1).arrives().between(1, 4).seconds().afterPrevious();
 ----
 
-You can also set the expectation on all messages, for example to say
+You can also set the expectation on all messages, for example, to say
 that the gap between them should be at most 1 second:
 
 [source,java]
