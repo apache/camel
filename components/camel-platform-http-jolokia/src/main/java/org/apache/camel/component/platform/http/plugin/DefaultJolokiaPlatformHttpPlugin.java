@@ -37,7 +37,7 @@ import org.jolokia.service.serializer.JolokiaSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@JdkService(DefaultJolokiaPlatformHttpPlugin.NAME)
+@JdkService("platform-http/" + JolokiaPlatformHttpPlugin.NAME)
 public class DefaultJolokiaPlatformHttpPlugin extends ServiceSupport implements JolokiaPlatformHttpPlugin {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultJolokiaPlatformHttpPlugin.class);
@@ -62,7 +62,7 @@ public class DefaultJolokiaPlatformHttpPlugin extends ServiceSupport implements 
         serviceManager.addService(new JolokiaSerializer());
         serviceManager.addService(new LocalRequestHandler(1));
 
-        LOG.info("Creating DefaultJolokiaPlatformHttpPlugin with restrictor {}", restrictor);
+        LOG.info("Creating DefaultJolokiaPlatformHttpPlugin with Restrictor: {}", restrictor);
     }
 
     @Override
@@ -87,15 +87,15 @@ public class DefaultJolokiaPlatformHttpPlugin extends ServiceSupport implements 
         try {
             var restrictor = RestrictorFactory.lookupPolicyRestrictor(pLocation);
             if (restrictor != null) {
-                jolokiaLogHandler.info("Using access restrictor " + pLocation);
+                jolokiaLogHandler.info("Using access restrictor: " + pLocation);
                 return restrictor;
             } else {
-                jolokiaLogHandler.info("No access restrictor found at " + pLocation + ", access to all MBeans is allowed");
+                jolokiaLogHandler.info("No access restrictor found at: " + pLocation + ", access to all MBeans is allowed");
                 return new AllowAllRestrictor();
             }
         } catch (IOException e) {
-            jolokiaLogHandler.error("Error while accessing access restrictor at " + pLocation +
-                            ". Denying all access to MBeans for security reasons. Exception: " + e,
+            jolokiaLogHandler.error("Error while accessing access restrictor: at " + pLocation +
+                                    ". Denying all access to MBeans for security reasons. Exception: " + e,
                     e);
             return new DenyAllRestrictor();
         }

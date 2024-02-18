@@ -26,11 +26,21 @@ import org.apache.camel.StaticService;
  */
 public interface PlatformHttpPluginRegistry extends CamelContextAware, StaticService {
 
-    String PLATFORM_HTTP_FACTORY_PATH = "component/platform/http/";
+    String FACTORY = "platform-http/plugin-registry";
 
-    String FACTORY = PLATFORM_HTTP_FACTORY_PATH + "platform-http-plugin-registry";
-
+    /**
+     * Resolve a plugin by id
+     *
+     * @param  id the plugin id
+     * @return    the plugin if found
+     */
     Optional<PlatformHttpPlugin> resolvePluginById(String id);
 
+    /**
+     * Register the plugin into the registry.
+     *
+     * @param  plugin the plugin
+     * @return        true if the plugin was added, or false if already exists
+     */
     boolean register(PlatformHttpPlugin plugin);
 }

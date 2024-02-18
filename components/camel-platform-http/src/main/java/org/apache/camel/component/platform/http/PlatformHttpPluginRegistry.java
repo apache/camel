@@ -35,45 +35,39 @@ import org.slf4j.LoggerFactory;
 /**
  * Default {@link org.apache.camel.component.platform.http.spi.PlatformHttpPluginRegistry}.
  */
-@JdkService(org.apache.camel.component.platform.http.spi.PlatformHttpPluginRegistry.FACTORY)
+@JdkService(PlatformHttpPluginRegistry.FACTORY)
 public class PlatformHttpPluginRegistry extends ServiceSupport
         implements org.apache.camel.component.platform.http.spi.PlatformHttpPluginRegistry {
 
-    private static final String PLATFORM_HTTP_PLUGIN_FACTORY_PATH
-            = "META-INF/services/org/apache/camel/" + PLATFORM_HTTP_FACTORY_PATH + "plugin/";
-    private CamelContext camelContext;
-
-    private final Set<PlatformHttpPlugin> plugins = new TreeSet<>(Comparator.comparing(PlatformHttpPlugin::getId));
-
     private static final Logger LOG = LoggerFactory.getLogger(PlatformHttpPluginRegistry.class);
+
+    private static final String PLATFORM_HTTP_PLUGIN_FACTORY_PATH
+            = "META-INF/services/org/apache/camel/platform-http/";
+
+    private CamelContext camelContext;
+    private final Set<PlatformHttpPlugin> plugins = new TreeSet<>(Comparator.comparing(PlatformHttpPlugin::getId));
 
     @Override
     public Optional<PlatformHttpPlugin> resolvePluginById(String id) {
         PlatformHttpPlugin answer = plugins.stream().filter(plugin -> plugin.getId().equals(id)).findFirst()
                 .orElse(getCamelContext().getRegistry().findByTypeWithName(PlatformHttpPlugin.class).get(id));
-
         if (answer == null) {
             answer = resolvePluginWithFactoryFinderById(id);
 
         }
-
         if (answer != null) {
             register(answer);
         }
-
         return Optional.ofNullable(answer);
     }
 
     @Override
     public boolean register(PlatformHttpPlugin plugin) {
-        boolean result;
-
         if (getPlugin(plugin.getId()).isPresent()) {
             return false;
         }
 
-        result = plugins.add(plugin);
-
+        boolean result = plugins.add(plugin);
         if (result) {
             CamelContextAware.trySetCamelContext(plugin, camelContext);
             ServiceHelper.startService(plugin);
@@ -100,10 +94,10 @@ public class PlatformHttpPluginRegistry extends ServiceSupport
 
     private PlatformHttpPlugin resolvePluginWithFactoryFinderById(String id) {
         PlatformHttpPlugin answer = null;
+
         FactoryFinder factoryFinder
                 = getCamelContext().getCamelContextExtension().getFactoryFinder(PLATFORM_HTTP_PLUGIN_FACTORY_PATH);
         Class<?> type = factoryFinder.findOptionalClass(id).orElse(null);
-
         if (type != null) {
             if (PlatformHttpPlugin.class.isAssignableFrom(type)) {
                 answer = (PlatformHttpPlugin) camelContext.getInjector().newInstance(type, false);
@@ -118,4 +112,5 @@ public class PlatformHttpPluginRegistry extends ServiceSupport
 
         return answer;
     }
+
 }

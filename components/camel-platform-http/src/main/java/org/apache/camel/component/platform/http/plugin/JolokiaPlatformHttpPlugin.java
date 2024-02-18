@@ -20,11 +20,11 @@ import org.apache.camel.component.platform.http.spi.PlatformHttpPlugin;
 import org.jolokia.server.core.http.HttpRequestHandler;
 
 /**
- * camel-platform-http plugin.
+ * Plugin for Jolokia
  */
 public interface JolokiaPlatformHttpPlugin extends PlatformHttpPlugin {
 
-    String NAME = "camel-platform-http-jolokia";
+    String NAME = "jolokia";
 
     HttpRequestHandler getRequestHandler();
 }

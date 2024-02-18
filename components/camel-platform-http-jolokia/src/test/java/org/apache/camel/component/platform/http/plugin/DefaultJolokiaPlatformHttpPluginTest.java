@@ -38,7 +38,7 @@ public class DefaultJolokiaPlatformHttpPluginTest extends ContextTestSupport {
         PlatformHttpPluginRegistry registry = resolvePlatformHttpPluginRegistry();
         Assertions.assertNotNull(registry);
         DefaultJolokiaPlatformHttpPlugin plugin = (DefaultJolokiaPlatformHttpPlugin) registry
-                .resolvePluginById(DefaultJolokiaPlatformHttpPlugin.NAME).orElseThrow();
+                .resolvePluginById("jolokia").orElseThrow();
         Assertions.assertNotNull(plugin);
         HttpRequestHandler handler = plugin.getRequestHandler();
 
