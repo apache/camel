@@ -96,7 +96,7 @@ public class PlatformHttpPluginRegistry extends ServiceSupport
         PlatformHttpPlugin answer = null;
 
         FactoryFinder factoryFinder
-                = getCamelContext().getCamelContextExtension().getFactoryFinder(PLATFORM_HTTP_PLUGIN_FACTORY_PATH);
+                = getCamelContext().getCamelContextExtension().getBootstrapFactoryFinder(PLATFORM_HTTP_PLUGIN_FACTORY_PATH);
         Class<?> type = factoryFinder.findOptionalClass(id).orElse(null);
         if (type != null) {
             if (PlatformHttpPlugin.class.isAssignableFrom(type)) {
