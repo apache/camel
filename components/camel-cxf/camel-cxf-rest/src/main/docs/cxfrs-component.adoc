@@ -14,9 +14,7 @@
 
 *{component-header}*
 
-The CXFRS component provides integration with
-http://cxf.apache.org[Apache CXF] for connecting to JAX-RS 1.1 and 2.0
-services hosted in CXF.
+The CXFRS component provides integration with http://cxf.apache.org[Apache CXF] for connecting to JAX-RS 1.1 and 2.0 services hosted in CXF.
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -25,7 +23,7 @@ for this component:
 -------------------------------------------------------------------------------------
 <dependency>
    <groupId>org.apache.camel</groupId>
-   <artifactId>camel-cxf</artifactId>
+   <artifactId>camel-cxf-rest</artifactId>
    <version>x.x.x</version>  <!-- use the same version as your Camel core version -->
 </dependency>
 -------------------------------------------------------------------------------------
@@ -42,7 +40,7 @@ Where *address* represents the CXF endpoint's address
 cxfrs:bean:rsEndpoint
 ---------------------
 
-Where *rsEndpoint* represents the spring bean's name which presents the
+Where *rsEndpoint* represents the spring bean's name, which presents the
 CXFRS client or server
 
 For either style above, you can append options to the URI as follows:
@@ -70,25 +68,34 @@ include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
 You can also configure the CXF REST endpoint through the spring
-configuration. Since there are lots of difference between the CXF REST
+configuration.
+
+
+[NOTE]
+====
+Since there are lots of differences between the CXF REST
 client and CXF REST Server, we provide different configuration for
-them. Please check out the
-https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-spring-rest/src/main/resources/schema/cxfJaxrsEndpoint.xsd[schema
-file] and http://cxf.apache.org/docs/jax-rs.html[CXF JAX-RS
-documentation] for more information.
+them.
+
+Please check the following files for more details:
+
+* the https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-spring-rest/src/main/resources/schema/cxfJaxrsEndpoint.xsd[schema file].
+* http://cxf.apache.org/docs/jax-rs.html[CXF JAX-RS documentation].
+====
 
 == How to configure the REST endpoint in Camel
 
-In
-https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-spring-rest/src/main/resources/schema/cxfJaxrsEndpoint.xsd[camel-cxf
-schema file], there are two elements for the REST endpoint definition.
-*cxf:rsServer* for REST consumer, *cxf:rsClient* for REST producer. +
- You can find a Camel REST service route configuration example here.
+In the
+https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-spring-rest/src/main/resources/schema/cxfJaxrsEndpoint.xsd[camel-cxf schema file], there are two elements for the REST endpoint definition:
+
+* `cxf:rsServer` for REST consumer
+* `cxf:rsClient` for REST producer.
+
+You can find a Camel REST service route configuration example there.
 
 == How to override the CXF producer address from message header
 
-The `camel-cxfrs` producer supports to override the services address by
-setting the message with the key of "CamelDestinationOverrideUrl".
+The `camel-cxfrs` producer supports overriding the service address by setting the message with the key of `CamelDestinationOverrideUrl`.
 
 [source,java]
 ----------------------------------------------------------------------------------------------
@@ -107,18 +114,18 @@ parameter indices of the JAX-RS operation. Somewhat inelegant, difficult
 and error-prone.
 
 In contrast, the `SimpleConsumer` binding style performs the following
-mappings, in order to *make the request data more accessible* to you
+mappings, to *make the request data more accessible* to you
 within the Camel Message:
 
-* JAX-RS Parameters (@HeaderParam, @QueryParam, etc.) are injected as IN
+* JAX-RS Parameters (`@HeaderParam`, `@QueryParam`, etc.) are injected as _IN_
 message headers. The header name matches the value of the annotation.
-* The request entity (POJO or other type) becomes the IN message body.
+* The request entity (POJO or another type) becomes the _IN_ message body.
 If a single entity cannot be identified in the JAX-RS method signature,
 it falls back to the original `MessageContentsList`.
-* Binary `@Multipart` body parts become IN message attachments,
+* Binary `@Multipart` body parts become _IN_ message attachments,
 supporting `DataHandler`, `InputStream`, `DataSource` and CXF's
 `Attachment` class.
-* Non-binary `@Multipart` body parts are mapped as IN message headers.
+* Non-binary `@Multipart` body parts are mapped as _IN_ message headers.
 The header name matches the Body Part name.
 
 Additionally, the following rules apply to the *Response mapping*:
@@ -130,7 +137,7 @@ is taken from the `Exchange.HTTP_RESPONSE_CODE` header, or defaults to
 200 OK if not present.
 * If the message body type is equal to `javax.ws.rs.core.Response`, it
 means that the user has built a custom response, and therefore it is
-respected and it becomes the final response.
+respected, and it becomes the final response.
 * In all cases, Camel headers permitted by custom or default
 `HeaderFilterStrategy` are added to the HTTP response.
 
@@ -147,35 +154,22 @@ parameter in the consumer endpoint to value `SimpleConsumer`:
 
 === Examples of request binding with different method signatures
 
-Below is a list of method signatures along with the expected result from
-the Simple binding.
+Below is a list of method signatures along with the expected result from the simple binding:
 
-*`public Response doAction(BusinessObject request);`* +
- Request payload is placed in IN message body, replacing the original
-MessageContentsList.
+* `public Response doAction(BusinessObject request);`: the request payload is placed in tbe _IN_ message body, replacing the original MessageContentsList.
 
-*`public Response doAction(BusinessObject request, @HeaderParam("abcd") String abcd, @QueryParam("defg") String defg);`* 
- Request payload placed in IN message body, replacing the original
-MessageContentsList. Both request params mapped as IN message headers
-with names abcd and defg.
+* `public Response doAction(BusinessObject request, @HeaderParam("abcd") String abcd, @QueryParam("defg") String defg);`: the request payload is placed in the _IN_ message body, replacing the original `MessageContentsList`. Both request parameters are mapped as IN message headers
+with names _"abcd"_ and _"defg"_.
 
-*`public Response doAction(@HeaderParam("abcd") String abcd, @QueryParam("defg") String defg);`* 
- Both request params mapped as IN message headers with names abcd and
-defg. The original MessageContentsList is preserved, even though it only
-contains the 2 parameters.
+* `public Response doAction(@HeaderParam("abcd") String abcd, @QueryParam("defg") String defg);`: both request parameters are mapped as the _IN_ message headers with names _"abcd"_ and
+_"defg"_. The original `MessageContentsList` is preserved, even though it only contains the two parameters.
 
-*`public Response doAction(@Multipart(value="body1") BusinessObject request, @Multipart(value="body2") BusinessObject request2);`* 
- The first parameter is transferred as a header with name body1, and the
-second one is mapped as header body2. The original MessageContentsList
-is preserved as the IN message body.
+* `public Response doAction(@Multipart(value="body1") BusinessObject request, @Multipart(value="body2") BusinessObject request2);`: the first parameter is transferred as a header with name _"body1"_, and the second one is mapped as header _"body2"_. The original `MessageContentsList`
+is preserved as the _IN_ message body.
 
-*`public Response doAction(InputStream abcd);`* 
- The InputStream is unwrapped from the MessageContentsList and preserved
-as the IN message body.
+* `public Response doAction(InputStream abcd);`: the `InputStream` is unwrapped from the `MessageContentsList` and preserved as the _IN_ message body.
 
-*`public Response doAction(DataHandler abcd);`* 
- The DataHandler is unwrapped from the MessageContentsList and preserved
-as the IN message body.
+* `public Response doAction(DataHandler abcd);`: the _DataHandler_ is unwrapped from the `MessageContentsList` and preserved as the _IN_ message body.
 
 === More examples of the Simple Binding Style
 
@@ -200,8 +194,7 @@ from("direct:newCustomer")
     .log("Request: type=${header.type}, active=${header.active}, customerData=${body}");
 --------------------------------------------------------------------------------------------
 
-The following HTTP request with XML payload (given that the Customer DTO
-is JAXB-annotated):
+The following HTTP request with XML payload (given that the Customer DTO is JAXB-annotated):
 
 -------------------------------------
 POST /customers/gold?active=true
@@ -220,22 +213,25 @@ Will print the message:
 Request: type=gold, active=true, customerData=<Customer.toString() representation>
 ----------------------------------------------------------------------------------
 
-For more examples on how to process requests and write responses can be
+[NOTE]
+====
+More examples on how to process requests and write responses can be
 found
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/jaxrs/simplebinding/[here].
+====
 
 == Consuming a REST Request - Default Binding Style
 
 The http://cxf.apache.org/docs/jax-rs.html[CXF JAXRS front end]
 implements the https://javaee.github.io/jsr311/[JAX-RS (JSR-311) API], so we can
-export the resources classes as a REST service. And we leverage the
+export the resource classes as a REST service. And we leverage the
 http://cxf.apache.org/docs/invokers.html[CXF Invoker
 API] to turn a REST request into a normal Java object method
 invocation.
 You don't need to specify the URI template within your endpoint, CXF takes care
 of the REST request URI to resource class method mapping according to the
 JSR-311 specification. All you need to do in Camel is delegate this
-method request to a right processor or endpoint.
+method request to the right processor or endpoint.
 
 Here is an example of a CXFRS route...
 [source,java]
@@ -290,7 +286,7 @@ the default mode.
 
 If a *performInvocation* option is enabled,
 the service implementation will be invoked first, the response will be
-set on the Camel exchange and the route execution will continue as
+set on the Camel exchange, and the route execution will continue as
 usual. This can be useful for integrating the existing JAX-RS implementations into Camel routes and
 for post-processing JAX-RS Responses in custom processors.
 
@@ -327,9 +323,9 @@ proxy-based client API], with this API you can invoke the remote REST
 service through a proxy. The `camel-cxfrs` producer is based on this
 http://cxf.apache.org/docs/jax-rs-client-api.html#JAX-RSClientAPI-Proxy-basedAPI[proxy
 API].
- You just need to specify the operation name in the message header and
+ You need to specify the operation name in the message header and
 prepare the parameter in the message body, the camel-cxfrs producer will
-generate right REST request for you.
+ generate the right REST request for you.
 
 Here is an example:
 [source,java]
@@ -344,9 +340,9 @@ Exchange exchange = template.send("direct://proxy", new Processor() {
         inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.FALSE);
         // set a customer header
         inMessage.setHeader("key", "value");
-        // setup the accept content type
+        // set up the accepted content type
         inMessage.setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
-        // set the parameters , if you just have one parameter
+        // set the parameters, if you just have one parameter,
         // camel will put this object into an Object[] itself
         inMessage.setBody("123");
     }
@@ -364,8 +360,7 @@ assertEquals("value", exchange.getMessage().getHeader("key"), "Get a wrong heade
 
 The http://cxf.apache.org/docs/jax-rs.html[CXF JAXRS front end] also
 provides
-http://cxf.apache.org/docs/jax-rs-client-api.html#JAX-RSClientAPI-CXFWebClientAPI[a
-http centric client API]. You can also invoke this API from
+http://cxf.apache.org/docs/jax-rs-client-api.html#JAX-RSClientAPI-CXFWebClientAPI[an HTTP centric client API]. You can also invoke this API from
 `camel-cxfrs` producer. You need to specify the
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Exchange.html#HTTP_PATH[HTTP_PATH]
 and
@@ -388,7 +383,7 @@ Exchange exchange = template.send("direct://http", new Processor() {
         inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
         // set the relative path
         inMessage.setHeader(Exchange.HTTP_PATH, "/customerservice/customers/123");
-        // Specify the response class , cxfrs will use InputStream as the response object type
+        // Specify the response class, cxfrs will use InputStream as the response object type
         inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Customer.class);
         // set a customer header
         inMessage.setHeader("key", "value");
