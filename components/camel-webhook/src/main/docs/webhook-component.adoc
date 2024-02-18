@@ -15,13 +15,13 @@
 *{component-header}*
 
 
-The Webhook meta component allows other Camel components to configure webhooks on a remote webhook provider and
-listening for them.
+The Webhook meta-component allows other Camel components to configure webhooks on a remote webhook provider and
+ listen for them.
 
 .The following components currently provide webhook endpoints:
 
-- `camel-telegram`
-- `camel-whatsapp`
+- xref:telegram-component.adoc[Camel Telegram]
+- xref:whatsapp-component.adoc[Camel WhatsApp]
 
 Maven users can add the following dependency to their `pom.xml`
 for this component:
@@ -63,7 +63,7 @@ include::partial$component-endpoint-options.adoc[]
 
 == Examples
 
-Examples of webhook component are provided in the documentation of the delegate components that support it.
+Examples of the webhook component are provided in the documentation of the delegate components that support it.
 
 
 include::spring-boot:partial$starter.adoc[]
