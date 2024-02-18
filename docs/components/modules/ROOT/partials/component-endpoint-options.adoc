@@ -32,7 +32,7 @@ The {doctitle} endpoint is configured using URI syntax:
 {syntax}
 ----
 
-with the following path and query parameters:
+With the following _path_ and _query_ parameters:
 
 === Path Parameters ({pathparametercount} parameters)
 
@@ -54,7 +54,7 @@ endif::[]
 === Query Parameters ({queryparametercount} parameters)
 
 ifeval::[{queryparametercount} == 0]
-The {doctitle} endpoint has no query parameters.
+The {doctitle} endpoint has no _query_ parameters.
 endif::[]
 
 ifeval::[{queryparametercount} != 0]
@@ -70,7 +70,7 @@ ifeval::[{apicount} != 0]
 
 == API Parameters ({apicount} APIs)
 
-The {doctitle} endpoint is an API based component and has additional parameters based on which API name and API method is used.
+The {doctitle} endpoint is an API-based component and has additional parameters based on which API name and API method is used.
 The API name and API method is located in the endpoint URI as the `{apiSyntax}` path parameters:
 
 [subs='+attributes']
@@ -110,8 +110,8 @@ The {apiname} API is defined in the syntax as follows:
 {scheme}:{apiname}/methodName?[parameters]
 ------
 
-The {methodcount} method(s) is listed in the table below, followed by detailed syntax for each  method.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+The {methodcount} method(s) is(are) listed in the table below, followed by detailed syntax for each method.
+(API methods can have a shorthand _alias_ name which can be used in the syntax instead of the name)
 
 [width="100%",cols="2,2,6a",options="header"]
 |===
@@ -144,7 +144,7 @@ In addition to the parameters above, the {name} API can also use any of the <<#_
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
 The message header name must be of the format `Camel{pascalcasescheme}.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+The `inBody` parameter overrides message header, i.e., the endpoint parameter `inBody=myParameterNameHere`
 would override a `Camel{pascalcasescheme}.myParameterNameHere` header.
 
 %endif::[]
