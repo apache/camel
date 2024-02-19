@@ -67,7 +67,7 @@ Java::
 from("activemq:SomeQueue")
     .to("bean:foo")
     .to("bean:bar")
-    .to("acitvemq:OutputQueueu");
+    .to("activemq:OutputQueue");
 ----
 
 XML::
@@ -113,7 +113,7 @@ from("activemq:SomeQueue")
         .pipeline()
             .to("bean:foo")
             .to("bean:bar")
-            .to("acitvemq:OutputQueueu")
+            .to("activemq:OutputQueue")
         .end()
     .end() // ends multicast
     .to("log:result");
