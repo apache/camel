@@ -125,6 +125,7 @@ public interface Exchange extends VariableAware {
 
     String DOCUMENT_BUILDER_FACTORY = "CamelDocumentBuilderFactory";
 
+    @Metadata(label = "doCatch,doFinally,errorHandler,onException", description = "Stores the caught exception due to a processing error of the current Exchange", javaType = "java.lang.Exception")
     String EXCEPTION_CAUGHT = "CamelExceptionCaught";
     String EXCEPTION_HANDLED = "CamelExceptionHandled";
     String EVALUATE_EXPRESSION_RESULT = "CamelEvaluateExpressionResult";
