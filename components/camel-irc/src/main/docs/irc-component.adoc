@@ -53,8 +53,9 @@ include::partial$component-endpoint-headers.adoc[]
 
 The IRC component supports SSL/TLS configuration
 through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE
-Configuration Utility].  This utility greatly decreases the amount of
-component specific code you need to write and is configurable at the
+Configuration Utility].
+This utility greatly decreases the amount of
+component-specific code you need to write and is configurable at the
 endpoint and component levels.  The following examples demonstrate how
 to use the utility with the IRC component.
 
@@ -121,23 +122,23 @@ ircs:host[:port]/#room?username=user&password=pass&trustManager=#referenceToMyTr
 
 == Using keys
 
-Some irc rooms requires you to provide a key to be able to join that
+Some IRC rooms require you to provide a key to be able to join that
 channel. The key is just a secret word.
 
-For example we join 3 channels where as only channel 1 and 3 uses a key.
+For example, we join three channels whereas only channel 1 and 3 use a key.
 
 [source,java]
 -----------------------------------------------------------------------------
 irc:nick@irc.server.org?channels=#chan1,#chan2,#chan3&keys=chan1Key,,chan3key
 -----------------------------------------------------------------------------
 
-== Getting a list of users of the channel
+== Getting a list of channel users
 
 Using the `namesOnJoin` option one can invoke the IRC-`NAMES` command after the component has joined a channel. 
-The server will reply with `irc.num = 353`. So in order to process the result the property `onReply` has to be `true`.
-Furthermore one has to filter the `onReply` exchanges in order to get the names.
+The server will reply with `irc.num = 353`. So to process the result the property `onReply` has to be `true`.
+Furthermore, one has to filter the `onReply` exchanges to get the names.
 
-For example we want to get all exchanges that contain the usernames of the channel:
+For example, we want to get all exchanges that contain the usernames of the channel:
 
 [source,java]
 -----------------------------------------------------------------------------
@@ -148,7 +149,7 @@ from("ircs:nick@myserver:1234/#mychannelname?namesOnJoin=true&onReply=true")
 			.to("mock:result").stop();
 -----------------------------------------------------------------------------
 
-== Sending to different channel or a person
+== Sending to a different channel or a person
 
 If you need to send messages to a different channel (or a person) which is not defined on IRC endpoint, you can specify a different destination in a message header.
 
