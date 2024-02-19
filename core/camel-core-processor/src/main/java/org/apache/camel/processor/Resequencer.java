@@ -84,8 +84,7 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
     private final AsyncProcessor processor;
     private final Collection<Exchange> collection;
     private ExceptionHandler exceptionHandler;
-
-    private final BatchSender sender;
+    private BatchSender sender;
 
     public Resequencer(CamelContext camelContext, Processor processor, Expression expression) {
         this(camelContext, processor, createSet(expression, false, false), expression);
@@ -107,7 +106,6 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
         this.processor = AsyncProcessorConverterHelper.convert(processor);
         this.collection = collection;
         this.expression = expression;
-        this.sender = new BatchSender();
         this.exceptionHandler = new LoggingExceptionHandler(camelContext, getClass());
     }
 
@@ -340,14 +338,21 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
     @Override
     protected void doStart() throws Exception {
         ServiceHelper.startService(processor);
+        sender = new BatchSender();
         sender.start();
     }
 
     @Override
     protected void doStop() throws Exception {
-        sender.cancel();
+        if (sender != null) {
+            try {
+                sender.cancel();
+            } catch (Exception e) {
+                // ignore
+            }
+            sender = null;
+        }
         ServiceHelper.stopService(processor);
-        collection.clear();
     }
 
     /**
