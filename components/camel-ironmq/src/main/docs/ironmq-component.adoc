@@ -20,7 +20,7 @@ The component uses the
 https://github.com/iron-io/iron_mq_java[IronMQ java client]
 library.
 
-To run it requires a IronMQ account, and a project id and token.
+To run it requires an IronMQ account and a project id and token.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -40,7 +40,7 @@ for this component:
 -----------------------------
  ironmq:queueName[?options]
 -----------------------------
-Where **queueName** identifies the IronMQ queue you want to publish or consume messages from.
+Where `queueName` identifies the IronMQ queue you want to publish or consume messages from.
 
 
 // component-configure options: START
@@ -61,11 +61,12 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Message Body
 
-Should be either a String or a array of Strings. In the latter case the batch of strings will be sent to IronMQ as one request, creating one message pr. element in the array.
+It should be either a String or an array of Strings.
+In the latter case, the batch of strings will be sent to IronMQ as one request, creating one message per element in the array.
 
 == Consumer example
 
-Consume 50 messages pr. poll from the queue 'testqueue' on aws eu, and save the messages to files.
+Consume 50 messages per poll from the queue `testqueue` on aws eu, and save the messages to files.
 
 [source,java]
 --------------------------------------------------
