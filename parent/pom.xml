@@ -409,7 +409,7 @@
         <rest-assured-version>5.4.0</rest-assured-version>
         <roaster-version>2.29.0.Final</roaster-version>
         <robotframework-version>4.1.2</robotframework-version>
-        <rocketmq-version>5.1.4</rocketmq-version>
+        <rocketmq-version>5.2.0</rocketmq-version>
         <rome-version>2.1.0</rome-version>
         <rssreader-version>3.6.0</rssreader-version>
         <rxjava2-version>2.2.21</rxjava2-version>
