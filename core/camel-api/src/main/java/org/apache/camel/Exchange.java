@@ -71,14 +71,22 @@ public interface Exchange extends VariableAware {
     String AUTHENTICATION_FAILURE_POLICY_ID = "CamelAuthenticationFailurePolicyId";
     @Deprecated
     String ACCEPT_CONTENT_TYPE = "CamelAcceptContentType";
+    @Metadata(label = "aggregate", description = "Number of exchanges that was grouped together.", javaType = "int")
     String AGGREGATED_SIZE = "CamelAggregatedSize";
+    @Metadata(label = "aggregate", description = "The time in millis this group will timeout", javaType = "long")
     String AGGREGATED_TIMEOUT = "CamelAggregatedTimeout";
+    @Metadata(label = "aggregate", description = "Enum that tell how this group was completed", enums = "consumer,force,interval,predicate,size,strategy,timeout", javaType = "String")
     String AGGREGATED_COMPLETED_BY = "CamelAggregatedCompletedBy";
+    @Metadata(label = "aggregate", description = "The correlation key for this aggregation group", javaType = "String")
     String AGGREGATED_CORRELATION_KEY = "CamelAggregatedCorrelationKey";
     String AGGREGATED_COLLECTION_GUARD = "CamelAggregatedCollectionGuard";
     String AGGREGATION_STRATEGY = "CamelAggregationStrategy";
+    @Metadata(label = "aggregate", description = "Set to true to force completing the current group. This allows to overrule any existing completion predicates, sizes, timeouts etc, and complete the group.", javaType = "boolean")
     String AGGREGATION_COMPLETE_CURRENT_GROUP = "CamelAggregationCompleteCurrentGroup";
+    @Metadata(label = "aggregate", description = "Set to true to force completing all the groups (excluding this message). This allows to overrule any existing completion predicates, sizes, timeouts etc, and complete the group."
+                                                 + " This message is considered a signal message only, the message headers/contents will not be processed otherwise. Instead use CamelAggregationCompleteAllGroupsInclusive if this message should be included in the aggregator.", javaType = "boolean")
     String AGGREGATION_COMPLETE_ALL_GROUPS = "CamelAggregationCompleteAllGroups";
+    @Metadata(label = "aggregate", description = "Set to true to force completing all the groups (including this message). This allows to overrule any existing completion predicates, sizes, timeouts etc, and complete the group.", javaType = "boolean")
     String AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE = "CamelAggregationCompleteAllGroupsInclusive";
     String ASYNC_WAIT = "CamelAsyncWait";
 
