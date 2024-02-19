@@ -11,10 +11,13 @@
 
 *Since Camel {since}*
 
-The camel-debug enables Camel debugger for 3rd party tooling.
+The camel-debug enables Camel debugger for third party tooling.
 This makes it easier to perform debugging in IDEs such as IDEA, Eclipse, VSCode
 
-IMPORTANT: The camel-debug is only for development purposes, it should **not** be used for production.
+[IMPORTANT]
+====
+The camel-debug is only for development purposes, it should **not** be used for production.
+====
 
 == Auto-detection from classpath
 
@@ -28,9 +31,8 @@ Detected: camel-debug JAR (Enabling Camel Debugging)
 
 == JMX remote connection
 
-To make it possible for 3rd party tooling to connect to the running Camel application,
-and to perform debugging actions, then Camel will expose a JMX RMI connector port,
-that the tools can use to connect via that allows JMX remote management.
+Camel will expose a JMX RMI connector port that the tools can use to connect via that allows JMX remote management.
+This is necessary to make it possible for third party tooling to connect to the running Camel application, and to perform debugging actions.
 
 The service URL to connect is:
 
