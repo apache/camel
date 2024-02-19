@@ -63,7 +63,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Exchange data format
 
-Camel will deliver the body as a json formatted java.lang.String (see
+Camel will deliver the body as a json formatted `java.lang.String` (see
 the `mode` option above).
 
 == Samples
@@ -75,7 +75,7 @@ In this sample we find the 7-day weather forecast for Madrid, Spain:
 from("weather:foo?location=Madrid,Spain&period=7 days&appid=APIKEY&geolocationAccessKey=IPSTACK_ACCESS_KEY&geolocationRequestHostIP=LOCAL_IP").to("jms:queue:weather");
 ---------------------------------------------------------------------------------------------
 
-To just find the current weather for your current location you can use
+To just find the current weather for your current location, you can use
 this:
 
 [source,java]
@@ -83,7 +83,7 @@ this:
 from("weather:foo?appid=APIKEY&geolocationAccessKey=IPSTACK_ACCESS_KEY&geolocationRequestHostIP=LOCAL_IP").to("jms:queue:weather");
 ---------------------------------------------------------
 
-And to find the weather using the producer we do:
+And to find the weather using the producer, we do:
 
 [source,java]
 --------------------------------------------------------
