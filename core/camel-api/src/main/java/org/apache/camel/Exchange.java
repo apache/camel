@@ -19,6 +19,7 @@ package org.apache.camel;
 import java.util.Map;
 
 import org.apache.camel.clock.Clock;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.annotations.ConstantProvider;
 
@@ -177,7 +178,9 @@ public interface Exchange extends VariableAware {
     String LOG_DEBUG_BODY_MAX_CHARS = "CamelLogDebugBodyMaxChars";
     String LOG_DEBUG_BODY_STREAMS = "CamelLogDebugStreams";
     String LOG_EIP_NAME = "CamelLogEipName";
+    @Metadata(label = "loop", description = "Index of the current iteration (0 based).", javaType = "int")
     String LOOP_INDEX = "CamelLoopIndex";
+    @Metadata(label = "loop", description = "Total number of loops. This is not available if running the loop in while loop mode.", javaType = "int")
     String LOOP_SIZE = "CamelLoopSize";
 
     // Long running action (saga): using "Long-Running-Action" as header value allows sagas
@@ -237,8 +240,11 @@ public interface Exchange extends VariableAware {
     String SKIP_WWW_FORM_URLENCODED = "CamelSkipWwwFormUrlEncoding";
     String SLIP_ENDPOINT = "CamelSlipEndpoint";
     String SLIP_PRODUCER = "CamelSlipProducer";
+    @Metadata(label = "split", description = "A split counter that increases for each Exchange being split. The counter starts from 0.", javaType = "int")
     String SPLIT_INDEX = "CamelSplitIndex";
+    @Metadata(label = "split", description = "Whether this Exchange is the last.", javaType = "boolean")
     String SPLIT_COMPLETE = "CamelSplitComplete";
+    @Metadata(label = "split", description = "The total number of Exchanges that was split. This property is not applied for stream based splitting, except for the very last message because then Camel knows the total size.", javaType = "int")
     String SPLIT_SIZE = "CamelSplitSize";
     String STEP_ID = "CamelStepId";
 

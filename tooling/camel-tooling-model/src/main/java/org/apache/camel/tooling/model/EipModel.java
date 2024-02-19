@@ -16,11 +16,15 @@
  */
 package org.apache.camel.tooling.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class EipModel extends BaseModel<EipModel.EipOptionModel> {
 
     protected boolean abstractModel;  // used in models from camel-core-engine
     protected boolean input;          // used in models from camel-core-engine
     protected boolean output;         // used in models from camel-core-engine
+    protected final List<EipModel.EipOptionModel> exchangeProperties = new ArrayList<>();
 
     public EipModel() {
     }
@@ -52,6 +56,14 @@ public class EipModel extends BaseModel<EipModel.EipOptionModel> {
 
     public void setOutput(boolean output) {
         this.output = output;
+    }
+
+    public List<EipOptionModel> getExchangeProperties() {
+        return exchangeProperties;
+    }
+
+    public void addExchangeProperty(EipOptionModel property) {
+        exchangeProperties.add(property);
     }
 
     public String getDocLink() {
