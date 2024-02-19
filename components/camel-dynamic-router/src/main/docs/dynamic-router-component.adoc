@@ -34,7 +34,7 @@ sent to.
  _Dynamic Rule Base_:: The Dynamic Router should have a list of routing recipients' criteria that define the terms under
 which an exchange is suitable for them to receive.
  * *core*: implements a dynamic version of a `Routing Slip` for this purpose, but that is not inherently dynamic in
-terms of its content.  If the content of this slip will be dynamic, it will be up to the user to define and implement
+terms of its content. If the content of this slip is dynamic, it will be up to the user to define and implement
 that capability.
  * *component*: builds the rule base at runtime, and maintains it as participants subscribe or unsubscribe via the
 control channel.
@@ -93,20 +93,23 @@ implementation group: 'org.apache.camel', name: 'camel-dynamic-router', version:
 // use the same version as your Camel core version
 ----
 
-The Dynamic Router component is used in the same way that other components are used.  Simply include the dynamic-router
+The Dynamic Router component is used in the same way that other components are used. Include the dynamic-router
 URI as a consumer in a route, along with the channel name.
 
-In Java:
 
+[tabs]
+====
+Java::
++
 .Example Java DSL Route Definition
 [source,java]
 ----
-// Send message to the Dynamic Router channel named "orders"
+// Send a message to the Dynamic Router channel named "orders"
 from("direct:start").to("dynamic-router:orders");
 ----
 
-And the same route using XML DSL:
-
+Spring XML::
++
 .Example XML Route Definition
 [source,xml]
 ----
@@ -115,6 +118,7 @@ And the same route using XML DSL:
    <to uri="dynamic-router:nameOfYourChannel"/>
 </route>
 ----
+====
 
 == Dynamic Router EIP Component Use Cases
 
@@ -131,7 +135,7 @@ If we have a simple point-of-sale application, we might have services that:
  2. Adjust inventory counts
  3. Process returns
 
-For the purpose of this example, the exact steps that each service carries out is not as important as the fact that
+For the purpose of this example, the exact steps that each service carries out are not as important as the fact that
 each service needs to be notified that it needs to do something under the right condition(s).  So, each service will
 subscribe to participate in routing:
 
@@ -195,10 +199,10 @@ from("direct:start")
 
 Note the `.process(myOrderProcessor)` step.  If incoming messages need to be validated, enriched, transformed, or
 otherwise augmented, that can be done before the Dynamic Router receives the message.  Then, when the Dynamic Router
-receives a message, it checks the `Exchange` against all subscriptions for the "orders" channel to determine if it is
+receives a message, it checks the `Exchange` against all subscriptions for the _orders_ channel to determine if it is
 suitable for any of the recipients.  Orders should have a header (`command` -> `processOrder`), so the message will be
-routed to the orders service, and the inventory service.  The system will process the order details, and then the
-inventory service will deduct from merchandise counts.  Likewise, returns should have a header
+routed to the _orders_ service, and the inventory service.  The system will process the order details, and then the
+inventory service will deduct from merchandize counts.  Likewise, returns should have a header
 (`command` -> `processReturn`), so the message will be routed to the returns service, where the return details will be
 processed, and the inventory service will increase the relevant merchandise counts.
 
