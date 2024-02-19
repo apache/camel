@@ -100,6 +100,7 @@ public interface Exchange extends VariableAware {
     String BREADCRUMB_ID = "breadcrumbId";
 
     String CHARSET_NAME = "CamelCharsetName";
+    @Deprecated
     String CIRCUIT_BREAKER_STATE = "CamelCircuitBreakerState";
     @Deprecated
     String CREATED_TIMESTAMP = "CamelCreatedTimestamp";
@@ -119,6 +120,7 @@ public interface Exchange extends VariableAware {
     String DEFAULT_CHARSET_PROPERTY = "org.apache.camel.default.charset";
     String DESTINATION_OVERRIDE_URL = "CamelDestinationOverrideUrl";
     String DISABLE_HTTP_STREAM_CACHE = "CamelDisableHttpStreamCache";
+    @Metadata(label = "idempotentConsumer", description = "Whether this exchange is a duplicate detected by the Idempotent Consumer EIP", javaType = "boolean")
     String DUPLICATE_MESSAGE = "CamelDuplicateMessage";
 
     String DOCUMENT_BUILDER_FACTORY = "CamelDocumentBuilderFactory";
@@ -204,12 +206,15 @@ public interface Exchange extends VariableAware {
     String MESSAGE_HISTORY_HEADER_FORMAT = "CamelMessageHistoryHeaderFormat";
     String MESSAGE_HISTORY_OUTPUT_FORMAT = "CamelMessageHistoryOutputFormat";
     String MESSAGE_TIMESTAMP = "CamelMessageTimestamp";
+    @Metadata(label = "multicast", description = "An index counter that increases for each Exchange being multicasted. The counter starts from 0.", javaType = "int")
     String MULTICAST_INDEX = "CamelMulticastIndex";
+    @Metadata(label = "multicast", description = "Whether this Exchange is the last.", javaType = "boolean")
     String MULTICAST_COMPLETE = "CamelMulticastComplete";
 
     @Deprecated
     String NOTIFY_EVENT = "CamelNotifyEvent";
 
+    @Metadata(label = "onCompletion", description = "Flag to mark that this exchange is currently being executed as onCompletion", javaType = "boolean")
     String ON_COMPLETION = "CamelOnCompletion";
     String ON_COMPLETION_ROUTE_IDS = "CamelOnCompletionRouteIds";
     String OFFSET = "CamelOffset";
@@ -218,6 +223,7 @@ public interface Exchange extends VariableAware {
     String PARENT_UNIT_OF_WORK = "CamelParentUnitOfWork";
     String STREAM_CACHE_UNIT_OF_WORK = "CamelStreamCacheUnitOfWork";
 
+    @Metadata(label = "recipientList", description = "The endpoint uri of this recipient list", javaType = "String")
     String RECIPIENT_LIST_ENDPOINT = "CamelRecipientListEndpoint";
     String RECEIVED_TIMESTAMP = "CamelReceivedTimestamp";
     String REDELIVERED = "CamelRedelivered";
@@ -246,6 +252,7 @@ public interface Exchange extends VariableAware {
     String SOAP_ACTION = "CamelSoapAction";
     String SKIP_GZIP_ENCODING = "CamelSkipGzipEncoding";
     String SKIP_WWW_FORM_URLENCODED = "CamelSkipWwwFormUrlEncoding";
+    @Metadata(label = "routingSlip", description = "The endpoint uri of this routing slip", javaType = "String")
     String SLIP_ENDPOINT = "CamelSlipEndpoint";
     String SLIP_PRODUCER = "CamelSlipProducer";
     @Metadata(label = "split", description = "A split counter that increases for each Exchange being split. The counter starts from 0.", javaType = "int")
@@ -254,6 +261,7 @@ public interface Exchange extends VariableAware {
     String SPLIT_COMPLETE = "CamelSplitComplete";
     @Metadata(label = "split", description = "The total number of Exchanges that was split. This property is not applied for stream based splitting, except for the very last message because then Camel knows the total size.", javaType = "int")
     String SPLIT_SIZE = "CamelSplitSize";
+    @Metadata(label = "step", description = "The id of the Step EIP", javaType = "String")
     String STEP_ID = "CamelStepId";
 
     String TIMER_COUNTER = "CamelTimerCounter";
