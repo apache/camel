@@ -14,13 +14,10 @@
 
 *{component-header}*
 
-The *Deep Java Library* component is used to infer Deep Learning models from message exchanges data.
-This component uses https://djl.ai/[Deep Java Library] as underlying library.
+The *Deep Java Library* component is used to infer deep learning models from message exchanges data.
+This component uses the https://djl.ai/[Deep Java Library] as the underlying library.
 
-In order to use the DJL component, Maven users will need to add the
-following dependency to their `pom.xml`:
-
-*pom.xml*
+To use the DJL component, Maven users will need to add the following dependency to their `pom.xml`:
 
 [source,xml]
 ----
@@ -80,7 +77,7 @@ The following table contains supported models in the model zoo:
 
 == DJL Engine implementation
 
-Because DJL is deep learning framework agnostic, you don't have to make a choice between frameworks when creating your projects.
+Because DJL is deep learning framework-agnostic, you don't have to make a choice between frameworks when creating your projects.
 You can switch frameworks at any point.
 To ensure the best performance, DJL also provides automatic CPU/GPU choice based on hardware configuration.
 
@@ -193,7 +190,7 @@ from("file:/data/mnist/0/10.png")
 === Custom deep learning model
 [source,java]
 ----
-// create deep learning model
+// create a deep learning model
 Model model = Model.newInstance();
 model.setBlock(new Mlp(28 * 28, 10, new int[]{128, 64}));
 model.load(Paths.get(MODEL_DIR), MODEL_NAME);
