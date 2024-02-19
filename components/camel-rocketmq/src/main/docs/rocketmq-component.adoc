@@ -66,7 +66,8 @@ include::partial$component-endpoint-headers.adoc[]
 
 == InOut Pattern
 
-InOut Pattern based on Message Key. When the producer sending the message, a messageKey will be generated and append to the message's key.
+InOut Pattern based on Message Key.
+When the producer sends the message, a messageKey will be generated and append to the message's key.
 
 After the message sent, a consumer will listen to the topic configured by the parameter `ReplyToTopic`.
 
