@@ -23,10 +23,12 @@ and consumers are invoked in a separate thread from the producer.
 
 Note that queues are only visible within the same CamelContext.
 
-This component does not implement any kind of persistence or recovery,
-if the JVM terminates while messages are yet to be processed. If you need
-persistence, reliability or distributed SEDA, try using 
-xref:jms-component.adoc[JMS].
+[NOTE]
+====
+This component does not implement any kind of persistence or recovery
+if the JVM terminates while messages are yet to be processed.
+If you need persistence, reliability or distributed SEDA, try using xref:jms-component.adoc[JMS].
+====
 
 [TIP]
 ====
@@ -39,10 +41,10 @@ of any consumers when a producer sends a message exchange.
 == URI format
 
 ----
-seda:someName[?options]
+seda:someId[?options]
 ----
 
-Where *someName* can be any string that uniquely identifies the endpoint
+Where _someId_ can be any string that uniquely identifies the endpoint
 within the current CamelContext.
 
 
@@ -63,24 +65,27 @@ include::partial$component-endpoint-options.adoc[]
 
 == Choosing BlockingQueue implementation
 
-By default, the SEDA component always intantiates LinkedBlockingQueue,
+By default, the SEDA component always instantiates a `LinkedBlockingQueue`,
 but you can use different implementation, you can reference your own
-BlockingQueue implementation, in this case the size option is not used
+`BlockingQueue` implementation, in this case the size option is not used:
 
 [source,xml]
 ----
 <bean id="arrayQueue" class="java.util.ArrayBlockingQueue">
-  <constructor-arg index="0" value="10" ><!-- size -->
-  <constructor-arg index="1" value="true" ><!-- fairness -->
+  <constructor-arg index="0" value="10" /><!-- size -->
+  <constructor-arg index="1" value="true" /><!-- fairness -->
 </bean>
 
 <!-- ... and later -->
 <from>seda:array?queue=#arrayQueue</from>
 ----
 
-Or you can reference a BlockingQueueFactory implementation, 3
-implementations are provided LinkedBlockingQueueFactory,
-ArrayBlockingQueueFactory and PriorityBlockingQueueFactory:
+You can also reference a `BlockingQueueFactory` implementation.
+Three implementations are provided:
+
+* `LinkedBlockingQueueFactory`
+* `ArrayBlockingQueueFactory`
+* `PriorityBlockingQueueFactory`
 
 [source,xml]
 ----
@@ -117,7 +122,7 @@ copies the response to the original message response.
 
 By default, the SEDA endpoint uses a single consumer thread, but you can
 configure it to use concurrent consumer threads. So instead of thread
-pools you can use:
+ pools, you can use:
 
 [source,java]
 ----
@@ -139,7 +144,7 @@ from("seda:stageName").thread(5).process(...)
 ----
 
 Can wind up with two `BlockQueues`: one from the SEDA endpoint, and one
-from the workqueue of the thread pool, which may not be what you want.
+from the work queue of the thread pool, which may not be what you want.
 Instead, you might wish to configure a xref:direct-component.adoc[Direct] endpoint
 with a thread pool, which can process messages both synchronously and
 asynchronously. For example:
@@ -154,12 +159,13 @@ on a SEDA endpoint using the `concurrentConsumers` option.
 
 == Sample
 
-In the route below we use the SEDA queue to send the request to this
-async queue to be able to send a fire-and-forget message for further
+In the route below, we use the SEDA queue to send the request to this
+async queue.
+As such, it is able to send a _fire-and-forget_ message for further
 processing in another thread, and return a constant reply in this thread
 to the original caller.
 
-We send a Hello World message and expects the reply to be OK.
+We send a _Hello World_ message and expect the reply to be _OK_.
 
 [source,java]
 ----
@@ -195,14 +201,14 @@ We send a Hello World message and expects the reply to be OK.
 ----
 
 
-The "Hello World" message will be consumed from the SEDA queue from
+The _Hello World_ message will be consumed from the SEDA queue from
 another thread for further processing. Since this is from a unit test,
 it will be sent to a `mock` endpoint where we can do assertions in the
 unit test.
 
 == Using multipleConsumers
 
-In this example we have defined two consumers.
+In this example, we have defined two consumers.
 
 [source,java]
 ----
@@ -229,11 +235,11 @@ In this example we have defined two consumers.
 ----
 
 
-Since we have specified *multipleConsumers=true* on the seda foo
+Since we have specified `multipleConsumers=true` on the seda `foo`
 endpoint we can have those two consumers receive their own copy of the
-message as a kind of pub-sub style messaging.
+message as a kind of _publish/subscribe_ style messaging.
 
-As the beans are part of an unit test they simply send the message to a
+As the beans are part of a unit test, they simply send the message to a
 mock endpoint.
 
 == Extracting queue information.
