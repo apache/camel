@@ -18,8 +18,7 @@ Camel component for communicating with Docker.
 
 The Docker Camel component leverages the
 https://github.com/docker-java/docker-java[docker-java] via the
-https://docs.docker.com/reference/api/docker_remote_api[Docker Remote
-API].
+https://docs.docker.com/reference/api/docker_remote_api[Docker Remote API].
 
 
 == URI format
@@ -49,7 +48,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Header Strategy
 
-All URI option can be passed as Header properties. Values found in a
+All URI options can be passed as Header properties. Values found in a
 message header take precedence over URI parameters. A header property
 takes the form of a URI option prefixed with *CamelDocker* as shown
 below
@@ -71,7 +70,7 @@ The following example consumes events from Docker:
 from("docker://events?host=192.168.59.103&port=2375").to("log:event");
 ----------------------------------------------------------------------
 
-The following example queries Docker for system wide information
+The following example queries Docker for system-wide information
 
 [source,java]
 -------------------------------------------------------------------
@@ -81,10 +80,10 @@ from("docker://info?host=192.168.59.103&port=2375").to("log:info");
 
 == Dependencies
 
-To use Docker in your Camel routes you need to add a dependency on
+To use Docker in your Camel routes, you need to add a dependency on
 *camel-docker*, which implements the component.
 
-If you use Maven you can just add the following to your pom.xml,
+If you use Maven, you can add the following to your pom.xml,
 substituting the version number for the latest and greatest release (see
 the download page for the latest versions).
 
