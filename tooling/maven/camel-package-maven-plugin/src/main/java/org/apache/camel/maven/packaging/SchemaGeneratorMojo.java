@@ -333,7 +333,13 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
     protected void findEipModelExchangeProperties(Class<?> classElement, String name, EipModel eipModel) {
         // load Exchange and find options for this EIP
-        Class<?> clazz = loadClass("org.apache.camel.Exchange");
+        Class<?> clazz;
+        if ("circuitBreaker".equals(name)) {
+            // special for circuit breaker
+            clazz = loadClass("org.apache.camel.spi.CircuitBreakerConstants");
+        } else {
+            clazz = loadClass("org.apache.camel.Exchange");
+        }
         for (Field field : clazz.getFields()) {
             if ((isStatic(field.getModifiers()) && field.getType() == String.class)
                     && field.isAnnotationPresent(Metadata.class)) {
