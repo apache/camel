@@ -15,24 +15,18 @@
 
 *{component-header}*
 
-Testing of distributed and asynchronous processing is
-notoriously difficult. The xref:mock-component.adoc[Mock],
-xref:dataset-component.adoc[DataSet], and xref:dataset-test-component.adoc[DataSet Test]
-endpoints work great with the
-Camel Testing Framework to simplify your unit and
-integration testing using
-xref:eips:enterprise-integration-patterns.adoc[Enterprise Integration
-Patterns] and Camel's large range of Components
+Testing of distributed and asynchronous processing is notoriously challenging.
+The xref:mock-component.adoc[Mock], xref:dataset-component.adoc[DataSet], and xref:dataset-test-component.adoc[DataSet Test]
+endpoints work with the Camel Testing Framework to simplify your unit and integration testing using
+xref:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns] and Camel's large range of Components
 together with the powerful Bean Integration.
 
-The DataSet component provides a mechanism to easily perform load & soak
-testing of your system. It works by allowing you to create
-https://www.javadoc.io/doc/org.apache.camel/camel-dataset/current/org/apache/camel/component/dataset/DataSet.html[DataSet
-instances] both as a source of messages and as a way to assert that the
-data set is received.
+The DataSet component provides a mechanism to easily perform load & soak testing of your system.
+It works by allowing you to create
+https://www.javadoc.io/doc/org.apache.camel/camel-dataset/current/org/apache/camel/component/dataset/DataSet.html[DataSet instances]
+both as a source of messages and as a way to assert that the data set is received.
 
-Camel will use the xref:log-component.adoc[throughput logger] when sending
-dataset's.
+Camel will use the xref:log-component.adoc[throughput logger] when sending the dataset.
 
 == URI format
 
@@ -41,13 +35,13 @@ dataset:name[?options]
 ----
 
 Where *name* is used to find the
-https://www.javadoc.io/doc/org.apache.camel/camel-dataset/current/org/apache/camel/component/dataset/DataSet.html[DataSet
-instance] in the Registry
+https://www.javadoc.io/doc/org.apache.camel/camel-dataset/current/org/apache/camel/component/dataset/DataSet.html[DataSet instance]
+in the Registry
 
 Camel ships with a support implementation of
 `org.apache.camel.component.dataset.DataSet`, the
 `org.apache.camel.component.dataset.DataSetSupport` class, that can be
-used as a base for implementing your own DataSet. Camel also ships with
+used as a base for implementing your own data set. Camel also ships with
 some implementations that can be used for testing:
  `org.apache.camel.component.dataset.SimpleDataSet`, `org.apache.camel.component.dataset.ListDataSet`
 and `org.apache.camel.component.dataset.FileDataSet`, all of which
@@ -73,9 +67,8 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Configuring DataSet
 
-Camel will lookup in the Registry for a bean
-implementing the DataSet interface. So you can register your own DataSet
-as:
+Camel will look up in the Registry for a bean implementing the `DataSet` interface.
+So you can register your own data set as:
 
 [source,xml]
 ----
@@ -99,17 +92,17 @@ from("activemq:SomeQueue").to("dataset:foo");
 ----
 
 The above would look in the Registry to find the
-*foo* DataSet instance which is used to create the messages.
+`foo` `DataSet` instance which is used to create the messages.
 
-Then you create a DataSet implementation, such as using the
+Then you create a `DataSet` implementation, such as using the
 `SimpleDataSet` as described below, configuring things like how big the
 data set is and what the messages look like etc.  
  
 
 == DataSetSupport (abstract class)
 
-The DataSetSupport abstract class is a nice starting point for new
-DataSets, and provides some useful features to derived classes.
+The `DataSetSupport` abstract class is a nice starting point for new
+data set, and provides some useful features to derived classes.
 
 === Properties on DataSetSupport
 
@@ -117,16 +110,17 @@ DataSets, and provides some useful features to derived classes.
 |===
 |Property |Type |Default |Description
 
-|`defaultHeaders` |`Map<String,Object>` |`null` |Specifies the default message body. For SimpleDataSet it is a constant
-payload; though if you want to create custom payloads per message,
+|`defaultHeaders` |`Map<String,Object>` |`null` | Specify the default message body.
+For `SimpleDataSet` it is a constant payload; though if you want to create custom payloads per message,
 create your own derivation of `DataSetSupport`.
 
 |`outputTransformer` |`org.apache.camel.Processor` |null |
 
-|`size` |`long` |`10` |Specifies how many messages to send/consume.
+|`size` |`long` |`10` | Specify how many messages to send/consume.
 
-|`reportCount` |`long` |`-1` |Specifies the number of messages to be received before reporting
-progress. Useful for showing progress of a large load test. If < 0, then
+|`reportCount` |`long` |`-1` | Specify the number of messages to be received before reporting
+progress.
+Useful for showing the progress of a large load test. If smaller than zero (` < 0`), then
 `size` / 5, if is 0 then `size`, else set to `reportCount` value.
 |===
 
@@ -140,7 +134,7 @@ The `SimpleDataSet` extends `DataSetSupport`, and adds a default body.
 |===
 |Property |Type |Default |Description
 
-|`defaultBody` |`Object` |`<hello>world!</hello>` |Specifies the default message body. By default, the `SimpleDataSet`
+|`defaultBody` |`Object` |`<hello>world!</hello>` |Specify the default message body. By default, the `SimpleDataSet`
 produces the same constant payload for each exchange. If you want to
 customize the payload for each exchange, create a Camel `Processor` and
 configure the `SimpleDataSet` to use it by setting the
@@ -158,18 +152,19 @@ bodies.
 |===
 |Property |Type |Default |Description
 
-|`defaultBodies` |`List<Object>` |`empty LinkedList<Object>` |Specifies the default message body. By default, the `ListDataSet`
+|`defaultBodies` |`List<Object>` |`empty LinkedList<Object>` |Specify the default message body. By default, the `ListDataSet`
 selects a constant payload from the list of `defaultBodies` using the
 `CamelDataSetIndex`. If you want to customize the payload, create a
 Camel `Processor` and configure the `ListDataSet` to use it by setting
 the `outputTransformer` property.
 
-|`size` |`long` |the size of the defaultBodies list |Specifies how many messages to send/consume. This value can be different
-from the size of the `defaultBodies` list. If the value is less than the
-size of the `defaultBodies` list, some of the list elements will not be
-used. If the value is greater than the size of the `defaultBodies` list,
+|`size` |`long` |the size of the defaultBodies list |Specify how many messages to send/consume.
+This value can be different from the size of the `defaultBodies` list.
+If the value is less than the size of the `defaultBodies` list, some of the list elements will not be
+used.
+If the value is greater than the size of the `defaultBodies` list,
 the payload for the exchange will be selected using the modulus of the
-`CamelDataSetIndex` and the size of the `defaultBodies` list (i.e.
+`CamelDataSetIndex` and the size of the `defaultBodies` list (i.e.,
 `CamelDataSetIndex % defaultBodies.size()` )
 |===
 
@@ -184,9 +179,9 @@ the bodies from a file.
 |===
 |Property |Type |Default |Description
 
-|`sourceFile` |`File` |null |Specifies the source file for payloads
+|`sourceFile` |`File` |null |Specify the source file for payloads
 
-|`delimiter` |`String` |\z |Specifies the delimiter pattern used by a `java.util.Scanner` to split
+|`delimiter` |`String` |\z |Specify the delimiter pattern used by a `java.util.Scanner` to split
 the file into multiple payloads.
 |===
 
