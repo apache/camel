@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-The Jolt component allows you to process a JSON messages using an
+The Jolt component allows you to process a JSON messages using a
 https://github.com/bazaarvoice/jolt[JOLT] specification. This can be
 ideal when doing JSON to JSON transformation.
 
@@ -38,9 +38,9 @@ their `pom.xml` for this component:
 jolt:specName[?options]
 -----------------------
 
-Where *specName* is the classpath-local URI of the specification to
+Where `specName` is the classpath-local URI of the specification to
 invoke; or the complete URL of the remote specification
-(eg: \file://folder/myfile.vm).
+(e.g.: `\file://folder/myfile.vm`).
 
 
 // component-configure options: START
@@ -61,7 +61,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Samples
 
-For example you could use something like
+For example, you could use something like
 
 [source,java]
 --------------------------------------
@@ -69,7 +69,7 @@ from("activemq:My.Queue").
   to("jolt:com/acme/MyResponse.json");
 --------------------------------------
 
-And a file based resource:
+And a file-based resource:
 
 [source,java]
 ---------------------------------------------------------------
@@ -79,7 +79,7 @@ from("activemq:My.Queue").
 ---------------------------------------------------------------
 
 You can also specify what specification the component should use
-dynamically via a header, so for example:
+dynamically via a header, so, for example:
 
 [source,java]
 ---------------------------------------------------------------------
