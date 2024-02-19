@@ -25,7 +25,7 @@ component has the following features:
 * As a producer, download files, move files between remote directories,
 delete files/dir, upload files and search files by queries
 
-In order to work with Dropbox API you need to obtain an *accessToken*,
+To work with Dropbox API, you need to obtain an *accessToken*,
  *expireIn*, *refreshToken*, *apiKey*, *apiSecret* and a *clientIdentifier.* +
 You can refer to the
 https://dropbox.tech/developers/migrating-app-permissions-and-access-tokens[Dropbox
@@ -70,7 +70,7 @@ perform on Dropbox remote folder.
 |`search` |search files on Dropbox based on string queries
 |===
 
-*Operations* require additional options to work, some are mandatory for
+*Operations* require additional options to work. Some are mandatory for
 the specific operation.
 
 
@@ -95,7 +95,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 Delete files on Dropbox.
 
-Works only as Camel producer.
+Works only as a Camel producer.
 
 Below are listed the options for this operation:
 
@@ -136,7 +136,7 @@ The following objects are set on message body result:
 
 Download files from Dropbox.
 
-Works as Camel producer or Camel consumer.
+Works as a Camel producer or Camel consumer.
 
 Below are listed the options for this operation:
 
@@ -174,9 +174,9 @@ The following objects are set on message body result:
 |===
 |Object type |Description
 
-|`byte[]` or `CachedOutputStream`  if stream caching is enabled |in case of single file download, stream representing the file downloaded
+|`byte[]` or `CachedOutputStream`  if stream caching is enabled |in case of single file download, stream represents the file downloaded
 
-|`Map<String, byte[]>` or `Map<String, CachedOutputStream>` if stream caching is enabled |in case of multiple files download, a map with as key the path of the
+|`Map<String, byte[]>` or `Map<String, CachedOutputStream>` if stream caching is enabled |in the case of multiple files downloaded, a map with as a key the path of the
 remote file downloaded and as value the stream representing the file
 downloaded
 |===
@@ -185,7 +185,7 @@ downloaded
 
 Move files on Dropbox between one folder to another.
 
-Works only as Camel producer.
+Works only as a Camel producer.
 
 Below are listed the options for this operation:
 
@@ -223,7 +223,7 @@ The following objects are set on message body result:
 
 Upload files on Dropbox.
 
-Works as Camel producer.
+Works as a Camel producer.
 
 Below are listed the options for this operation:
 
@@ -232,13 +232,13 @@ Below are listed the options for this operation:
 |Property |Mandatory |Description
 
 |`uploadMode` |`true` |add or force this option specifies how a file should be saved on
-dropbox: in case of "add" the new file will be renamed if a file with the same
-name already exists on dropbox. In case of "force" if a file with the same name already exists on
+dropbox: in the case of `add`, the new file will be renamed if a file with the same
+name already exists on dropbox. In the case of `force`, if a file with the same name already exists on
 dropbox, this will be overwritten.
 
 |`localPath` |`false` |Folder or file to upload on Dropbox from the local filesystem.
-If this option has been configured then it takes precedence over uploading as a single
-file with content from the Camel message body (message body is converted into a byte array).
+If this option has been configured, then it takes precedence over uploading as a single
+file with content from the Camel message body (the message body is converted into a byte array).
 
 |`remotePath` |`false` |Folder destination on Dropbox. If the property is not set, the component
 will upload the file on a remote path equal to the local path. With Windows or without an absolute 
@@ -288,14 +288,14 @@ The following objects are set on message body result:
 
 |`String` |in case of single file upload, result of the upload operation, OK or KO
 
-|`Map<String, DropboxResultCode>` |in case of multiple files upload, a map with as key the path of the
+|`Map<String, DropboxResultCode>` |in the case of multiple files upload, a map with as a key the path of the
 remote file uploaded and as value the result of the upload operation, OK
 or KO
 |===
 
 == Search operation
 
-Search inside a remote Dropbox folder including its sub directories.
+Search inside a remote Dropbox folder including its subdirectories.
 
 Works as Camel producer and as Camel consumer.
 
@@ -336,7 +336,7 @@ The following objects are set on message body result:
 |===
 |Object type |Description
 
-|`List<com.dropbox.core.v2.files.SearchMatchV2>` |list of file path founded. For more information on this object refer to
+|`List<com.dropbox.core.v2.files.SearchMatchV2>` |list of the file path found. For more information on this object, refer to
 https://javadoc.io/doc/com.dropbox.core/dropbox-core-sdk/latest/com/dropbox/core/v2/files/SearchMatchV2.html[Dropbox documentation].
 |===
 
