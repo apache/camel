@@ -114,7 +114,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             return;
         }
 
-        Schema descriptor = new Schema(MAPPER.createObjectNode(), MAPPER.createObjectNode());
+        Schema descriptor = new Schema(MAPPER.createObjectNode(), MAPPER.createObjectNode(), MAPPER.createObjectNode());
         Schema schema = MAPPER.readerForUpdating(descriptor).readValue(s);
         JsonNode type = schema.meta.at("/javaType");
         if (!type.isMissingNode() && type.isTextual()) {
@@ -489,7 +489,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
         final Schema descriptor = schemes.computeIfAbsent(
                 info.name().toString(),
-                k -> new Schema(MAPPER.createObjectNode(), MAPPER.createObjectNode()));
+                k -> new Schema(MAPPER.createObjectNode(), MAPPER.createObjectNode(), MAPPER.createObjectNode()));
 
         for (FieldInfo field : fields(info)) {
             if (generateSetValue(descriptor, modelName.get(), setProperty, field, properties)) {

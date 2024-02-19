@@ -51,6 +51,7 @@ import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.EipModel.EipConstantModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.JavadocHelper;
@@ -73,6 +74,8 @@ import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.ClassInfo.NestingType;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.IndexView;
+
+import static java.lang.reflect.Modifier.isStatic;
 
 @Mojo(name = "generate-schema", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
       defaultPhase = LifecyclePhase.PROCESS_CLASSES)
@@ -291,6 +294,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         return indexView;
     }
 
+    // process EIP model
     protected EipModel findEipModelProperties(Class<?> classElement, String name) {
         EipModel model = new EipModel();
         model.setJavaType(classElement.getName());
@@ -310,6 +314,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             if (!Strings.isNullOrEmpty(metadata.firstVersion())) {
                 model.setFirstVersion(metadata.firstVersion());
             }
+            addEipConstants(model, metadata, name);
         }
 
         // favor to use class javadoc of component as description
@@ -326,6 +331,86 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         return model;
+    }
+
+    void addEipConstants(EipModel model, Metadata metadata, String name) {
+        final Class<?> constantsClass = metadata.constantsClass();
+        if (constantsClass == void.class) {
+            getLog().debug(String.format("The Eip %s has not defined any constant class", name));
+            return;
+        }
+        if (!addEipConstants(model, constantsClass)) {
+            getLog().debug(String.format("No constants have been detected in the class %s", constantsClass.getName()));
+        }
+    }
+
+    private boolean addEipConstants(EipModel model, Class<?> constantsClass) {
+        boolean foundConstant = false;
+        for (Field field : constantsClass.getFields()) {
+            if (isStatic(field.getModifiers()) && field.getType() == String.class
+                    && field.isAnnotationPresent(Metadata.class)) {
+
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug(
+                            String.format("Trying to add %s in the class %s as a constant.", field.getName(),
+                                    constantsClass.getName()));
+                }
+
+                if (addEipConstant(model, field)) {
+                    foundConstant = true;
+                    continue;
+                }
+
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug(
+                            String.format(
+                                    "The field %s of the class %s is not considered a constant, skipping",
+                                    field.getName(), constantsClass.getName()));
+                }
+            }
+        }
+        return foundConstant;
+    }
+
+    private boolean addEipConstant(EipModel model, Field field) {
+        final Metadata metadata = field.getAnnotation(Metadata.class);
+        if (metadata == null) {
+            if (getLog().isDebugEnabled()) {
+                getLog().debug(String.format("The field %s in class %s has no Metadata", field.getName(),
+                        field.getDeclaringClass().getName()));
+            }
+            return false;
+        }
+        EipConstantModel constant = new EipConstantModel();
+        String description = metadata.description().trim();
+        constant.setDescription(description);
+        constant.setKind("constant");
+        constant.setDisplayName(metadata.displayName());
+        constant.setJavaType(metadata.javaType());
+        constant.setRequired(metadata.required());
+        constant.setDefaultValue(metadata.defaultValue());
+        constant.setDeprecated(field.isAnnotationPresent(Deprecated.class));
+        constant.setDeprecationNote(metadata.deprecationNote());
+        constant.setSecret(metadata.secret());
+        constant.setLabel(metadata.label());
+        try {
+            setConstantNames(constant, field);
+            model.addConstant(constant);
+        } catch (Exception e) {
+            if (getLog().isDebugEnabled()) {
+                getLog().debug(
+                        String.format("The name of the constant corresponding to the field %s in class %s cannot be retrieved",
+                                field.getName(),
+                                field.getDeclaringClass().getName()));
+            }
+        }
+        return true;
+    }
+
+    private void setConstantNames(EipConstantModel constant, Field field) throws Exception {
+        final Class<?> declaringClass = field.getDeclaringClass();
+        constant.setConstantName(String.format("%s#%s", declaringClass.getName(), field.getName()));
+        constant.setName((String) field.get(null));
     }
 
     protected void findClassProperties(

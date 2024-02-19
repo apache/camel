@@ -170,4 +170,9 @@ public @interface Metadata {
      * This can be used to help tooling to provide a better user experience.
      */
     String inputLanguage() default "";
+
+    /**
+     * The class that contains the names of constants that are used by an Eip.
+     */
+    Class<?> constantsClass() default void.class;
 }

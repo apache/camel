@@ -16,11 +16,24 @@
  */
 package org.apache.camel.tooling.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class EipModel extends BaseModel<EipModel.EipOptionModel> {
 
     protected boolean abstractModel;  // used in models from camel-core-engine
     protected boolean input;          // used in models from camel-core-engine
     protected boolean output;         // used in models from camel-core-engine
+
+    protected final List<EipConstantModel> constants = new ArrayList<>();
+
+    public List<EipConstantModel> getConstants() {
+        return constants;
+    }
+
+    public void addConstant(EipConstantModel constant) {
+        constants.add(constant);
+    }
 
     public EipModel() {
     }
@@ -61,5 +74,17 @@ public class EipModel extends BaseModel<EipModel.EipOptionModel> {
 
     public static class EipOptionModel extends BaseOptionModel {
 
+    }
+
+    public static class EipConstantModel extends BaseOptionModel {
+        private String constantName;
+
+        public String getConstantName() {
+            return constantName;
+        }
+
+        public void setConstantName(String constantName) {
+            this.constantName = constantName;
+        }
     }
 }

@@ -30,6 +30,7 @@ import org.apache.camel.tooling.model.ComponentModel.ComponentOptionModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointHeaderModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
 import org.apache.camel.tooling.model.DataFormatModel.DataFormatOptionModel;
+import org.apache.camel.tooling.model.EipModel.EipConstantModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
 import org.apache.camel.tooling.model.LanguageModel.LanguageOptionModel;
 import org.apache.camel.tooling.model.MainModel.MainGroupModel;
@@ -316,6 +317,10 @@ public final class JsonMapper {
         JsonObject wrapper = new JsonObject();
         wrapper.put("model", obj);
         wrapper.put("properties", asJsonObject(model.getOptions()));
+        List<EipConstantModel> constantModel = model.getConstants();
+        if (!constantModel.isEmpty()) {
+            wrapper.put("constants", asJsonObject(constantModel));
+        }
         return wrapper;
     }
 
@@ -560,6 +565,8 @@ public final class JsonMapper {
             prop.put("optional", ((ComponentModel.ApiOptionModel) option).isOptional());
         } else if (option instanceof ComponentModel.EndpointHeaderModel) {
             prop.put("constantName", ((ComponentModel.EndpointHeaderModel) option).getConstantName());
+        } else if (option instanceof EipConstantModel) {
+            prop.put("constantName", ((EipConstantModel) option).getConstantName());
         }
         prop.entrySet().removeIf(e -> e.getValue() == null);
         prop.remove("prefix", "");

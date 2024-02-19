@@ -28,13 +28,16 @@ public class Schema {
     public ObjectNode meta;
     @JsonProperty
     public ObjectNode properties;
+    @JsonProperty
+    public ObjectNode constants;
 
     public Schema() {
     }
 
-    public Schema(ObjectNode meta, ObjectNode properties) {
+    public Schema(ObjectNode meta, ObjectNode properties, ObjectNode constants) {
         this.meta = meta;
         this.properties = properties;
+        this.constants = constants;
     }
 
     public JsonNode property(String name) {
