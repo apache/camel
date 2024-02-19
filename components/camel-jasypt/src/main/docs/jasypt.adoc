@@ -11,7 +11,7 @@
 
 *Since Camel {since}*
 
-http://www.jasypt.org/[Jasypt] is a simplified encryption library which
+http://www.jasypt.org/[Jasypt] is a simplified encryption library that
 makes encryption and decryption easy. Camel integrates with Jasypt to
 allow sensitive information in xref:ROOT:properties-component.adoc[Properties] files to
 be encrypted. By dropping *`camel-jasypt`* on the classpath those
@@ -68,7 +68,7 @@ Encrypted text: qaEEacuW7BUti8LcMgyjKw==
 ----------------------------------------
 
 This means the encrypted representation `qaEEacuW7BUti8LcMgyjKw==` can
-be decrypted back to `tiger` if you know the master password which was
+be decrypted back to `tiger` if you know the _master_ password which was
 `secret`. +
  If you run the tool again, then the encrypted value will return a
 different result. But decrypting the value will always return the
@@ -99,14 +99,15 @@ my.secret = ENC(qaEEacuW7BUti8LcMgyjKw==)
 
 == Protecting the master password
 
-The master password used by Jasypt must be provided,
+The _master_ password used by Jasypt must be provided,
 so that it's capable of decrypting the values. However, having this
-master password out in the open may not be an ideal solution. Therefore,
+_master_ password out in the open may not be an ideal solution. Therefore,
 you can provide it as a JVM system property or as an OS
 environment setting. If you decide to do so then the `password` option
-supports prefixes which dictates this. `sysenv:` means to lookup the OS
-system environment with the given key. `sys:` means to lookup a JVM
-system property.
+supports prefix that dictates this:
+
+* `sysenv:` means to look up the OS system environment with the given key.
+* `sys:` means to look up a JVM system property.
 
 For example, you could provide the password before you start the
 application
@@ -118,7 +119,7 @@ $ export CAMEL_ENCRYPTION_PASSWORD=secret
 
 Then start the application, such as running the start script.
 
-When the application is up and running you can unset the environment
+When the application is up and running, you can unset the environment
 
 [source,bash]
 ---------------------------------
@@ -147,7 +148,7 @@ Java::
 +
 On the Spring Boot and Quarkus runtimes, Camel Jasypt can be configured via configuration properties. Refer to their respective documentation pages for more information.
 +
-Else, in Java DSL you need to configure Jasypt as a `JasyptPropertiesParser` instance and set it on the xref:ROOT:properties-component.adoc[Properties] component as show below:
+Else, in Java DSL you need to configure Jasypt as a `JasyptPropertiesParser` instance and set it on the xref:ROOT:properties-component.adoc[Properties] component as shown below:
 +
 [source,java]
 ---------------------
@@ -156,10 +157,10 @@ JasyptPropertiesParser jasypt = new JasyptPropertiesParser();
 // set the master password (see above for how to do this in a secure way)
 jasypt.setPassword("secret");
 
-// create the properties component
+// create the properties' component
 PropertiesComponent pc = new PropertiesComponent();
 pc.setLocation("classpath:org/apache/camel/component/jasypt/secret.properties");
-// and use the jasypt properties parser so we can decrypt values
+// and use the jasypt properties parser, so we can decrypt values
 pc.setPropertiesParser(jasypt);
 // end enable nested placeholder support
 pc.setNestedPlaceholder(true);
@@ -192,7 +193,7 @@ XML (Spring)::
 +
 In Spring XML you need to configure the `JasyptPropertiesParser` which
 is shown below. Then the Camel xref:ROOT:properties-component.adoc[Properties]
-component is told to use `jasypt` as the properties parser, which means
+component is told to use `jasypt` as the property parser, which means
 Jasypt has its chance to decrypt values looked up in
 the properties file.
 +
@@ -224,7 +225,7 @@ Jasypt.
 <!-- define the jasypt properties parser with the given password to be used -->
 <bean id="jasypt" class="org.apache.camel.component.jasypt.JasyptPropertiesParser">
     <!-- password is mandatory, you can prefix it with sysenv: or sys: to indicate it should use
-         an OS environment or JVM system property value, so you dont have the master password defined here -->
+         an OS environment or JVM system property value, so you don't have the master password defined here -->
     <property name="password" value="secret"/>
 </bean>
 
