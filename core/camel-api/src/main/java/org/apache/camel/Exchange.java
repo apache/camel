@@ -137,6 +137,8 @@ public interface Exchange extends VariableAware {
 
     @Deprecated
     String FAILURE_HANDLED = "CamelFailureHandled";
+
+    @Metadata(label = "doCatch,doFinally", description = "Endpoint URI where the Exchange failed during sending", javaType = "String")
     String FAILURE_ENDPOINT = "CamelFailureEndpoint";
     String FAILURE_ROUTE_ID = "CamelFailureRouteId";
     String FATAL_FALLBACK_ERROR_HANDLER = "CamelFatalFallbackErrorHandler";
@@ -269,6 +271,8 @@ public interface Exchange extends VariableAware {
     String TIMER_NAME = "CamelTimerName";
     String TIMER_PERIOD = "CamelTimerPeriod";
     String TIMER_TIME = "CamelTimerTime";
+
+    @Metadata(label = "multicast,pollEnrich,recipientList,routingSlip,toD,to,wireTap", description = "Endpoint URI where this Exchange is being sent to", javaType = "String")
     String TO_ENDPOINT = "CamelToEndpoint";
     @Deprecated
     String TRACE_EVENT = "CamelTraceEvent";

@@ -33,6 +33,7 @@
     "shareUnitOfWork": { "index": 18, "kind": "attribute", "displayName": "Share Unit Of Work", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Shares the org.apache.camel.spi.UnitOfWork with the parent and each of the sub messages. Recipient List will by default not share unit of work between the parent exchange and each recipient exchange. This means each sub exchange has its own individual unit of work." }
   },
   "exchangeProperties": {
-    "CamelRecipientListEndpoint": { "index": 0, "kind": "exchangeProperty", "displayName": "Recipient List Endpoint", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "The endpoint uri of this recipient list" }
+    "CamelRecipientListEndpoint": { "index": 0, "kind": "exchangeProperty", "displayName": "Recipient List Endpoint", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "The endpoint uri of this recipient list" },
+    "CamelToEndpoint": { "index": 1, "kind": "exchangeProperty", "displayName": "To Endpoint", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "Endpoint URI where this Exchange is being sent to" }
   }
 }
