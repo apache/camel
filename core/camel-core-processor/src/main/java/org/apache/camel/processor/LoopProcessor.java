@@ -21,7 +21,6 @@ import java.util.concurrent.atomic.LongAdder;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
@@ -33,6 +32,7 @@ import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.constants.LoopConstants;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,7 +123,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
                 count = ExchangeHelper.convertToMandatoryType(exchange, Integer.class, text);
                 // keep track of pending task if loop with fixed value
                 taskCount.add(count);
-                exchange.setProperty(ExchangePropertyKey.LOOP_SIZE, count);
+                exchange.setProperty(LoopConstants.LOOP_SIZE, count);
             }
         }
 
@@ -143,7 +143,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
 
                     // set current index as property
                     LOG.debug("LoopProcessor: iteration #{}", index);
-                    current.setProperty(ExchangePropertyKey.LOOP_INDEX, index);
+                    current.setProperty(LoopConstants.LOOP_INDEX, index);
 
                     processor.process(current, doneSync -> {
                         // increment counter after done

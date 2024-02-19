@@ -25,11 +25,12 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.constants.LoopConstants;
 
 /**
  * Processes a message multiple times
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,routing", constantsClass = LoopConstants.class)
 @XmlRootElement(name = "loop")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoopDefinition extends OutputExpressionNode {
