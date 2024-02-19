@@ -14,9 +14,9 @@
 
 *{component-header}*
 
-Paho MQTT5 component provides connector for the MQTT messaging protocol using
-the https://eclipse.org/paho/[Eclipse Paho] library with MQTT v5. Paho is one of the
-most popular MQTT libraries, so if you would like to integrate it with
+Paho MQTT5 component provides connector for the https://docs.oasis-open.org/mqtt/mqtt/v5.0/mqtt-v5.0.html[MQTT messaging protocol version 5.0]
+using the https://eclipse.org/paho/[Eclipse Paho] library.
+Paho is one of the most popular MQTT libraries, so if you would like to integrate it with
 your Java project - Camel Paho connector is a way to go.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -38,7 +38,7 @@ for this component:
 paho-mqtt5:topic[?options]
 ----
 
-Where *topic* is the name of the topic.
+Where `topic` is the name of the topic.
 
 
 // component-configure options: START
@@ -60,7 +60,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Default payload type
 
-By default, Camel Paho component operates on the binary payloads
+By default, the Camel Paho component operates on the binary payloads
 extracted out of (or put into) the MQTT message:
 
 [source,java]
@@ -73,7 +73,7 @@ byte[] payload = "message".getBytes();
 producerTemplate.sendBody("paho-mqtt5:topic", payload);
 ----
 
-But of course Camel build-in xref:manual::type-converter.adoc[type conversion
+Of course, Camel build-in xref:manual::type-converter.adoc[type conversion
 API] can perform the automatic data type transformations for you. In the
 example below Camel automatically converts binary payload into `String`
 (and conversely):
@@ -91,7 +91,7 @@ producerTemplate.sendBody("paho-mqtt5:topic", payload);
 
 == Samples
 
-For example the following snippet reads messages from the MQTT broker
+For example, the following snippet reads messages from the MQTT broker
 installed on the same host as the Camel router:
 
 [source,java]
@@ -100,7 +100,7 @@ from("paho-mqtt5:some/queue")
     .to("mock:test");
 ----
 
-While the snippet below sends message to the MQTT broker:
+While the snippet below sends a message to the MQTT broker:
 
 [source,java]
 ----
@@ -108,7 +108,7 @@ from("direct:test")
     .to("paho-mqtt5:some/target/queue");
 ----
 
-For example this is how to read messages from the remote MQTT broker: 
+For example, this is how to read messages from the remote MQTT broker:
 
 [source,java]
 ----
