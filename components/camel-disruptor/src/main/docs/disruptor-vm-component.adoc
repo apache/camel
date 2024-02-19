@@ -15,17 +15,18 @@
 *{component-header}*
 
 The Disruptor component provides asynchronous
-https://en.wikipedia.org/wiki/Staged_event-driven_architecture[SEDA] behavior much as the
-standard SEDA component, but utilizes a
-https://github.com/LMAX-Exchange/disruptor[Disruptor] instead of a
+https://en.wikipedia.org/wiki/Staged_event-driven_architecture[SEDA] behavior similarly to the
+standard SEDA component.
+However, it uses a https://github.com/LMAX-Exchange/disruptor[Disruptor] instead of a
 http://docs.oracle.com/javase/1.5.0/docs/api/java/util/concurrent/BlockingQueue.html[BlockingQueue]
-utilized by the standard xref:seda-component.adoc[SEDA]. Alternatively, a *disruptor-vm:* endpoint is supported by this component. As with the SEDA
-component, buffers of the *disruptor:* endpoints are only visible within
+used by the standard xref:seda-component.adoc[SEDA].
+
+As with the SEDA component, buffers of the Disruptor endpoints are only visible within
 a *single* CamelContext and no support is
 provided for persistence or recovery. The buffers of the
-**disruptor-vm:** endpoints also provides support for communication
-across CamelContexts instances so you can use this mechanism to
-communicate across web applications (provided that *camel-disruptor.jar*
+**disruptor-vm:** endpoints also provide support for communication
+across CamelContexts instances, so you can use this mechanism to
+communicate across web applications (as long as *camel-disruptor.jar*
 is on the *system/boot* classpath).
 
 The main advantage of choosing to use the Disruptor component over the
@@ -35,25 +36,25 @@ consumers. In those cases, significant increases of throughput and
 reduction of latency has been observed. Performance in scenarios without
 contention is comparable to the SEDA component.
 
-The Disruptor is implemented with the intention of mimicing the
-behaviour and options of the SEDA component as much as possible.
-The main differences with the them are the following:
+The Disruptor is implemented with the intention of mimicking the
+behavior and options of the SEDA component as much as possible.
+The main differences between them are the following:
 
 * The buffer used is always bounded in size (default 1024 exchanges).
-* As a the buffer is always bouded, the default behaviour for the
+* As the buffer is always bouded, the default behaviour for the
 Disruptor is to block while the buffer is full instead of throwing an
-exception. This default behaviour may be configured on the component
+exception. This default behavior may be configured on the component
 (see options).
-* The Disruptor enpoints don't implement the BrowsableEndpoint
+* The Disruptor endpoints don't implement the `BrowsableEndpoint`
 interface. As such, the exchanges currently in the Disruptor can't be
-retrieved, only the amount of exchanges.
+retrieved, only the number of exchanges.
 * The Disruptor requires its consumers (multicasted or otherwise) to be
 statically configured. Adding or removing consumers on the fly requires
 complete flushing of all pending exchanges in the Disruptor.
 * As a result of the reconfiguration: Data sent over a Disruptor is
 directly processed and 'gone' if there is at least one consumer, late
 joiners only get new exchanges published after they've joined.
-* The *pollTimeout* option is not supported by the Disruptor component.
+* The `pollTimeout` option is not supported by the Disruptor component.
 * When a producer blocks on a full Disruptor, it does not respond to
 thread interrupts.
 
@@ -73,10 +74,10 @@ for this component:
 == URI format
 
 --------------------------------
- disruptor-vm:someName[?options]
+ disruptor-vm:someId[?options]
 --------------------------------
 
-Where **someName** can be any string that uniquely identifies the
+Where _someId_ can be any string that uniquely identifies the
 endpoint within the current CamelContext.
 
 == Options
@@ -94,7 +95,7 @@ include::partial$component-endpoint-options.adoc[]
 
 == More Documentation
 
-See the disruptor component for more information
+See the xref:disruptor-component.adoc[Disruptor] component for more information.
 
 // shared with disruptor
 
