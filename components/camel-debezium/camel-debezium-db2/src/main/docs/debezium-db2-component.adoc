@@ -18,9 +18,19 @@
 
 The Debezium db2 component is wrapper around https://debezium.io/[Debezium] using https://debezium.io/documentation/reference/1.8/operations/embedded.html[Debezium Engine], which enables Change Data Capture from db2 database using Debezium without the need for Kafka or Kafka Connect.
 
-*Note on handling failures:* Per https://debezium.io/documentation/reference/1.9/development/engine.html#_handling_failures[Debezium Embedded Engine] documentation, the engines is actively recording source offsets and periodically flushes these offsets to a persistent storage, so when the application is restarted or crashed, the engine will resume from the last recorded offset.
-Thus, at normal operation, your downstream routes will receive each event exactly once, however in case of an application crash (not having a graceful shutdown), the application will resume from the last recorded offset,
-which may result in receiving duplicate events immediately after the restart. Therefore, your downstream routes should be tolerant enough of such case and deduplicate events if needed.
+[NOTE]
+====
+*Note on handling failures:*
+per https://debezium.io/documentation/reference/1.9/development/engine.html#_handling_failures[Debezium Embedded Engine] documentation,
+the engines are actively recording source offsets and periodically flush these offsets to a persistent storage.
+Therefore, when the application is restarted or crashed, the engine will resume from the last recorded offset.
+This means that, at normal operation, your downstream routes will receive each event exactly once.
+However, in case of an application crash (not having a graceful shutdown),
+the application will resume from the last recorded offset,
+which may result in receiving duplicate events immediately after the restart.
+Therefore, your downstream routes should be tolerant enough of such a case and deduplicate events if needed.
+====
+
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component.
@@ -70,7 +80,7 @@ The message body if is not `null` (in case of tombstones), it contains the state
 
 === Consuming events
 
-Here is a very simple route that you can use in order to listen to Debezium events from db2 connector.
+Here is a basic route that you can use to listen to Debezium events from the db2 connector:
 
 [source,java]
 ----
@@ -87,10 +97,10 @@ from("debezium-db2:dbz-test-1?offsetStorageFileName=/usr/offset-file-1.dat&datab
 By default, the component will emit the events in the body and `CamelDebeziumBefore` header as https://kafka.apache.org/22/javadoc/org/apache/kafka/connect/data/Struct.html[`Struct`] data type, the reasoning behind this, is to perceive the schema information in case is needed.
 However, the component as well contains a xref:manual::type-converter.adoc[Type Converter] that converts
 from default output type of https://kafka.apache.org/22/javadoc/org/apache/kafka/connect/data/Struct.html[`Struct`] to `Map` in order to leverage Camel's rich xref:manual::data-format.adoc[Data Format] types which many of them work out of box with `Map` data type.
-To use it, you can either add `Map.class` type when you access the message e.g: `exchange.getIn().getBody(Map.class)`, or you can convert the body always to `Map` from the route builder by adding `.convertBodyTo(Map.class)` to your Camel Route DSL after `from` statement.
+To use it, you can either add `Map.class` type when you access the message (e.g., : `exchange.getIn().getBody(Map.class)`), or you can convert the body always to `Map` from the route builder by adding `.convertBodyTo(Map.class)` to your Camel Route DSL after `from` statement.
 
-We mentioned above about the schema, which can be used in case you need to perform advance data transformation and the schema is needed for that. If you choose not to convert your body to `Map`,
-you can obtain the schema information as https://kafka.apache.org/22/javadoc/org/apache/kafka/connect/data/Schema.html[`Schema`] type from `Struct` like this:
+We mentioned above the schema, which can be used in case you need to perform advance data transformation and the schema is needed for that.
+If you choose not to convert your body to `Map`, you can obtain the schema information as https://kafka.apache.org/22/javadoc/org/apache/kafka/connect/data/Schema.html[`Schema`] type from `Struct` like this:
 
 [source,java]
 ----
@@ -106,7 +116,11 @@ from("debezium-db2:[name]?[options]])
     });
 ----
 
-*Important Note:* This component is a thin wrapper around Debezium Engine as mentioned, therefore before using this component in production, you need to understand how Debezium works and how configurations can reflect the expected behavior, especially in regards to https://debezium.io/documentation/reference/1.8/operations/embedded.html#_handling_failures[handling failures].
-
+[IMPORTANT]
+====
+This component is a thin wrapper around Debezium Engine as mentioned.
+Therefore, before using this component in production, you need to understand how Debezium works and how configurations can reflect the expected behavior.
+This is especially true in regard to https://debezium.io/documentation/reference/1.8/operations/embedded.html#_handling_failures[handling failures].
+====
 
 include::spring-boot:partial$starter.adoc[]
