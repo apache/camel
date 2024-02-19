@@ -152,8 +152,8 @@ producerTemplate.sendBody("dynamic-router-control:unsubscribe", controlMessage);
 To determine if an exchange is suitable for any of the participants, all predicates for the participants that are
 subscribed to the channel are evaluated until the first result of "true" is found, by default.  If the Dynamic Router
 is configured with the `recipientMode` set to `allMatch`, then all recipients with matching predicates will be
-selected.  The exchange will be routed to the corresponding endpoint(s).  The rule base contains a default filter that
-is registered at the least priority (which is the highest integer number).  Like the "default" case of a switch
+selected.  The exchange will be routed to the corresponding endpoint(s).  The rule base contains a default filter
+registered at the least priority (which is the highest integer number).  Like the "default" case of a switch
 statement in Java, any message that is not appropriate for any registered participants will be processed by this
 filter.  The filter logs information about the dropped message at *debug* level, by default.  To turn the level up to
 *warn*, include `warnDroppedMessage=true` in the component URI.
