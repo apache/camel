@@ -19,9 +19,9 @@ DNSJava. The component is a thin layer on top of
 http://www.xbill.org/dnsjava/[DNSJava].
 The component offers the following operations:
 
-* ip, to resolve a domain by its ip
-* lookup, to lookup information about the domain
-* dig, to run DNS queries
+* `ip`: to resolve a domain by its ip
+* `lookup`: to lookup information about the domain
+* `dig`: to run DNS queries
 
 [NOTE]
 ====
@@ -85,10 +85,10 @@ include::partial$component-endpoint-headers.adoc[]
 </route>
 ----
 
-This looks up a domain's IP. For example, www.example.com resolves to
-192.0.32.10. +
- The IP address to lookup must be provided in the header with key
-`"dns.domain"`.
+This looks up a domain's IP. For example, _www.example.com_ resolves to
+192.0.32.10.
+
+The IP address to lookup must be provided in the header with key `"dns.domain"`.
 
 === DNS lookup
 
@@ -121,11 +121,11 @@ The query must be provided in the header with key `"dns.query"`.
 
 == Dns Activation Policy
 
-DnsActivationPolicy can be used to dynamically start and stop routes based on dns state.
+The `DnsActivationPolicy` can be used to dynamically start and stop routes based on dns state.
 
-If you have instances of the same component running in different regions you can configure a route in each region to activate only if dns is pointing to its region.
+If you have instances of the same component running in different regions, you can configure a route in each region to activate only if dns is pointing to its region.
 
-i.e. You may have an instance in NYC and an instance in SFO. You would configure a service CNAME service.example.com to point to nyc-service.example.com to bring NYC instance up and SFO instance down. When you change the CNAME service.example.com to point to sfo-service.example.com -- nyc instance would stop its routes and sfo will bring its routes up. This allows you to switch regions without restarting actual components.
+For example, you may have an instance in NYC and an instance in SFO. You would configure a service CNAME service.example.com to point to nyc-service.example.com to bring NYC instance up and SFO instance down. When you change the CNAME service.example.com to point to sfo-service.example.com -- nyc instance would stop its routes and sfo will bring its routes up. This allows you to switch regions without restarting actual components.
 
 [source,xml]
 ----
