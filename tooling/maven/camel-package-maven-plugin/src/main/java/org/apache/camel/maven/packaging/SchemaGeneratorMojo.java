@@ -368,6 +368,12 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                         }
                         o.setSecret(metadata.secret());
                         o.setJavaType(metadata.javaType());
+                        // special if the property is for input (such as AGGREGATION_COMPLETE_CURRENT_GROUP)
+                        if (labels.startsWith("consumer,")) {
+                            o.setLabel("consumer");
+                        } else {
+                            o.setLabel("producer");
+                        }
                         eipModel.addExchangeProperty(o);
                         break;
                     }
