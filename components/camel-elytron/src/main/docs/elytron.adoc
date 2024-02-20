@@ -10,29 +10,32 @@
 
 *Since Camel {since}*
 
-The Elytron Security Provider provides Elytron security over camel-undertow component.
-It enables camel-undertow component use Elytron security capabilities.
-To force camel-undertow to use elytron security provider, add elytron security provider library
-on classpath and provide instance of ElytronSercurityConfiguration as `securityConfiguration`
-parameter into camel-undertow component or provide both  `securityConfiguration` and `securityProvider`
-into camel-undertow component.
+The Elytron Security Provider provides Elytron security over the Camel Elytron component.
+It enables the Camel Elytron component to use Elytron security capabilities.
+To force Camel Elytron to use elytron security provider, add the elytron security provider library
+on classpath and provide instance of `ElytronSecurityConfiguration` as `securityConfiguration`
+parameter into the Camel Elytron component or provide both  `securityConfiguration` and `securityProvider`
+into the Camel Elytron component.
 
-Configuration has to provide all 3 security attributes:
+Configuration has to provide all three security attributes:
 
 [width="100%",cols="2,5,^3",options="header"]
 |===
 | Name | Description | Type
-| *domainBuilder* | Builder for security domain. | SecurityDomain.Builder
+| *domainBuilder* | Builder for security domain. | `SecurityDomain.Builder`
 | *mechanismName* | MechanismName should be selected with regard to default securityRealm. For
-example to use bearer_token security, mechanism name has to be `BEARER_TOKEN` and realm has to be `TokenSecurityReal` | String
-| *elytronProvider* | Instance of WildFlyElytronBaseProvider with respect of mechanismName | WildFlyElytronBaseProvider
+example, to use bearer_token security, mechanism name has to be `BEARER_TOKEN` and realm has to be `TokenSecurityReal` | `String`
+| *elytronProvider* | Instance of WildFlyElytronBaseProvider with respect of mechanismName | `WildFlyElytronBaseProvider`
 |===
 
 Each exchange created by Undertow endpoint with Elytron security contains header `securityIdentity`
 with current Elytron's security identity as value.
-(`org.wildfly.security.auth.server.SecurityIdentity`) or is FORBIDDEN (status code 403)
+(`org.wildfly.security.auth.server.SecurityIdentity`) or is _FORBIDDEN_ (status code 403)
 
-NOTE: OSGi is not supported
+[NOTE]
+====
+OSGi is not supported.
+====
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -49,6 +52,6 @@ for this component:
 
 == Other Elytron capabilities
 
-This seurity provider contains only basic Elytron dependencies (without any transitive dependency
-from org.wildfly.security:wildfly-elytron).
+This security provider contains only basic Elytron dependencies (without any transitive dependency
+from `org.wildfly.security:wildfly-elytron`).
 Ignored libraries should be added among application's dependencies for their usage.
