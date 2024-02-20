@@ -49,11 +49,17 @@ public class FinallyProcessor extends DelegateAsyncProcessor implements Traceabl
             // store the caught exception as a property
             exchange.setException(null);
             exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, exception);
-        }
 
-        // store the last to endpoint as the failure endpoint
-        if (exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT) == null) {
-            exchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT, exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
+            // store the last to endpoint as the failure endpoint
+            if (exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT) == null) {
+                exchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT,
+                        exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
+            }
+            // and store the route id so we know in which route we failed
+            String routeId = ExchangeHelper.getAtRouteId(exchange);
+            if (routeId != null) {
+                exchange.setProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, routeId);
+            }
         }
 
         // continue processing
@@ -107,6 +113,7 @@ public class FinallyProcessor extends DelegateAsyncProcessor implements Traceabl
             try {
                 if (exception == null) {
                     exchange.removeProperty(ExchangePropertyKey.FAILURE_ENDPOINT);
+                    exchange.removeProperty(ExchangePropertyKey.FAILURE_ROUTE_ID);
                 } else {
                     // set exception back on exchange
                     exchange.setException(exception);

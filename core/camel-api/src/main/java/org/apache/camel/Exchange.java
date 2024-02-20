@@ -150,9 +150,13 @@ public interface Exchange extends VariableAware {
     @Deprecated
     String FAILURE_HANDLED = "CamelFailureHandled";
 
-    @Metadata(label = "doCatch,doFinally", description = "Endpoint URI where the Exchange failed during sending",
+    @Metadata(label = "doCatch,doFinally,errorHandler,onException",
+              description = "Endpoint URI where the Exchange failed during processing",
               javaType = "String")
     String FAILURE_ENDPOINT = "CamelFailureEndpoint";
+    @Metadata(label = "doCatch,doFinally,errorHandler,onException",
+              description = "Route ID where the Exchange failed during processing",
+              javaType = "String")
     String FAILURE_ROUTE_ID = "CamelFailureRouteId";
     String FATAL_FALLBACK_ERROR_HANDLER = "CamelFatalFallbackErrorHandler";
     String FILE_CONTENT_TYPE = "CamelFileContentType";

@@ -21,6 +21,7 @@
   },
   "exchangeProperties": {
     "CamelExceptionCaught": { "index": 0, "kind": "exchangeProperty", "displayName": "Exception Caught", "required": false, "javaType": "java.lang.Exception", "deprecated": false, "autowired": false, "secret": false, "description": "Stores the caught exception due to a processing error of the current Exchange" },
-    "CamelFailureEndpoint": { "index": 1, "kind": "exchangeProperty", "displayName": "Failure Endpoint", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "Endpoint URI where the Exchange failed during sending" }
+    "CamelFailureEndpoint": { "index": 1, "kind": "exchangeProperty", "displayName": "Failure Endpoint", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "Endpoint URI where the Exchange failed during processing" },
+    "CamelFailureRouteId": { "index": 2, "kind": "exchangeProperty", "displayName": "Failure Route Id", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "Route ID where the Exchange failed during processing" }
   }
 }
