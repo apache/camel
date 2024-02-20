@@ -33,8 +33,13 @@ import org.bson.conversions.Bson;
 import org.junit.jupiter.api.Test;
 
 import static com.mongodb.client.model.Filters.eq;
-import static org.apache.camel.component.mongodb.MongoDbConstants.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.apache.camel.component.mongodb.MongoDbConstants.FIELDS_PROJECTION;
+import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
+import static org.apache.camel.component.mongodb.MongoDbConstants.OPTIONS;
+import static org.apache.camel.component.mongodb.MongoDbConstants.SORT_BY;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MongoDbFindOneAndDeleteOperationIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 

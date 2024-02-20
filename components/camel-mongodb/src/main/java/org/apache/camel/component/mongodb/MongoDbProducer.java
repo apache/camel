@@ -16,7 +16,13 @@
  */
 package org.apache.camel.component.mongodb;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -25,7 +31,15 @@ import com.mongodb.client.DistinctIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.*;
+import com.mongodb.client.model.BulkWriteOptions;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.FindOneAndDeleteOptions;
+import com.mongodb.client.model.FindOneAndReplaceOptions;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.ReplaceOptions;
+import com.mongodb.client.model.ReturnDocument;
+import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.WriteModel;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import org.apache.camel.Exchange;
@@ -41,7 +55,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.mongodb.client.model.Filters.eq;
-import static org.apache.camel.component.mongodb.MongoDbConstants.*;
+import static org.apache.camel.component.mongodb.MongoDbConstants.BATCH_SIZE;
+import static org.apache.camel.component.mongodb.MongoDbConstants.COLLECTION;
+import static org.apache.camel.component.mongodb.MongoDbConstants.COLLECTION_INDEX;
+import static org.apache.camel.component.mongodb.MongoDbConstants.CRITERIA;
+import static org.apache.camel.component.mongodb.MongoDbConstants.DATABASE;
+import static org.apache.camel.component.mongodb.MongoDbConstants.FIELDS_PROJECTION;
+import static org.apache.camel.component.mongodb.MongoDbConstants.LIMIT;
+import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
+import static org.apache.camel.component.mongodb.MongoDbConstants.MULTIUPDATE;
+import static org.apache.camel.component.mongodb.MongoDbConstants.NUM_TO_SKIP;
+import static org.apache.camel.component.mongodb.MongoDbConstants.OID;
+import static org.apache.camel.component.mongodb.MongoDbConstants.OPERATION_HEADER;
+import static org.apache.camel.component.mongodb.MongoDbConstants.OPTIONS;
+import static org.apache.camel.component.mongodb.MongoDbConstants.RECORDS_AFFECTED;
+import static org.apache.camel.component.mongodb.MongoDbConstants.RECORDS_MATCHED;
+import static org.apache.camel.component.mongodb.MongoDbConstants.RESULT_PAGE_SIZE;
+import static org.apache.camel.component.mongodb.MongoDbConstants.RESULT_TOTAL_SIZE;
+import static org.apache.camel.component.mongodb.MongoDbConstants.RETURN_DOCUMENT;
+import static org.apache.camel.component.mongodb.MongoDbConstants.SORT_BY;
+import static org.apache.camel.component.mongodb.MongoDbConstants.UPSERT;
+import static org.apache.camel.component.mongodb.MongoDbConstants.WRITERESULT;
 
 /**
  * The MongoDb producer.

@@ -34,8 +34,15 @@ import org.bson.conversions.Bson;
 import org.junit.jupiter.api.Test;
 
 import static com.mongodb.client.model.Filters.eq;
-import static org.apache.camel.component.mongodb.MongoDbConstants.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.apache.camel.component.mongodb.MongoDbConstants.CRITERIA;
+import static org.apache.camel.component.mongodb.MongoDbConstants.FIELDS_PROJECTION;
+import static org.apache.camel.component.mongodb.MongoDbConstants.OPTIONS;
+import static org.apache.camel.component.mongodb.MongoDbConstants.RETURN_DOCUMENT;
+import static org.apache.camel.component.mongodb.MongoDbConstants.SORT_BY;
+import static org.apache.camel.component.mongodb.MongoDbConstants.UPSERT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MongoDbFindOneAndReplaceOperationIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
