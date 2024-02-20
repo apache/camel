@@ -15,7 +15,7 @@
 
 *{component-header}*
 
-The http://www.hazelcast.com/[Hazelcast] Map component is one of Camel Hazelcast Components which allows you to access Hazelcast distributed map.
+The http://www.hazelcast.com/[Hazelcast] Map component is one of Camel Hazelcast Components which allows you to access a Hazelcast distributed map.
 
 
 == Options
@@ -36,7 +36,7 @@ include::partial$component-endpoint-options.adoc[]
 
 == Map cache producer - to("hazelcast-map:foo")
 
-If you want to store a value in a map you can use the map cache
+If you want to store a value in a map, you can use the map cache
 producer. 
 
 The map cache producer provides follow operations specified by *CamelHazelcastOperationType* header:
@@ -68,8 +68,11 @@ template.sendBodyAndHeader("direct:[put|get|update|delete|query|evict]", "my-foo
 
 === Sample for *put*:
 
-Java DSL:
+[tabs]
+====
 
+Java DSL::
++
 [source,java]
 ------------------------------------------------------------------------------------
 from("direct:put")
@@ -77,8 +80,8 @@ from("direct:put")
 .toF("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX);
 ------------------------------------------------------------------------------------
 
-Spring DSL:
-
+Spring XML::
++
 [source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
@@ -90,9 +93,15 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
+====
+
 Sample for *put* with eviction:
 
-Java DSL:
+[tabs]
+====
+
+Java DSL::
++
 
 [source,java]
 ------------------------------------------------------------------------------------
@@ -103,8 +112,8 @@ from("direct:put")
 .toF("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX);
 ------------------------------------------------------------------------------------
 
-Spring DSL:
-
+Spring XML::
++
 [source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
@@ -122,11 +131,15 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
+====
 
 === Sample for *get*:
 
-Java DSL:
+[tabs]
+====
 
+Java DSL::
++
 [source,java]
 ------------------------------------------------------------------------------------
 from("direct:get")
@@ -135,8 +148,8 @@ from("direct:get")
 .to("seda:out");
 ------------------------------------------------------------------------------------
 
-Spring DSL:
-
+Spring XML::
++
 [source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
@@ -149,10 +162,15 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
+====
+
 === Sample for *update*:
 
-Java DSL:
+[tabs]
+====
 
+Java DSL::
++
 [source,java]
 ---------------------------------------------------------------------------------------
 from("direct:update")
@@ -160,8 +178,8 @@ from("direct:update")
 .toF("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX);
 ---------------------------------------------------------------------------------------
 
-Spring DSL:
-
+Spring XML::
++
 [source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
@@ -173,9 +191,15 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
+====
+
 === Sample for *delete*:
 
-Java DSL:
+[tabs]
+====
+
+Java DSL::
++
 
 [source,java]
 ---------------------------------------------------------------------------------------
@@ -184,8 +208,8 @@ from("direct:delete")
 .toF("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX);
 ---------------------------------------------------------------------------------------
 
-Spring DSL:
-
+Spring XML::
++
 [source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
@@ -197,10 +221,15 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
+====
+
 === Sample for *query*
 
-Java DSL:
+[tabs]
+====
 
+Java DSL::
++
 [source,java]
 --------------------------------------------------------------------------------------
 from("direct:query")
@@ -209,8 +238,8 @@ from("direct:query")
 .to("seda:out");
 --------------------------------------------------------------------------------------
 
-Spring DSL:
-
+Spring XML::
++
 [source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
@@ -223,7 +252,9 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
-For the query operation Hazelcast offers a SQL like syntax to query your
+====
+
+For the query operation Hazelcast offers an SQL like syntax to query your
 distributed map.
 
 [source,java]
@@ -236,8 +267,8 @@ template.sendBodyAndHeader("direct:query", null, HazelcastConstants.QUERY, q1);
 == Map cache consumer - from("hazelcast-map:foo")
 
 Hazelcast provides event listeners on their data grid. If you want to be
-notified if a cache will be manipulated, you can use the map consumer.
-There're 4 events: *put*, *update*, *delete* and *envict*. The event
+notified if a cache is manipulated, you can use the map consumer.
+There are four events: *put*, *update*, *delete* and *envict*. The event
 type will be stored in the "*hazelcast.listener.action*" header
 variable. The map consumer provides some additional information inside
 these variables:
@@ -252,13 +283,13 @@ Header Variables inside the response message:
 
 |`CamelHazelcastListenerType` |`String` |the map consumer sets here "cachelistener"
 
-|`CamelHazelcastListenerAction` |`String` |type of event - here *added*, *updated*, *envicted* and *removed*.
+|`CamelHazelcastListenerAction` |`String` |type of event (*added*, *updated*, *envicted* and *removed*).
 
 |`CamelHazelcastObjectId` |`String` |the oid of the object
 
-|`CamelHazelcastCacheName` |`String` |the name of the cache - e.g. "foo"
+|`CamelHazelcastCacheName` |`String` |the name of the cache (e.g., "foo")
 
-|`CamelHazelcastCacheType` |`String` |the type of the cache - here map
+|`CamelHazelcastCacheType` |`String` |the type of the cache (e.g., map)
 |=======================================================================
 
 The object value will be stored within *put* and *update* actions inside
