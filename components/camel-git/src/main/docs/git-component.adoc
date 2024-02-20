@@ -34,8 +34,8 @@ git://localRepositoryPath[?options]
 
 == URI Options
 
-The producer allows to do operations on a specific repository. +
-The consumer allows consuming commits, tags and branches on a specific
+The producer allows doing operations on a specific repository.
+The consumer allows consuming commits, tags, and branches in a specific
 repository.
 
 
@@ -58,9 +58,9 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Producer Example
 
-Below is an example route of a producer that add a file test.java to a
-local repository, commit it with a specific message on master branch and
-then push it to remote repository.
+Below is an example route of a producer that adds a file test.java to a
+local repository, commits it with a specific message on the `main` branch and
+then pushes it to remote repository.
 
 [source,java]
 --------------------------------------------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ from("direct:start")
     .to("git:///tmp/testRepo?operation=commit")
     .to("git:///tmp/testRepo?operation=push&remotePath=https://foo.com/test/test.git&username=xxx&password=xxx")
     .to("git:///tmp/testRepo?operation=createTag&tagName=myTag")
-    .to("git:///tmp/testRepo?operation=pushTag&tagName=myTag&remoteName=origin")
+    .to("git:///tmp/testRepo?operation=pushTag&tagName=myTag&remoteName=origin");
 --------------------------------------------------------------------------------------------------------------------
 
 == Consumer Example
@@ -85,19 +85,19 @@ from("git:///tmp/testRepo?type=commit")
 ---------------------------------------
 
 == Custom config file
-By default camel-git will load ``.gitconfig`` file from user home folder. You
-can override this by providing your own ``.gitconfig`` file.
+By default, camel-git will load ``.gitconfig`` file from user home folder.
+You can override this by providing your own ``.gitconfig`` file.
 
 [source,java]
 ---------------------------------------
 from("git:///tmp/testRepo?type=commit&gitConfigFile=file:/tmp/configfile")
-    .to(....) //will load from os dirs
+    .to(....); // will load from os dirs
 
 from("git:///tmp/testRepo?type=commit&gitConfigFile=classpath:configfile")
-    .to(....) //will load from resources dir
+    .to(....); // will load from resources dir
 
 from("git:///tmp/testRepo?type=commit&gitConfigFile=http://somedomain.xyz/gitconfigfile")
-    .to(....) //will load from http. You could also use https
+    .to(....); // will load from http. You could also use https
 ---------------------------------------
 
 include::spring-boot:partial$starter.adoc[]
