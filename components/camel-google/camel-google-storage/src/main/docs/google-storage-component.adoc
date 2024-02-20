@@ -16,7 +16,7 @@
 *{component-header}*
 
 The Google Storage component provides access to https://cloud.google.com/storage/[Google Cloud Storage] via
-the https://github.com/googleapis/java-storage[google java storage library].
+the https://github.com/googleapis/java-storage[Google java storage library].
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -36,9 +36,9 @@ for this component:
 == Authentication Configuration
 
 Google Storage component authentication is targeted for use with the GCP Service Accounts.
-For more information please refer to https://cloud.google.com/storage/docs/reference/libraries#setting_up_authentication[Google Storage Auth Guide].
+For more information, please refer to https://cloud.google.com/storage/docs/reference/libraries#setting_up_authentication[Google Storage Auth Guide].
 
-When you have the **service account key** you can provide authentication credentials to your application code.
+When you have the **service account key**, you can provide authentication credentials to your application code.
 Google security credentials can be set through the component endpoint:
 
 [source,java]
@@ -61,11 +61,10 @@ export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"
 google-storage://bucketNameOrArn?[options]
 --------------------------------------------------------
 
-By default the bucket will be created if it don't already exists. +
-You can append query options to the URI in the following format,
-?options=value&option2=value&...
+By default, the bucket will be created if it doesn't already exist.
+You can append query options to the URI in the following format: `?options=value&option2=value&...`
 
-For example in order to read file `hello.txt` from bucket `myCamelBucket`, use the following snippet:
+For example, to read file `hello.txt` from bucket `myCamelBucket`, use the following snippet:
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -96,17 +95,17 @@ include::partial$component-endpoint-headers.adoc[]
 
 === Google Storage Producer operations
 
-Google Storage component provides the following operation on the producer side:
+Google Storage component provides the following operations on the producer side:
 
-- copyObject
-- listObjects
-- deleteObject
-- deleteBucket
-- listBuckets
-- getObject
-- createDownloadLink
+- `copyObject`
+- `listObjects`
+- `deleteObject`
+- `deleteBucket`
+- `listBuckets`
+- `getObject`
+- `createDownloadLink`
 
-If you don't specify an operation explicitly the producer will a file upload.
+If you don't specify an operation explicitly, the producer will a file upload.
 
 === Advanced component configuration
 
@@ -136,9 +135,9 @@ from("direct:start")
 .log("uploaded file object:${header.CamelGoogleCloudStorageObjectName}, body:${body}");
 --------------------------------------------------------------------------------
 
-This operation will upload the file camel.txt with the content "Camel rocks!" in the myCamelBucket bucket
+This operation will upload the file `camel.txt` with the content `"Camel rocks!"` in the myCamelBucket bucket
 
-- CopyObject: this operation copy an object from one bucket to a different one
+- `CopyObject`: this operation copies an object from one bucket to a different one
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -154,7 +153,7 @@ This operation will upload the file camel.txt with the content "Camel rocks!" in
 
 This operation will copy the object with the name expressed in the header DESTINATION_OBJECT_NAME to the DESTINATION_BUCKET_NAME bucket, from the bucket myCamelBucket.
 
-- DeleteObject: this operation deletes an object from a bucket
+- `DeleteObject`: this operation deletes an object from a bucket
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -168,7 +167,7 @@ This operation will copy the object with the name expressed in the header DESTIN
 
 This operation will delete the object from the bucket myCamelBucket.
 
-- ListBuckets: this operation list the buckets for this account in this region
+- `ListBuckets`: this operation lists the buckets for this account in this region
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -179,7 +178,7 @@ from("direct:start")
 
 This operation will list the buckets for this account.
 
-- DeleteBucket: this operation delete the bucket specified as URI parameter or header
+- `DeleteBucket`: this operation deletes the bucket specified as URI parameter or header
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -190,7 +189,7 @@ from("direct:start")
 
 This operation will delete the bucket myCamelBucket.
 
-- ListObjects: this operation list object in a specific bucket
+- `ListObjects`: this operation list object in a specific bucket
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -201,7 +200,7 @@ from("direct:start")
 
 This operation will list the objects in the myCamelBucket bucket.
 
-- GetObject: this operation get a single object in a specific bucket
+- `GetObject`: this operation gets a single object in a specific bucket
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -213,9 +212,9 @@ from("direct:start")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation will return an Blob objct instance related to the OBJECT_NAME object in myCamelBucket bucket.
+This operation will return a Blob object instance related to the `OBJECT_NAME` object in `myCamelBucket` bucket.
 
-- CreateDownloadLink: this operation will return a download link
+- `CreateDownloadLink`: this operation will return a download link
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -230,14 +229,15 @@ from("direct:start")
 
 This operation will return a download link url for the file OBJECT_NAME in the bucket myCamelBucket. It's possible to specify the expiration time for the created link through the header DOWNLOAD_LINK_EXPIRATION_TIME. If not specified, by default it is 5 minutes.
 
-== Bucket Autocreation
+== Bucket Auto creation
 
 With the option `autoCreateBucket` users are able to avoid the autocreation of a Bucket in case it doesn't exist. The default for this option is `true`.
-If set to false any operation on a not-existent bucket won't be successful and an error will be returned.
+If set to false, any operation on a not-existent bucket won't be successful and an error will be returned.
 
 == MoveAfterRead consumer option
 
-In addition to deleteAfterRead it has been added another option, moveAfterRead. With this option enabled the consumed object will be moved to a target destinationBucket instead of being only deleted.
+In addition to `deleteAfterRead` it has been added another option, `moveAfterRead`.
+With this option enabled the consumed object will be moved to a target `destinationBucket` instead of being only deleted.
 This will require specifying the destinationBucket option. As example:
 
 [source,java]
@@ -252,7 +252,7 @@ This will require specifying the destinationBucket option. As example:
   .to("mock:result");
 --------------------------------------------------------------------------------
 
-In this case the objects consumed will be moved to myCamelProcessedBucket bucket and deleted from the original one (because of deleteAfterRead).
+In this case, the objects consumed will be moved to myCamelProcessedBucket bucket and deleted from the original one (because of deleteAfterRead).
 
 
 include::spring-boot:partial$starter.adoc[]
