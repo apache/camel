@@ -170,10 +170,10 @@ Sample for *Poll* mode
 fromF("hazelcast-%sfoo?queueConsumerMode=Poll", HazelcastConstants.QUEUE_PREFIX)).to("mock:result");
 -------------------------------------------------------------------------------------------
 
-In this way the consumer will poll the queue and return the head of the queue or null after a timeout.
+In this way, the consumer will poll the queue and return the head of the queue or null after a timeout.
 
 
-In Listen mode instead the consumer will listen for events on queue.
+In Listen mode instead, the consumer will listen for events on queue.
 
 The queue consumer in Listen mode provides 2 operations:
 * add

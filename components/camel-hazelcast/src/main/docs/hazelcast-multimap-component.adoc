@@ -38,7 +38,7 @@ include::partial$component-endpoint-options.adoc[]
 
 A multimap is a cache where you can store n values to one key.
 
-The  multimap producer provides 8 operations:
+The  multimap producer provides eight operations:
 
 * put
 * get
@@ -55,8 +55,11 @@ include::partial$component-endpoint-headers.adoc[]
 
 === Sample for *put*:
 
-Java DSL:
+[tabs]
+====
 
+Java DSL::
++
 [source,java]
 ------------------------------------------------------------------------------------
 from("direct:put")
@@ -64,8 +67,8 @@ from("direct:put")
 .to(String.format("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX));
 ------------------------------------------------------------------------------------
 
-Spring DSL:
-
+Spring XML::
++
 [source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
@@ -78,9 +81,15 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
+====
+
 === Sample for *removevalue*:
 
-Java DSL:
+[tabs]
+====
+
+Java DSL::
++
 
 [source,java]
 --------------------------------------------------------------------------------------------
@@ -89,8 +98,8 @@ from("direct:removevalue")
 .toF("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX);
 --------------------------------------------------------------------------------------------
 
-Spring DSL:
-
+Spring XML::
++
 [source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
@@ -103,15 +112,20 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
+====
+
 To remove a value you have to provide the value you want to remove
 inside the message body. If you have a multimap object
-\{`key: "4711" values: { "my-foo", "my-bar"`}} you have to put "my-foo"
-inside the message body to remove the "my-foo" value.
+`\{`key: "4711" values: { "my-foo", "my-bar"`}}` you have to put `my-foo`
+inside the message body to remove the `my-foo` value.
 
 === Sample for *get*:
 
-Java DSL:
+[tabs]
+====
 
+Java DSL::
++
 [source,java]
 ------------------------------------------------------------------------------------
 from("direct:get")
@@ -120,8 +134,8 @@ from("direct:get")
 .to("seda:out");
 ------------------------------------------------------------------------------------
 
-Spring DSL:
-
+Spring XML::
++
 [source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
@@ -135,10 +149,15 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
+====
+
 === Sample for *delete*:
 
-Java DSL:
+[tabs]
+====
 
+Java DSL::
++
 [source,java]
 ---------------------------------------------------------------------------------------
 from("direct:delete")
@@ -146,8 +165,8 @@ from("direct:delete")
 .toF("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX);
 ---------------------------------------------------------------------------------------
 
-Spring DSL:
-
+Spring XML::
++
 [source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
@@ -160,7 +179,9 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
-you can call them in your test class with:
+====
+
+You can call them in your test class with:
 
 [source,java]
 ------------------------------------------------------------------------------------------------------------------
