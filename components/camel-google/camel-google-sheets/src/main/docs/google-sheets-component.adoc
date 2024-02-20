@@ -25,16 +25,16 @@ the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
 protocol] for authenticating a Google account and authorizing access to
 user data. Before you can use this component, you will need
 to https://developers.google.com/google-apps/sheets/auth[create an
-account and generate OAuth credentials]. Credentials comprise of a
-clientId, clientSecret, and a refreshToken. A handy resource for
-generating a long-lived refreshToken is
+account and generate OAuth credentials]. Credentials consist of a
+`clientId`, `clientSecret`, and a `refreshToken`. A handy resource for
+generating a long-lived `refreshToken` is
 the https://developers.google.com/oauthplayground[OAuth playground].
 
 In the case of a https://developers.google.com/identity/protocols/oauth2#serviceaccount[service account],
-credentials comprise of a JSON-file (serviceAccountKey). You can also use
+credentials consist of a JSON-file (serviceAccountKey). You can also use
 https://developers.google.com/identity/protocols/oauth2/service-account#delegatingauthority[delegation domain-wide authority]
 (delegate) and one, several, or all possible
-https://developers.google.com/sheets/api/guides/authorizing[Sheets API Auth Scopes] (scopes).
+https://developers.google.com/sheets/api/guides/authorizing[Sheets API Auth Scopes].
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -79,8 +79,8 @@ include::partial$component-endpoint-options.adoc[]
 
 == ValueInputOption
 
-Many of the APIs with Google sheets requires to include the following header,
-with one of the enum value:
+Many of the APIs with Google sheets require including the following header,
+with one of the enum values:
 
 |====
 | *Header* | *Enum* | *Description*
