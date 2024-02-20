@@ -74,6 +74,8 @@ import org.jboss.jandex.ClassInfo.NestingType;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.IndexView;
 
+import static java.lang.reflect.Modifier.isStatic;
+
 @Mojo(name = "generate-schema", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
       defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
@@ -247,8 +249,9 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         String javaTypeName = element.name().toString();
         Class<?> classElement = loadClass(javaTypeName);
 
-        // gather eip information
+        // gather eip information and what metadata the EIP can store as exchange properties
         EipModel eipModel = findEipModelProperties(classElement, name);
+        findEipModelExchangeProperties(classElement, name, eipModel);
 
         // get endpoint information which is divided into paths and options
         // (though there should really only be one path)
@@ -326,6 +329,57 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         return model;
+    }
+
+    protected void findEipModelExchangeProperties(Class<?> classElement, String name, EipModel eipModel) {
+        // load Exchange and find options for this EIP
+        Class<?> clazz;
+        if ("circuitBreaker".equals(name)) {
+            // special for circuit breaker
+            clazz = loadClass("org.apache.camel.spi.CircuitBreakerConstants");
+        } else {
+            clazz = loadClass("org.apache.camel.Exchange");
+        }
+        for (Field field : clazz.getFields()) {
+            if ((isStatic(field.getModifiers()) && field.getType() == String.class)
+                    && field.isAnnotationPresent(Metadata.class)) {
+                Metadata metadata = field.getAnnotation(Metadata.class);
+                String labels = metadata.label();
+                for (String lab : labels.split(",")) {
+                    if (lab.equals(name)) {
+                        EipOptionModel o = new EipOptionModel();
+                        o.setKind("exchangeProperty");
+                        // SPLIT_INDEX => CamelSplitIndex
+                        String n = field.getName().toLowerCase().replace('_', '-');
+                        String n2 = SchemaHelper.dashToCamelCase(n);
+                        String valueName = "Camel" + Character.toUpperCase(n2.charAt(0)) + n2.substring(1);
+                        o.setName(valueName);
+                        o.setDescription(metadata.description());
+                        if (!metadata.displayName().isEmpty()) {
+                            o.setDisplayName(metadata.displayName());
+                        } else {
+                            o.setDisplayName(Strings.asTitle(o.getName().substring(5)));
+                        }
+                        o.setRequired(metadata.required());
+                        o.setDefaultValue(metadata.defaultValue());
+                        o.setDeprecated(field.isAnnotationPresent(Deprecated.class));
+                        if (!metadata.deprecationNote().isEmpty()) {
+                            o.setDeprecationNote(metadata.deprecationNote());
+                        }
+                        o.setSecret(metadata.secret());
+                        o.setJavaType(metadata.javaType());
+                        // special if the property is for input (such as AGGREGATION_COMPLETE_CURRENT_GROUP)
+                        if (labels.startsWith("consumer,")) {
+                            o.setLabel("consumer");
+                        } else {
+                            o.setLabel("producer");
+                        }
+                        eipModel.addExchangeProperty(o);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     protected void findClassProperties(

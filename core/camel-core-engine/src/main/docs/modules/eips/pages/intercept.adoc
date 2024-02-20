@@ -64,7 +64,7 @@ All these interceptors support the following features:
 the message to an xref:message-endpoint.adoc[endpoint] afterwards.
 * `interceptFrom` and `interceptSendToEndpoint` support endpoint
 URI pattern matching by exact uri, wildcard and regular expression. See further below for more details.
-* The intercepted endpoint uri is stored as message header with the key
+* The intercepted endpoint uri is stored as exchange property with the key
 `Exchange.INTERCEPTED_ENDPOINT`.
 
 === Using intercept

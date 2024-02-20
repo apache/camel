@@ -43,7 +43,7 @@ public class RecipientListErrorHandlingIssueIT extends FtpServerTestSupport {
 
                 interceptSendToEndpoint("(ftp|direct):.*").process(new Processor() {
                     public void process(Exchange exchange) {
-                        String target = exchange.getIn().getHeader(Exchange.INTERCEPTED_ENDPOINT, String.class);
+                        String target = exchange.getProperty(Exchange.INTERCEPTED_ENDPOINT, String.class);
                         exchange.getIn().setHeader("target", target);
                     }
                 });

@@ -294,11 +294,22 @@ public final class JsonMapper {
         model.setInput(mobj.getBooleanOrDefault("input", false));
         model.setOutput(mobj.getBooleanOrDefault("output", false));
         JsonObject mprp = (JsonObject) obj.get("properties");
-        for (Map.Entry<String, Object> entry : mprp.entrySet()) {
-            JsonObject mp = (JsonObject) entry.getValue();
-            EipOptionModel option = new EipOptionModel();
-            parseOption(mp, option, entry.getKey());
-            model.addOption(option);
+        if (mprp != null) {
+            for (Map.Entry<String, Object> entry : mprp.entrySet()) {
+                JsonObject mp = (JsonObject) entry.getValue();
+                EipOptionModel option = new EipOptionModel();
+                parseOption(mp, option, entry.getKey());
+                model.addOption(option);
+            }
+        }
+        mprp = (JsonObject) obj.get("exchangeProperties");
+        if (mprp != null) {
+            for (Map.Entry<String, Object> entry : mprp.entrySet()) {
+                JsonObject mp = (JsonObject) entry.getValue();
+                EipOptionModel option = new EipOptionModel();
+                parseOption(mp, option, entry.getKey());
+                model.addExchangeProperty(option);
+            }
         }
         return model;
     }
@@ -318,6 +329,9 @@ public final class JsonMapper {
         JsonObject wrapper = new JsonObject();
         wrapper.put("model", obj);
         wrapper.put("properties", asJsonObject(model.getOptions()));
+        if (!model.getExchangeProperties().isEmpty()) {
+            wrapper.put("exchangeProperties", asJsonObject(model.getExchangeProperties()));
+        }
         return wrapper;
     }
 

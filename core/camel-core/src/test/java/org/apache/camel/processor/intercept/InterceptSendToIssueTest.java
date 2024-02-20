@@ -33,7 +33,7 @@ public class InterceptSendToIssueTest extends ContextTestSupport {
     public void testInterceptSendTo() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:foo");
         mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived(Exchange.INTERCEPTED_ENDPOINT, "direct://foo");
+        mock.expectedPropertyReceived(Exchange.INTERCEPTED_ENDPOINT, "direct://foo");
 
         template.sendBody("direct:start", "Hello World");
 

@@ -432,6 +432,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
             // set property which endpoint we send to and the producer that can do it
             ex.setProperty(ExchangePropertyKey.TO_ENDPOINT, endpoint.getEndpointUri());
             ex.setProperty(ExchangePropertyKey.SLIP_ENDPOINT, endpoint.getEndpointUri());
+            // routing slip needs to have access to the producer
             ex.setProperty(ExchangePropertyKey.SLIP_PRODUCER, p);
 
             return target.process(ex, new AsyncCallback() {

@@ -30,5 +30,8 @@
     "redeliveryPolicyRef": { "index": 15, "kind": "attribute", "displayName": "Redelivery Policy Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets a reference to a RedeliveryPolicy to be used for redelivery settings." },
     "executorServiceRef": { "index": 16, "kind": "attribute", "displayName": "Executor Service Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets a reference to a thread pool to be used by the error handler" },
     "redeliveryPolicy": { "index": 17, "kind": "element", "displayName": "Redelivery Policy", "required": false, "type": "object", "javaType": "org.apache.camel.spring.xml.CamelRedeliveryPolicyFactoryBean", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the redelivery settings" }
+  },
+  "exchangeProperties": {
+    "CamelExceptionCaught": { "index": 0, "kind": "exchangeProperty", "displayName": "Exception Caught", "required": false, "javaType": "java.lang.Exception", "deprecated": false, "autowired": false, "secret": false, "description": "Stores the caught exception due to a processing error of the current Exchange" }
   }
 }

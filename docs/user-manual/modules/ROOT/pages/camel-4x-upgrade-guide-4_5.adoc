@@ -6,3 +6,23 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.4 to 4.5
 
+=== camel-core
+
+=== Intercept EIP
+
+The `interceptFrom` and `interceptSentToEndpoint` EIPs is now storing the intercepted endpoint using key `Exchange.INTERCEPTED_ENDPOINT`
+as exchange property instead of a header.
+
+Before:
+
+[source,java]
+----
+String uri = exchange.getIn().getHeader(Exchange.INTERCEPTED_ENDPOINT, String.class);
+----
+
+After:
+
+[source,java]
+----
+String uri = exchange.getProperty(Exchange.INTERCEPTED_ENDPOINT, String.class);
+----

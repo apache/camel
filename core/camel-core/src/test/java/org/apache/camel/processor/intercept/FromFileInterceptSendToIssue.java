@@ -31,7 +31,7 @@ public class FromFileInterceptSendToIssue extends ContextTestSupport {
     public void testInterceptSendTo() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:foo");
         mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived(Exchange.INTERCEPTED_ENDPOINT, "seda://foo");
+        mock.expectedPropertyReceived(Exchange.INTERCEPTED_ENDPOINT, "seda://foo");
 
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "input.txt");
 
