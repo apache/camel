@@ -158,7 +158,7 @@ public class Plc4XEndpoint extends DefaultEndpoint {
      * @return true if connection supports writing, else false
      */
     public boolean canWrite() {
-        return connection.getMetadata().canWrite();
+        return connection.getMetadata().isWriteSupported();
     }
 
     @Override

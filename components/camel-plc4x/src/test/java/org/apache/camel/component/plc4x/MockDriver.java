@@ -57,8 +57,8 @@ public class MockDriver implements PlcDriver {
     public PlcConnection getConnection(String url) throws PlcConnectionException {
         // Mock a connection.
         PlcConnection plcConnectionMock = mock(PlcConnection.class, RETURNS_DEEP_STUBS);
-        when(plcConnectionMock.getMetadata().canRead()).thenReturn(true);
-        when(plcConnectionMock.getMetadata().canWrite()).thenReturn(true);
+        when(plcConnectionMock.getMetadata().isReadSupported()).thenReturn(true);
+        when(plcConnectionMock.getMetadata().isWriteSupported()).thenReturn(true);
         when(plcConnectionMock.readRequestBuilder()).thenReturn(mock(PlcReadRequest.Builder.class, RETURNS_DEEP_STUBS));
         when(plcConnectionMock.writeRequestBuilder()).thenReturn(mock(PlcWriteRequest.Builder.class, RETURNS_DEEP_STUBS));
         when(plcConnectionMock.subscriptionRequestBuilder())
