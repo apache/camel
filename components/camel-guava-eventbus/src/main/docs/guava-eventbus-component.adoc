@@ -23,7 +23,7 @@ component provides integration bridge between Camel and
 https://google.github.io/guava/releases/19.0/api/docs/com/google/common/eventbus/EventBus.html[Google
 Guava EventBus] infrastructure. With the latter component, messages
 exchanged with the Guava `EventBus` can be transparently forwarded to
-the Camel routes. EventBus component allows also to route body of Camel
+the Camel routes. EventBus component allows also routing the body of Camel
 exchanges to the Guava `EventBus`.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -129,7 +129,7 @@ This drawback of this approach is that `EventBus` instance used by Camel
 will never generate `com.google.common.eventbus.DeadEvent`
 notifications. If you want Camel to listen only to the precisely
 specified event (and therefore enable `DeadEvent` support), use
-`listenerInterface` endpoint option. Camel will create dynamic proxy
+`listenerInterface` endpoint option. Camel will create a dynamic proxy
 over the interface you specify with the latter option and listen only to
 messages specified by the interface handler methods. The example of the
 listener interface with single method handling only `SpecificEvent`
@@ -155,9 +155,9 @@ follows.
 from("guava-eventbus:busName?listenerInterface=com.example.CustomListener").to("seda:queue");
 ---------------------------------------------------------------------------------------------
 
-== Consuming multiple type of events
+== Consuming multiple types of events
 
-In order to define multiple type of events to be consumed by Guava
+To define multiple types of events to be consumed by Guava
 EventBus consumer use `listenerInterface` endpoint option, as listener
 interface could provide multiple methods marked with the `@Subscribe`
 annotation.
