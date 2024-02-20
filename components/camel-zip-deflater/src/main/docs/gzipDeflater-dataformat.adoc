@@ -24,7 +24,7 @@ using `gzip` tool.
 [NOTE]
 ====
 This dataformat is not for working with gzip files such as uncompressing and building gzip files.
-Instead, use the xref:dataformats::zipfile-dataformat.adoc[zipfile] dataformat.
+Instead, use the xref:dataformats:zipfile-dataformat.adoc[zipfile] dataformat.
 ====
 
 == Options
