@@ -26,6 +26,12 @@ TIP: See the `cacheSize` option for more details on _how much cache_ to use depe
 
 == Exchange properties
 
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Manual Exchange properties (TODO remove me)
+
 The following exchange properties are set on each `Exchange` that are sent by the routing slip:
 
 [width="100%",cols="3,1m,6",options="header"]
