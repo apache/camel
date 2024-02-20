@@ -1,0 +1,14 @@
+{
+  "transformer": {
+    "kind": "transformer",
+    "name": "aws2-ddbstream:application-cloudevents",
+    "title": "Aws2 Ddbstream (Application Cloudevents)",
+    "description": "Adds CloudEvent headers to the Camel message with AWS Dynamo DB Streams get records response details",
+    "deprecated": false,
+    "javaType": "org.apache.camel.component.aws2.ddbstream.transform.Ddb2StreamCloudEventDataTypeTransformer",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-aws2-ddb",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+
