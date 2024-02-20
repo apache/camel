@@ -23,7 +23,7 @@ decompress payloads at the endpoint.
 [NOTE]
 ====
 This dataformat is not for working with zip files such as uncompressing and building zip files.
-Instead, use the xref:dataformats:zipfile-dataformat.adoc[zipfile] dataformat.
+Instead, use the xref:dataformats:zipFile-dataformat.adoc[zipfile] dataformat.
 ====
 
 == Options
