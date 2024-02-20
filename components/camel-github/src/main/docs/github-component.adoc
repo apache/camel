@@ -17,7 +17,7 @@
 The GitHub component interacts with the GitHub API by
 encapsulating https://git.eclipse.org/c/egit/egit-github.git/[egit-github]. It
 currently provides polling for new pull requests, pull request comments,
-tags, and commits.  It is also able to produce comments on pull
+tags, and commits. It is also able to produce comments on pull
 requests, as well as close the pull request entirely.
 
 Rather than webhooks, this endpoint relies on simple polling. Reasons
@@ -70,9 +70,9 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Configuring authentication
 
-The github component requires to be configured with an authentication token on either the component or endpoint level.
+The GitHub component requires to be configured with an authentication token on either the component or endpoint level.
 
-For example to set it on the component:
+For example, to set it on the component:
 
 [source,java]
 ----
@@ -86,15 +86,15 @@ ghc.setOauthToken("mytoken");
 |=======================================================================
 |Endpoint |Context |Body Type
 
-|pullRequest |polling |org.eclipse.egit.github.core.PullRequest
+|pullRequest |polling |`org.eclipse.egit.github.core.PullRequest`
 
-|pullRequestComment |polling |org.eclipse.egit.github.core.Comment (comment on the general pull
-request discussion) or org.eclipse.egit.github.core.CommitComment
+|pullRequestComment |polling |`org.eclipse.egit.github.core.Comment` (comment on the general pull
+request discussion) or `org.eclipse.egit.github.core.CommitComment`
 (inline comment on a pull request diff)
 
-|tag |polling |org.eclipse.egit.github.core.RepositoryTag
+|tag |polling |`org.eclipse.egit.github.core.RepositoryTag`
 
-|commit |polling |org.eclipse.egit.github.core.RepositoryCommit
+|commit |polling |`org.eclipse.egit.github.core.RepositoryCommit`
 |=======================================================================
 
 == Producer Endpoints:
@@ -103,15 +103,15 @@ request discussion) or org.eclipse.egit.github.core.CommitComment
 |=======================================================================
 |Endpoint |Body |Message Headers
 
-|pullRequestComment |String (comment text) | - GitHubPullRequest (integer) (REQUIRED): Pull request number.
+|pullRequestComment |String (comment text) | - `GitHubPullRequest` (integer) (REQUIRED): Pull request number.
 
-- GitHubInResponseTo (integer): Required if responding to another inline
+- `GitHubInResponseTo` (integer): Required if responding to another inline
 comment on the pull request diff. If left off, a general comment on the
 pull request discussion is assumed.
 
-|closePullRequest |none | - GitHubPullRequest (integer) (REQUIRED): Pull request number.
+|closePullRequest |none | - `GitHubPullRequest` (integer) (REQUIRED): Pull request number.
 
-|createIssue |String (issue body text) | - GitHubIssueTitle (String) (REQUIRED): Issue Title.
+|createIssue |String (issue body text) | - `GitHubIssueTitle` (String) (REQUIRED): Issue Title.
 |=======================================================================
 
 
