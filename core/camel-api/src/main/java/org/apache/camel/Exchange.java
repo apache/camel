@@ -300,7 +300,7 @@ public interface Exchange extends VariableAware {
     String TIMER_PERIOD = "CamelTimerPeriod";
     String TIMER_TIME = "CamelTimerTime";
 
-    @Metadata(label = "multicast,pollEnrich,recipientList,routingSlip,toD,to,wireTap",
+    @Metadata(label = "enrich,multicast,pollEnrich,recipientList,routingSlip,toD,to,wireTap",
               description = "Endpoint URI where this Exchange is being sent to", javaType = "String")
     String TO_ENDPOINT = "CamelToEndpoint";
     @Deprecated

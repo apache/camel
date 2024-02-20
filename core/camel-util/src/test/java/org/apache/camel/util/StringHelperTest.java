@@ -61,6 +61,17 @@ public class StringHelperTest {
         assertEquals("available-phone-number-country", camelCaseToDash("AvailablePhoneNumberCountry"));
     }
 
+    @Test
+    public void testDashToCamelCaseSkipQuotedOrKeyed() {
+        String line = "camel.component.rabbitmq.args[queue.x-queue-type]";
+        // no preserve
+        assertEquals("camel.component.rabbitmq.args[queue.xQueueType]",
+                dashToCamelCase(line));
+
+        // preserved
+        assertEquals(line, dashToCamelCase(line, true));
+    }
+
     @Nested
     class DashToCamelCase {
 
