@@ -38,7 +38,7 @@ fop://outputFormat?[options]
 
 == Output Formats
 
-The primary output format is PDF but other output
+The primary output format is PDF, but other output
 http://xmlgraphics.apache.org/fop/0.95/output.html[formats] are also
 supported:
 
@@ -92,8 +92,8 @@ The location of a configuration file with the following
 http://xmlgraphics.apache.org/fop/1.0/configuration.html[structure].
 The file is loaded from the classpath by
 default. You can use `file:`, or `classpath:` as prefix to load the
-resource from file or classpath. In previous releases the file is always
-loaded from file system.
+resource from file or classpath. In previous releases, the file is always
+loaded from the file system.
 
 == Message Operations
 
@@ -133,7 +133,7 @@ loaded from file system.
 == Example
 
 Below is an example route that renders PDFs from xml data and xslt
-template and saves the PDF files in target folder:
+template and saves the PDF files in the target folder:
 
 [source,java]
 ---------------------------------
