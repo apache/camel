@@ -45,7 +45,7 @@ include::partial$component-endpoint-options.adoc[]
 
 === Using Hashicorp Vault Property Function
 
-To use this function you'll need to provide credentials for Hashicorp vault as environment variables:
+To use this function, you'll need to provide credentials for Hashicorp vault as environment variables:
 
 [source,bash]
 ----
@@ -67,7 +67,7 @@ camel.vault.hashicorp.port = port
 camel.vault.hashicorp.scheme = scheme
 ----
 
-At this point you'll be able to reference a property in the following way:
+At this point, you'll be able to reference a property in the following way:
 
 [source,xml]
 ----
@@ -93,9 +93,9 @@ You could specify a default value in case the secret is not present on Hashicorp
 </camelContext>
 ----
 
-In this case if the secret doesn't exist, the property will fallback to "default" as value.
+In this case, if the secret doesn't exist, the property will fall back to "default" as value.
 
-Also you are able to get particular field of the secret, if you have for example a secret named database of this form:
+Also, you are able to get a particular field of the secret, if you have, for example, a secret named database of this form:
 
 [source,bash]
 ----
@@ -135,7 +135,7 @@ You could specify a default value in case the particular field of secret is not 
 </camelContext>
 ----
 
-In this case if the secret doesn't exist or the secret exists, but the username field is not part of the secret, the property will fallback to "admin" as value.
+In this case, if the secret doesn't exist or the secret exists, but the username field is not part of the secret, the property will fall back to "admin" as value.
 
 There is also the syntax to get a particular version of the secret for both the approach, with field/default value specified or only with secret:
 
@@ -175,6 +175,6 @@ This approach will return the route secret value with version '2' or default val
 
 This approach will return the username field of the database secret with version '2' or admin in case the secret doesn't exist or the version doesn't exist.
 
-For the moment we are not considering the rotation function, if any will be applied, but it is in the work to be done.
+For the moment we are not considering the rotation function if any are applied, but it is in the work to be done.
 
 The only requirement is adding the camel-hashicorp-vault jar to your Camel application.
