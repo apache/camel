@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-This component provides access to remote file systems over the FTP and
+This component provides access to remote file systems over the FTP secure and
 SFTP protocols.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -49,7 +49,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == More Information
 
-For more information you can look at xref:ftp-component.adoc[FTP component]
+For more information, you can look at xref:ftp-component.adoc[FTP component].
 
 
 include::spring-boot:partial$starter.adoc[]
