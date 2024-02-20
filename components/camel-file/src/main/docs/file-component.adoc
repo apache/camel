@@ -25,14 +25,14 @@ messages from other components to be saved to disk.
 file:directoryName[?options]
 ----
 
-Where *directoryName* represents the underlying file directory.
+Where `directoryName` represents the underlying file directory.
 
 *Only directories*
 
 Camel supports only endpoints configured with a starting directory. So
-the *directoryName* must be a directory.
- If you want to consume a single file only, you can use the *fileName*
-option, e.g. by setting `fileName=thefilename`.
+the `directoryName` *must be* a directory.
+ If you want to consume a single file only, you can use the `fileName`
+option, e.g., by setting `fileName=thefilename`.
  Also, the starting directory must not contain dynamic expressions with
 `${ }` placeholders. Again use the `fileName` option to specify the
 dynamic part of the filename.
@@ -43,11 +43,11 @@ dynamic part of the filename.
 
 Beware the JDK File IO API is a bit limited in detecting whether another
 application is currently writing/copying a file. And the implementation
-can be different depending on OS platform as well. This could lead to
+can be different depending on the OS platform as well. This could lead to
 that Camel thinks the file is not locked by another process and start
-consuming it. Therefore you have to do you own investigation what suites
+consuming it. Therefore, you have to do your own investigation what suites
 your environment. To help with this Camel provides different `readLock`
-options and `doneFileName` option that you can use. See also the section
+options and `doneFileName` option that you can use. See also
 <<File2-Consumingfilesfromfolderswhereothersdropfilesdirectly, Consuming files from folders where others drop files directly>>.
 ====
 
@@ -73,17 +73,32 @@ include::partial$component-endpoint-headers.adoc[]
 ====
 *Default behavior for file producer* 
 
-By default it will override any existing file, if one exist with the same name.
+By default, it will override any existing file if one exists with the same name.
 ====
 
+== Move, Pre Move and Delete operations
 
-== Move and Delete operations
+By default, Camel will move consumed files to the `.camel` subfolder
+relative to the directory where the file was consumed.
 
-Any move or delete operations is executed after (post command) the
-routing has completed; so during processing of the `Exchange` the file
-is still located in the inbox folder.
+If you want to delete the file after processing, the route should be:
 
-Lets illustrate this with an example:
+[source,java]
+----
+from("file://inbox?delete=true").to("bean:handleOrder");
+----
+
+[NOTE]
+====
+There is a sample <<File2-ReadingFromADirectoryAndTheDefaultMoveOperation,showing reading from a directory and the default move operation>> below.
+====
+
+=== Move, Delete and the Routing process
+
+Any move or delete operations are executed after the routing has completed.
+So, during processing of the `Exchange` the file is still located in the inbox folder.
+
+Let's illustrate this with an example:
 
 [source,java]
 ----
@@ -97,39 +112,33 @@ point in time the file is still located in the `inbox` folder. After the
 bean completes, and thus the route is completed, the file consumer will
 perform the move operation and move the file to the `.done` sub-folder.
 
-The *move* and the *preMove* options are considered as a directory name
-(though if you use an expression such as xref:languages:file-language.adoc[File Language], or xref:languages:simple-language.adoc[Simple] then the result of the expression
-evaluation is the file name to be used - eg if you set
+The `move` and the `preMove` options are considered as a directory name.
+Though, if you use an expression such as xref:languages:file-language.adoc[File Language],
+or xref:languages:simple-language.adoc[Simple], then the result of the expression
+evaluation is the file name to be used.
+E.g., if you set:
 
 ----
 move=../backup/copy-of-${file:name}
 ----
 
-then that's using the xref:languages:file-language.adoc[File Language] which we
-use return the file name to be used), which can be either relative or
-absolute. If relative, the directory is created as a sub-folder from
-within the folder where the file was consumed.
+Then that's using the xref:languages:file-language.adoc[File Language] which we
+ use to return the file name to be used.
+This can be either relative or absolute.
+If relative, the directory is created as a subfolder from within the folder where the file was consumed.
 
-By default, Camel will move consumed files to the `.camel` sub-folder
-relative to the directory where the file was consumed.
+=== Move and Pre Move operations
 
-If you want to delete the file after processing, the route should be:
-
-[source,java]
-----
-from("file://inbox?delete=true").to("bean:handleOrder");
-----
-
-We have introduced a *pre* move operation to move files *before* they
+We have introduced a `preMove` operation to move files *before* they
 are processed. This allows you to mark which files have been scanned as
-they are moved to this sub folder before being processed.
+they are moved to this subfolder before being processed.
 
 [source,java]
 ----
 from("file://inbox?preMove=inprogress").to("bean:handleOrder");
 ----
 
-You can combine the *pre* move and the regular move:
+You can combine the `preMove` and the regular `move`:
 
 [source,java]
 ----
@@ -137,50 +146,48 @@ from("file://inbox?preMove=inprogress&move=.done").to("bean:handleOrder");
 ----
 
 So in this situation, the file is in the `inprogress` folder when being
-processed and after it's processed, it's moved to the `.done` folder.
+processed, and after it's processed, it's moved to the `.done` folder.
 
-== Fine grained control over Move and PreMove option
+=== Fine-grained control over Move and PreMove option
 
-The *move* and *preMove* options
-are Expression-based, so we have the full power of
+The `move` and `preMove` options are Expression-based, so we have the full power of
 the xref:languages:file-language.adoc[File Language] to do advanced configuration
-of the directory and name pattern. +
- Camel will, in fact, internally convert the directory name you enter
-into a xref:languages:file-language.adoc[File Language] expression. So when we
-enter `move=.done` Camel will convert this into:
-`${file:parent}/.done/${file:onlyname}`. This is only done if
-Camel detects that you have not provided a ${ } in the option value
-yourself. So when you enter a ${ } Camel will *not* convert it and thus
+of the directory and name pattern.
+Camel will, in fact, internally convert the directory name you enter
+into a xref:languages:file-language.adoc[File Language] expression.
+So, when we use `move=.done` Camel will convert this into:
+`${file:parent}/.done/${file:onlyname}`.
+
+This is only done if Camel detects that you have not provided a `${ }` in the option value
+yourself.
+So when you enter a `${ }` Camel will *not* convert it, and thus
 you have the full power.
 
-So if we want to move the file into a backup folder with today's date as
+So if we want to move the file into a backup folder with today's date, as
 the pattern, we can do:
 
 ----
 move=backup/${date:now:yyyyMMdd}/${file:name}
 ----
 
-== About moveFailed
+=== About moveFailed
 
 The `moveFailed` option allows you to move files that *could not* be
 processed successfully to another location such as an error folder of your
-choice. For example to move the files in an error folder with a
-timestamp you can use
+choice.
+For example, to move the files in an error folder with a timestamp you can use
 `moveFailed=/error/${``file:name.noext``}-${date:now:yyyyMMddHHmmssSSS}.${``file:ext`}.
 
+[TIP]
+====
 See more examples at xref:languages:file-language.adoc[File Language]
-
-== Batch Consumer
-
-This component implements the Batch Consumer.
+====
 
 == Exchange Properties, file consumer only
 
 As the file consumer implements the `BatchConsumer` it supports batching
-the files it polls. By batching we mean that Camel will add the
-following additional properties to the Exchange, so
-you know the number of files polled, the current index, and whether the
-batch is already completed.
+the files it polls. By batching, we mean that Camel will add the
+following additional properties to the Exchange:
 
 [width="100%",cols="10%,90%",options="header",]
 |===
@@ -194,15 +201,15 @@ batch is already completed.
 the batch. Is only `true` for the last entry.
 |===
 
-This allows you for instance to know how many files exist in this batch
-and for instance let the Aggregator2 aggregate
+This allows you, for instance, to know how many files exist in this batch
+and for instance, let the Aggregator2 aggregate
 this number of files.
 
 == Using charset
 
-The charset option allows for configuring an encoding of the files on
-both the consumer and producer endpoints. For example if you read utf-8
-files, and want to convert the files to iso-8859-1, you can do:
+The `charset` option allows configuring the encoding of the files on
+both the consumer and producer endpoints. For example, if you read utf-8
+files and want to convert the files to iso-8859-1, you can do:
 
 [source,java]
 ----
@@ -210,7 +217,7 @@ from("file:inbox?charset=utf-8")
   .to("file:outbox?charset=iso-8859-1")
 ----
 
-You can also use the `convertBodyTo` in the route. In the example below
+You can also use the `convertBodyTo` in the route. In the example below,
 we have still input files in utf-8 format, but we want to convert the
 file content to a byte array in iso-8859-1 format. And then let a bean
 process the data. Before writing the content to the outbox folder using
@@ -225,14 +232,14 @@ from("file:inbox?charset=utf-8")
 ----
 
 If you omit the charset on the consumer endpoint, then Camel does not
-know the charset of the file, and would by default use "UTF-8". However
+know the charset of the file, and would by default use `UTF-8`. However,
 you can configure a JVM system property to override and use a different
 default encoding with the key `org.apache.camel.default.charset`.
 
-In the example below this could be a problem if the files is not in
+In the example below, this could be a problem if the files are not in
 UTF-8 encoding, which would be the default encoding for read the
-files. +
- In this example when writing the files, the content has already been
+files.
+In this example when writing the files, the content has already been
 converted to a byte array, and thus would write the content directly as
 is (without any further encodings).
 
@@ -246,7 +253,7 @@ from("file:inbox")
 
 You can also override and control the encoding dynamic when writing
 files, by setting a property on the exchange with the key
-`Exchange.CHARSET_NAME`. For example in the route below we set the
+`Exchange.CHARSET_NAME`. For example, in the route below, we set the
 property with a value from a message header.
 
 [source,java]
@@ -258,18 +265,18 @@ from("file:inbox")
   .to("file:outbox");
 ----
 
-We suggest to keep things simpler, so if you pickup files with the same
+We suggest keeping things simpler, so if you pick up files with the same
 encoding, and want to write the files in a specific encoding, then favor
 to use the `charset` option on the endpoints.
 
-Notice that if you have explicit configured a `charset` option on the
+Notice that if you have explicitly configured a `charset` option on the
 endpoint, then that configuration is used, regardless of the
 `Exchange.CHARSET_NAME` property.
 
 If you have some issues then you can enable DEBUG logging on
 `org.apache.camel.component.file`, and Camel logs when it reads/write a
-file using a specific charset. +
- For example the route below will log the following:
+file using a specific charset.
+For example, the route below will log the following:
 
 [source,java]
 ----
@@ -286,7 +293,7 @@ DEBUG FileOperations                 - Using Reader to write file: target/charse
 
 == Common gotchas with folder and filenames
 
-When Camel is producing files (writing files) there are a few gotchas
+When Camel is producing files (writing files), there are a few gotchas
 affecting how to set a filename of your choice. By default, Camel will
 use the message ID as the filename, and since the message ID is normally
 a unique generated ID, you will end up with filenames such as:
@@ -317,7 +324,7 @@ from("direct:report").setHeader("CamelFileName", constant("report.txt")).to( "fi
 ----
 
 And a syntax where we set the filename on the endpoint with the
-*fileName* URI option.
+`fileName` URI option.
 
 [source,java]
 ----
@@ -335,25 +342,25 @@ for syntax and samples.
 == Consuming files from folders where others drop files directly
 
 Beware if you consume files from a folder where other applications write
-files to directly. Take a look at the different readLock options to see
-what suits your use cases. The best approach is however to write to
-another folder and after the write move the file in the drop folder.
-However if you write files directly to the drop folder then the option
-changed could better detect whether a file is currently being
+files too. Take a look at the different `readLock` options to see
+what suits your use cases. The best approach is, however, to write to
+another folder and, after writing, move the file in the drop folder.
+However, if you write files directly to the drop folder, then the option
+`changed` could better detect whether a file is currently being
 written/copied as it uses a file changed algorithm to see whether the
 file size / modification changes over a period of time. The other
-readLock options rely on Java File API that sadly is not always very
-good at detecting this. You may also want to look at the doneFileName
-option, which uses a marker file (done file) to signal when a file is
+`readLock` options rely on Java File API that, sadly, is not always very
+good at detecting this. You may also want to look at the `doneFileName`
+option, which uses a marker file (_done file_) to signal when a file is
 done and ready to be consumed.
 
-== Using done files
+== Done files
 
-*Since Camel 2.6*
+=== Using done files
 
-See also section _writing done files_ below.
+See also section <<File2-WritingDoneFiles,_writing done files_>> below.
 
-If you want only to consume files when a done file exists, then you can
+If you want only to consume files when a _done file_ exists, then you can
 use the `doneFileName` option on the endpoint.
 
 [source,java]
@@ -361,137 +368,117 @@ use the `doneFileName` option on the endpoint.
 from("file:bar?doneFileName=done");
 ----
 
-Will only consume files from the bar folder, if a done _file_ exists in
+It will only consume files from the _bar_ folder if a _done file_ exists in
 the same directory as the target files. Camel will automatically delete
 the _done file_ when it's done consuming the files.
-Camel does not delete automatically the _done file_ if
-`noop=true` is configured.
 
-However it is more common to have one _done file_ per target file. This
-means there is a 1:1 correlation. To do this you must use dynamic
-placeholders in the `doneFileName` option. Currently Camel supports the
+[NOTE]
+====
+Camel does not delete automatically the _done file_ if `noop=true` is configured.
+====
+
+However, it is more common to have one _done file_ per target file. This
+means there is a 1:1 correlation. To do this, you must use dynamic
+placeholders in the `doneFileName` option. Currently, Camel supports the
 following two dynamic tokens: `file:name` and `file:name.noext` which
-must be enclosed in ${ }. The consumer only supports the static part of
+must be enclosed in `${ }`. The consumer only supports the static part of
 the _done file_ name as either prefix or suffix (not both).
+
+
+[tabs]
+====
+Suffix::
++
 
 [source,java]
 ----
 from("file:bar?doneFileName=${file:name}.done");
 ----
++
+In this example, the files will only be polled if there exists a _done file_
+with the name `_file name_.done`.
+For example:
 
-In this example only files will be polled if there exists a done file
-with the name _file name_.done. For example
+* `hello.txt`: is the file to be consumed
+* `hello.txt.done`: is the associated `done` file
 
-* `hello.txt` - is the file to be consumed
-* `hello.txt.done` - is the associated done file
-
-You can also use a prefix for the done file, such as:
+Prefix::
++
 
 [source,java]
 ----
 from("file:bar?doneFileName=ready-${file:name}");
 ----
++
+You can also use a prefix for the _done file_, such as:
 
-* `hello.txt` - is the file to be consumed
-* `ready-hello.txt` - is the associated done file
+* `hello.txt`: is the file to be consumed
+* `ready-hello.txt`: is the associated `done` file
 
-== Writing done files
+====
 
-After you have written a file you may want to write an additional _done_
-_file_ as a kind of marker, to indicate to others that the file is
-finished and has been written. To do that you can use the `doneFileName`
-option on the file producer endpoint.
+
+[[File2-WritingDoneFiles]]
+=== Writing done files
+
+After you have written a file, you may want to write an additional _done file_ as a kind of marker,
+to indicate to others that the file is finished and has been written.
+To do that, you can use the `doneFileName` option on the file producer endpoint.
 
 [source,java]
 ----
 .to("file:bar?doneFileName=done");
 ----
 
-Will simply create a file named `done` in the same directory as the
+This will create a file named `done` in the same directory as the
 target file.
 
-However it is more common to have one done file per target file. This
-means there is a 1:1 correlation. To do this you must use dynamic
-placeholders in the `doneFileName` option. Currently Camel supports the
-following two dynamic tokens: `file:name` and `file:name.noext` which
-must be enclosed in ${ }.
+However, it is more common to have one _done file_ per target file. This
+means there is a 1:1 correlation. To do this, you must use dynamic
+placeholders in the `doneFileName` option. Currently, Camel supports the
+following two dynamic tokens: `file:name` and `file:name.noext`.
+They must be enclosed in `${ }`:
 
+[tabs]
+====
+Prefix and file name::
++
 [source,java]
 ----
 .to("file:bar?doneFileName=done-${file:name}");
 ----
-
-Will for example create a file named `done-foo.txt` if the target file
++
+This will, for example, create a file named `done-foo.txt` if the target file
 was `foo.txt` in the same directory as the target file.
 
+Suffix and file name::
++
 [source,java]
 ----
 .to("file:bar?doneFileName=${file:name}.done");
 ----
-
-Will for example create a file named `foo.txt.done` if the target file
++
+This will, for example, create a file named `foo.txt.done` if the target file
 was `foo.txt` in the same directory as the target file.
 
+File name without the extension::
++
 [source,java]
 ----
 .to("file:bar?doneFileName=${file:name.noext}.done");
 ----
-
-Will for example create a file named `foo.done` if the target file was
++
+Will, for example, create a file named `foo.done` if the target file was
 `foo.txt` in the same directory as the target file.
 
-== Samples
-
-=== Read from a directory and write to another directory
-
-[source,java]
-----
-from("file://inputdir/?delete=true").to("file://outputdir")
-----
-
-=== Read from a directory and write to another directory using a dynamic name
-
-[source,java]
-----
-from("file://inputdir/?delete=true").to("file://outputdir?fileName=copy-of-${file:name}")
-----
-
-Listen on a directory and create a message for each file dropped there.
-Copy the contents to the `outputdir` and delete the file in the
-`inputdir`.
-
-=== Reading recursively from a directory and writing to another
-
-[source,java]
-----
-from("file://inputdir/?recursive=true&delete=true").to("file://outputdir")
-----
-
-Listen on a directory and create a message for each file dropped there.
-Copy the contents to the `outputdir` and delete the file in the
-`inputdir`. Will scan recursively into sub-directories. Will lay out the
-files in the same directory structure in the `outputdir` as the
-`inputdir`, including any sub-directories.
-
-[source]
-----
-inputdir/foo.txt
-inputdir/sub/bar.txt
-----
-
-Will result in the following output layout:
-
-----
-outputdir/foo.txt
-outputdir/sub/bar.txt
-----
+====
 
 [[File2-Usingflatten]]
 == Using flatten
 
-If you want to store the files in the outputdir directory in the same
-directory, disregarding the source directory layout (e.g. to flatten out
-the path), you just add the `flatten=true` option on the file producer
+If you want to store the files in the `outputdir` directory in the same
+directory, disregarding the source directory layout (e.g., to flatten out
+the path), you add the `flatten=true` option on the file producer
 side:
 
 [source,java]
@@ -499,59 +486,17 @@ side:
 from("file://inputdir/?recursive=true&delete=true").to("file://outputdir?flatten=true")
 ----
 
-Will result in the following output layout:
+It will result in the following output layout:
 
 ----
 outputdir/foo.txt
 outputdir/bar.txt
 ----
 
-== Reading from a directory and the default move operation
-
-Camel will by default move any processed file into a `.camel`
-subdirectory in the directory the file was consumed from.
-
-[source,java]
-----
-from("file://inputdir/?recursive=true&delete=true").to("file://outputdir")
-----
-
-Affects the layout as follows: +
- *before*
-
-----
-inputdir/foo.txt
-inputdir/sub/bar.txt
-----
-
-*after*
-
-----
-inputdir/.camel/foo.txt
-inputdir/sub/.camel/bar.txt
-outputdir/foo.txt
-outputdir/sub/bar.txt
-----
-
-== Read from a directory and process the message in java
-
-[source,java]
-----
-from("file://inputdir/").process(new Processor() {
-  public void process(Exchange exchange) throws Exception {
-    Object body = exchange.getIn().getBody();
-    // do some business logic with the input body
-  }
-});
-----
-
-The body will be a `File` object that points to the file that was just
-dropped into the `inputdir` directory.
-
 == Writing to files
 
-Camel is of course also able to write files, i.e. produce files. In the
-sample below we receive some reports on the SEDA queue that we process
+Camel is also able to write files, i.e., produce files.
+In the sample below, we receive some reports on the SEDA queue that we process
 before they are being written to a directory.
 
 === Write to subdirectory using `Exchange.FILE_NAME`
@@ -580,8 +525,8 @@ destinations.
 
 === Writing file through the temporary directory relative to the final destination
 
-Sometime you need to temporarily write the files to some directory
-relative to the destination directory. Such situation usually happens
+Sometimes you need to temporarily write the files to some directory
+relative to the destination directory. Such a situation usually happens
 when some external process with limited filtering capabilities is
 reading from the directory you are writing to. In the example below
 files will be written to the  `/var/myapp/filesInProgress` directory and
@@ -594,22 +539,10 @@ from("direct:start").
   to("file:///var/myapp/finalDirectory?tempPrefix=/../filesInProgress/");
 ----
 
-== Using expression for filenames
-
-In this sample we want to move consumed files to a backup folder using
-today's date as a sub-folder name:
-
-[source,java]
-----
-from("file://inbox?move=backup/${date:now:yyyyMMdd}/${file:name}").to("...");
-----
-
-See xref:languages:file-language.adoc[File Language] for more samples.
-
 == Avoiding reading the same file more than once (idempotent consumer)
 
 Camel supports Idempotent Consumer
-directly within the component so it will skip already processed files.
+directly within the component, so it will skip already processed files.
 This feature can be enabled by setting the `idempotent=true` option.
 
 [source,java]
@@ -619,7 +552,7 @@ from("file://inbox?idempotent=true").to("...");
 
 Camel uses the absolute file name as the idempotent key, to detect
 duplicate files. You can customize this key by
-using an expression in the idempotentKey option. For example to use both
+using an expression in the idempotentKey option. For example, to use both
 the name and the file size as the key
 
 [source,xml]
@@ -630,9 +563,10 @@ the name and the file size as the key
 </route>
 ----
 
-By default Camel uses a in memory based store for keeping track of
-consumed files, it uses a least recently used cache holding up to 1000
-entries. You can plugin your own implementation of this store by using
+By default, Camel uses an in-memory store for keeping track of
+consumed files.
+It uses the least recently used cache holding up to 1000
+entries. You can plug in your own implementation of this store by using
 the `idempotentRepository` option using the `#` sign in the value to
 indicate it's a referring to a bean in the Registry
 with the specified `id`.
@@ -656,19 +590,21 @@ consumed before:
 DEBUG FileConsumer is idempotent and the file has been consumed before. Will skip this file: target\idempotent\report.txt
 ----
 
-== Using a file based idempotent repository
+== Idempotent Repository
 
-In this section we will use the file based idempotent repository
+=== Using a file-based idempotent repository
+
+In this section we will use the file-based idempotent repository
 `org.apache.camel.processor.idempotent.FileIdempotentRepository` instead
-of the in-memory based that is used as default. +
- This repository uses a 1st level cache to avoid reading the file
+of the in-memory one that is used as default.
+This repository uses a first level cache to avoid reading the file
 repository. It will only use the file repository to store the content of
-the 1st level cache. Thereby the repository can survive server restarts.
-It will load the content of the file into the 1st level cache upon
-startup. The file structure is very simple as it stores the key in
+the first level cache. Thereby, the repository can survive server restarts.
+It will load the content of the file into the first level cache upon
+startup. The file structure is basic as it stores the key in
 separate lines in the file. By default, the file store has a size limit
-of 1mb. When the file grows larger Camel will truncate the file store,
-rebuilding the content by flushing the 1st level cache into a fresh
+of 1mb. When the file grows larger, Camel will truncate the file store,
+rebuilding the content by flushing the first level cache into a fresh
 empty file.
 
 We configure our repository using Spring XML creating our file
@@ -676,14 +612,14 @@ idempotent repository and define our file consumer to use our repository
 with the `idempotentRepository` using `#` sign to indicate
 Registry lookup:
 
-== Using a JPA based idempotent repository
+=== Using a JPA based idempotent repository
 
-In this section we will use the JPA based idempotent repository instead
+In this section, we will use the JPA based idempotent repository instead
 of the in-memory based that is used as default.
 
 First we need a persistence-unit in `META-INF/persistence.xml` where we
 need to use the class
-`org.apache.camel.processor.idempotent.jpa.MessageProcessed` as model.
+`org.apache.camel.processor.idempotent.jpa.MessageProcessed` as the model.
 
 [source,xml]
 ----
@@ -709,7 +645,7 @@ XML file as well:
 <bean id="jpaStore" class="org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository">
     <!-- Here we refer to the entityManagerFactory -->
     <constructor-arg index="0" ref="entityManagerFactory"/>
-    <!-- This 2nd parameter is the name  (= a category name).
+    <!-- This 2nd parameter is the name (= a category name).
          You can have different repositories with different names -->
     <constructor-arg index="1" value="FileConsumer"/>
 </bean>
@@ -727,15 +663,36 @@ option:
 </route>
 ----
 
-== Filter using org.apache.camel.component.file.GenericFileFilter
+== Filtering Strategies
 
-Camel supports pluggable filtering strategies. You can then configure
-the endpoint with such a filter to skip certain files being processed.
+Camel supports pluggable filtering strategies. They are described below.
+
+=== Filter using the `GenericFilter`
+
+The `filter` option allows you to implement a custom filter in Java code
+by implementing the `org.apache.camel.component.file.GenericFileFilter`
+interface.
+
+==== Implementing a GenericFilter
+
+The interface has an `accept` method that returns a boolean.
+The meaning of the return values are:
+
+* `true` to include the file
+* `false` to skip the file.
+
+
+There is also a `isDirectory` method on `GenericFile` to inform whether the file is a directory.
+This allows you to filter unwanted directories, to avoid traversing down unwanted directories.
+
+==== Using the `GenericFilter`
+
+You can then configure the endpoint with such a filter to skip certain files being processed.
 
 In the sample we have built our own filter that skips files starting
 with `skip` in the filename:
 
-And then we can configure our route using the *filter* attribute to
+And then we can configure our route using the `filter` attribute to
 reference our filter (using `#` notation) that we have defined in the
 spring XML file:
 
@@ -750,12 +707,12 @@ spring XML file:
 </route>
 ----
 
-== Filtering using ANT path matcher
+=== Filtering using ANT path matcher
 
 The ANT path matcher is based on
 http://static.springframework.org/spring/docs/2.5.x/api/org/springframework/util/AntPathMatcher.html[AntPathMatcher].
 
-The file paths is matched with the following rules:
+The file paths are matched with the following rules:
 
 * `?` matches one character
 * `*` matches zero or more characters
@@ -772,14 +729,17 @@ The sample below demonstrates how to use it:
 from("file://inbox?antInclude=**/*.txt").to("...");
 ----
 
+== Sorting Strategies
+
+Camel supports pluggable sorting strategies. They are described below.
+
 === Sorting using Comparator
 
-Camel supports pluggable sorting strategies. This strategy it to use the
-build in `java.util.Comparator` in Java. You can then configure the
+This strategy it to use the build in `java.util.Comparator` in Java. You can then configure the
 endpoint with such a comparator and have Camel sort the files before
 being processed.
 
-In the sample we have built our own comparator that just sorts by file
+In the sample, we have built our own comparator that just sorts by file
 name:
 
 And then we can configure our route using the *sorter* option to
@@ -809,7 +769,7 @@ Registry for a bean with the ID, `mySorter`.
 
 === Sorting using sortBy
 
-Camel supports pluggable sorting strategies. This strategy it to use the
+Camel supports pluggable sorting strategies. This strategy uses the
 xref:languages:file-language.adoc[File Language] to configure the sorting. The
 `sortBy` option is configured as follows:
 
@@ -818,7 +778,7 @@ xref:languages:file-language.adoc[File Language] to configure the sorting. The
 sortBy=group 1;group 2;group 3;...
 ----
 
-Where each group is separated with semi colon. In the simple situations
+Where each group is separated with semicolon. In the simple situations
 you just use one group, so a simple example could be:
 
 ----
@@ -826,14 +786,14 @@ sortBy=file:name
 ----
 
 This will sort by file name, you can reverse the order by prefixing
-`reverse:` to the group, so the sorting is now Z..A:
+`reverse:` to the group, so the sorting is now Z to A:
 
 ----
 sortBy=reverse:file:name
 ----
 
-As we have the full power of xref:languages:file-language.adoc[File Language] we
-can use some of the other parameters, so if we want to sort by file size
+As we have the full power of xref:languages:file-language.adoc[File Language], we
+can use some of the other parameters, so if we want to sort by file size,
 we do:
 
 ----
@@ -842,43 +802,44 @@ sortBy=file:length
 
 You can configure to ignore the case, using `ignoreCase:` for string
 comparison, so if you want to use file name sorting but to ignore the
-case then we do:
+case, then we do:
 
 ----
 sortBy=ignoreCase:file:name
 ----
 
-You can combine ignore case and reverse, however reverse must be
+You can combine ignore case and reverse. However, `reverse` must be
 specified first:
 
 ----
 sortBy=reverse:ignoreCase:file:name
 ----
 
-In the sample below we want to sort by last modified file, so we do:
+In the sample below we want to sort by the last modified file, so we do:
 
 ----
 sortBy=file:modified
 ----
 
-And then we want to group by name as a 2nd option so files with same
-modifcation is sorted by name:
+And then we want to group by name as a second option, so files with the same
+modification time are sorted by name:
 
 ----
 sortBy=file:modified;file:name
 ----
 
-Now there is an issue here, can you spot it? Well the modified timestamp
+Now there is an issue here, can you spot it? Well, the modified timestamp
 of the file is too fine as it will be in milliseconds, but what if we
-want to sort by date only and then subgroup by name? +
- Well as we have the true power of xref:languages:file-language.adoc[File Language] we can use its date command that supports patterns. So this
-can be solved as:
+want to sort by date only and then subgroup by name?
+Well, as we have the true power of xref:languages:file-language.adoc[File Language],
+we can use its date command that supports patterns.
+So this can be solved as:
 
 ----
 sortBy=date:file:yyyyMMdd;file:name
 ----
 
-Yeah, that is pretty powerful, oh by the way you can also use reverse
+Yeah, that is pretty powerful, oh by the way, you can also use reverse
 per group, so we could reverse the file names:
 
 ----
@@ -889,8 +850,8 @@ sortBy=date:file:yyyyMMdd;reverse:file:name
 
 The option `processStrategy` can be used to use a custom
 `GenericFileProcessStrategy` that allows you to implement your own
-_begin_, _commit_ and _rollback_ logic. +
- For instance lets assume a system writes a file in a folder you should
+_begin_, _commit_ and _rollback_ logic.
+For instance, let's assume a system writes a file in a folder you should
 consume. But you should not start consuming the file before another
 _ready_ file has been written as well.
 
@@ -898,26 +859,13 @@ So by implementing our own `GenericFileProcessStrategy` we can implement
 this as:
 
 * In the `begin()` method we can test whether the special _ready_ file
-exists. The begin method returns a `boolean` to indicate if we can
+exists. The `begin` method returns a `boolean` to indicate if we can
 consume the file or not.
 * In the `abort()` method special logic can be executed in
-case the `begin` operation returned `false`, for example to cleanup
+case the `begin` operation returned `false`, for example, to clean up
 resources etc.
 * in the `commit()` method we can move the actual file and also delete
 the _ready_ file.
-
-== Using filter
-
-The `filter` option allows you to implement a custom filter in Java code
-by implementing the `org.apache.camel.component.file.GenericFileFilter`
-interface. This interface has an `accept` method that returns a boolean.
-Return `true` to include the file, and `false` to skip the file.
-There is a `isDirectory` method on `GenericFile`
-whether the file is a directory. This allows you to filter unwanted
-directories, to avoid traversing down unwanted directories.
-
-For example to skip any directories which starts with `"skip"` in the
-name, can be implemented as follows:
 
 == Using bridgeErrorHandler
 
@@ -934,8 +882,8 @@ onException(IOException.class)
     .transform().simple("Error ${exception.message}")
     .to("mock:error");
 
-// this is the file route that pickup files, notice how we bridge the consumer to use the Camel routing error handler
-// the exclusiveReadLockStrategy is only configured because this is from an unit test, so we use that to simulate exceptions
+// this is the file route that pickup files. Notice how we bridge the consumer to use the Camel routing error handler
+// the exclusiveReadLockStrategy is only configured because this is from a unit test, so we use that to simulate exceptions
 from("file:target/nospace?bridgeErrorHandler=true")
     .convertBodyTo(String.class)
     .to("mock:result");
@@ -944,18 +892,119 @@ from("file:target/nospace?bridgeErrorHandler=true")
 So all you have to do is to enable this option, and the error handler in
 the route will take it from there.
 
-IMPORTANT: *Important when using bridgeErrorHandler*
-When using bridgeErrorHandler, then
-interceptors, OnCompletions
-does *not* apply. The Exchange is processed directly
-by the Camel Error Handler, and does not allow
+[IMPORTANT]
+====
+When using bridgeErrorHandler, then `interceptors`, `OnCompletions`
+do *not* apply.
+The Exchange is processed directly by the Camel Error Handler, and does not allow
 prior actions such as interceptors, onCompletion to take action.
+====
 
 == Debug logging
 
 This component has log level *TRACE* that can be helpful if you have
 problems.
 
+== Samples
+
+[[File2-ReadingFromADirectoryAndTheDefaultMoveOperation]]
+=== Reading from a directory and the default move operation
+
+By default, Camel will move any processed file into a `.camel`
+subdirectory in the directory the file was consumed from.
+
+[source,java]
+----
+from("file://inputdir/?recursive=true&delete=true").to("file://outputdir")
+----
+
+Affects the layout as follows: +
+*before*
+
+----
+inputdir/foo.txt
+inputdir/sub/bar.txt
+----
+
+*after*
+
+----
+inputdir/.camel/foo.txt
+inputdir/sub/.camel/bar.txt
+outputdir/foo.txt
+outputdir/sub/bar.txt
+----
+
+=== Read from a directory and write to another directory
+
+[source,java]
+----
+from("file://inputdir/?delete=true").to("file://outputdir")
+----
+
+=== Read from a directory and write to another directory using a dynamic name
+
+[source,java]
+----
+from("file://inputdir/?delete=true").to("file://outputdir?fileName=copy-of-${file:name}")
+----
+
+Listen to a directory and create a message for each file dropped there.
+Copy the contents to the `outputdir` and delete the file in the
+`inputdir`.
+
+=== Reading recursively from a directory and writing to another
+
+[source,java]
+----
+from("file://inputdir/?recursive=true&delete=true").to("file://outputdir")
+----
+
+Listen to a directory and create a message for each file dropped there.
+Copy the contents to the `outputdir` and delete the file in the
+`inputdir`. Will scan recursively into subdirectories. Will lay out the
+files in the same directory structure in the `outputdir` as the
+`inputdir`, including any subdirectories.
+
+[source]
+----
+inputdir/foo.txt
+inputdir/sub/bar.txt
+----
+
+It will result in the following output layout:
+
+----
+outputdir/foo.txt
+outputdir/sub/bar.txt
+----
+
+=== Read from a directory and process the message in java
+
+[source,java]
+----
+from("file://inputdir/").process(new Processor() {
+  public void process(Exchange exchange) throws Exception {
+    Object body = exchange.getIn().getBody();
+    // do some business logic with the input body
+  }
+});
+----
+
+The body will be a `File` object that points to the file that was just
+dropped into the `inputdir` directory.
+
+=== Using expression for filenames
+
+In this sample, we want to move consumed files to a backup folder using
+today's date as a subfolder name:
+
+[source,java]
+----
+from("file://inbox?move=backup/${date:now:yyyyMMdd}/${file:name}").to("...");
+----
+
+See xref:languages:file-language.adoc[File Language] for more samples.
 
 
 include::spring-boot:partial$starter.adoc[]
