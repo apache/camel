@@ -147,15 +147,6 @@
 
 
     <build>
-        <extensions>
-            <!-- Operating system and CPU architecture detection extension -->
-            <extension>
-                <groupId>kr.motd.maven</groupId>
-                <artifactId>os-maven-plugin</artifactId>
-                <version>${os-maven-plugin-version}</version>
-            </extension>
-        </extensions>
-
         <plugins>
             <!--
               Check if the running OS platform supports the protobuf generator plugin.
