@@ -11,7 +11,7 @@
 
 *Since Camel {since}*
 
-Fastjson is a Data Format which uses the
+Fastjson is a Data Format that uses the
 https://github.com/alibaba/fastjson[Fastjson Library]
 
 [source,java]
@@ -31,12 +31,11 @@ include::partial$dataformat-options.adoc[]
 
 == Dependencies
 
-To use Fastjson in your camel routes you need to add the dependency
+To use Fastjson in your camel routes, you need to add the dependency
 on *camel-fastjson* which implements this data format.
 
-If you use maven you could just add the following to your pom.xml,
-substituting the version number for the latest & greatest release (see
-the download page for the latest versions).
+If you use maven, you could add the following to your `pom.xml`,
+substituting the version number for the latest & greatest release.
 
 [source,xml]
 ----------------------------------------------------------
