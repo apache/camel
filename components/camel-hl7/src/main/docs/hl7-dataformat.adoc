@@ -37,9 +37,9 @@ for this component:
 
 == HL7 MLLP protocol
 
-HL7 is often used with the HL7 MLLP protocol, which is a text based TCP
+HL7 is often used with the HL7 MLLP protocol, which is a text-based TCP
 socket based protocol. This component ships with a Mina and Netty Codec
-that conforms to the MLLP protocol so you can easily expose an HL7
+that conforms to the MLLP protocol, so you can easily expose an HL7
 listener accepting HL7 requests over the TCP transport layer. To expose
 a HL7 listener service, the xref:ROOT:mina-component.adoc[camel-mina] or
 xref:ROOT:netty-component.adoc[camel-netty] component is used with the
@@ -84,7 +84,7 @@ requests using TCP on port `8888`:
 ----
 
 *sync=true* indicates that this listener is synchronous and therefore
-will return a HL7 response to the caller. The HL7 codec is setup with
+will return a HL7 response to the caller. The HL7 codec is set up with
 *codec=#hl7codec*. Note that `hl7codec` is just a Spring bean ID, so it
 could be named `mygreatcodecforhl7` or whatever. The codec is also set
 up in the Spring XML file:
@@ -105,7 +105,7 @@ from("hl7MinaListener")
   .bean("patientLookupService");
 ----
 
-This is a very simple route that will listen for HL7 and route it to a
+This is a basic route that will listen for HL7 and route it to a
 service named *patientLookupService*. This is also Spring bean ID,
 configured in the Spring XML as:
 
@@ -145,7 +145,7 @@ requests using TCP on port `8888`:
 ----
 
 *sync=true* indicates that this listener is synchronous and therefore
-will return a HL7 response to the caller. The HL7 codec is setup with
+will return a HL7 response to the caller. The HL7 codec is set up with
 *encoders=#hl7encoder*and*decoders=#hl7decoder*. Note that `hl7encoder`
 and `hl7decoder` are just bean IDs, so they could be named differently.
 The beans can be set in the Spring XML file:
@@ -170,7 +170,7 @@ from("hl7NettyListener")
 The HL7 MLLP codec uses plain String as its data format. Camel uses its
 Type Converter to convert to/from strings to
 the HAPI HL7 model objects, but you can use the plain String objects if
-you prefer, for instance if you wish to parse the data yourself.
+you prefer, for instance, if you wish to parse the data yourself.
 
 You can also let both the Mina and Netty codecs use a
 plain `byte[]` as its data format by setting the `produceString`
@@ -183,7 +183,7 @@ The HL7v2 model uses Java objects from the HAPI library. Using this
 library, you can encode and decode from the EDI format (ER7) that is
 mostly used with HL7v2.
 
-The sample below is a request to lookup a patient with the patient ID
+The sample below is a request to look up a patient with the patient ID
 `0101701234`.
 
 [source,text]
@@ -192,8 +192,8 @@ MSH|^~\\&|MYSENDER|MYRECEIVER|MYAPPLICATION||200612211200||QRY^A19|1234|P|2.4
 QRD|200612211200|R|I|GetPatient|||1^RD|0101701234|DEM||
 ----
 
-Using the HL7 model you can work with a `ca.uhn.hl7v2.model.Message`
-object, e.g. to retrieve a patient ID:
+Using the HL7 model, you can work with a `ca.uhn.hl7v2.model.Message`
+object, e.g., to retrieve a patient ID:
 
 [source,java]
 ----
@@ -268,7 +268,7 @@ separators anymore by converting `\n` to `\r`. If you  +
 === Charset
 
 Both `marshal and unmarshal` evaluate the charset
-provided in the field `MSH-18`. If this field is empty, by default the
+provided in the field `MSH-18`. If this field is empty, by default, the
 charset contained in the corresponding Camel charset property/header is
 assumed. You can even change this default behavior by overriding the
 `guessCharsetName` method when inheriting from the `HL7DataFormat`
@@ -334,7 +334,7 @@ value is missing, its value is `null`.
 
 == Dependencies
 
-To use HL7 in your Camel routes you'll need to add a dependency on
+To use HL7 in your Camel routes, you'll need to add a dependency on
 *camel-hl7* listed above, which implements this data format.
 
 The HAPI library is split into a
@@ -362,7 +362,7 @@ By default `camel-hl7` only references the HAPI
 https://repo1.maven.org/maven2/ca/uhn/hapi/hapi-base[base library].
 Applications are responsible for including structure libraries
 themselves. For example, if an application works with HL7v2 message
-versions 2.4 and 2.5 then the following dependencies must be added:
+versions 2.4 and 2.5, then the following dependencies must be added:
 
 [source,xml]
 ----
