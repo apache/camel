@@ -38,7 +38,7 @@ freemarker:templateName[?options]
 ---------------------------------
 
 Where *templateName* is the classpath-local URI of the template to
-invoke; or the complete URL of the remote template (eg:
+invoke; or the complete URL of the remote template (e.g.:
 `\file://folder/myfile.ftl`).
 
 
@@ -62,7 +62,7 @@ Headers set during the FreeMarker evaluation are returned to the message
 and added as headers. This provides a mechanism for the FreeMarker
 component to return values to the Message.
 
-An example: Set the header value of `fruit` in the FreeMarker template:
+For example, set the header value of `fruit` in the FreeMarker template:
 
 --------------------------------------
 ${request.setHeader('fruit', 'Apple')}
@@ -96,7 +96,7 @@ a `Map`). The `Exchange` is transferred as:
 |`response` |The Out message (only for InOut message exchange pattern).
 |=======================================================================
 
-You can setup your custom FreeMarker context in the
+You can set up your custom FreeMarker context in the
 message header with the key "*CamelFreemarkerDataModel*" just like this
 
 [source,java]
@@ -119,7 +119,7 @@ reloading is thus enabled. This scenario can be used in development.
 
 Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
-headers is set then Camel uses this over the endpoint configured
+headers is set, then Camel uses this over the endpoint configured
 resource. This allows you to provide a dynamic template at runtime.
 
 // component headers: START
@@ -128,7 +128,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Samples
 
-For example you could use something like:
+For example, you could use something like:
 
 [source,java]
 -------------------------------------------
@@ -140,7 +140,7 @@ To use a FreeMarker template to formulate a response for a message for
 InOut message exchanges (where there is a `JMSReplyTo` header).
 
 If you want to use InOnly and consume the message and send it to another
-destination you could use:
+destination, you could use:
 
 [source,java]
 -------------------------------------------
@@ -149,7 +149,7 @@ from("activemq:My.Queue").
   to("activemq:Another.Queue");
 -------------------------------------------
 
-And to disable the content cache, e.g. for development usage where the
+And to disable the content cache, e.g., for development usage where the
 `.ftl` template should be hot reloaded:
 
 [source,java]
@@ -180,7 +180,7 @@ from("direct:in").
 
 == The Email Sample
 
-In this sample we want to use FreeMarker templating for an order
+In this sample, we want to use FreeMarker templating for an order
 confirmation email. The email template is laid out in FreeMarker as:
 
 ----------------------------------------------
