@@ -27,5 +27,8 @@
     "ignoreInvalidEndpoint": { "index": 12, "kind": "attribute", "displayName": "Ignore Invalid Endpoint", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Ignore the invalidate endpoint exception when try to create a producer with that endpoint" },
     "allowOptimisedComponents": { "index": 13, "kind": "attribute", "displayName": "Allow Optimised Components", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to allow components to optimise enricher if they are org.apache.camel.spi.SendDynamicAware ." },
     "autoStartComponents": { "index": 14, "kind": "attribute", "displayName": "Auto Start Components", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to auto startup components when enricher is starting up." }
+  },
+  "exchangeProperties": {
+    "CamelToEndpoint": { "index": 0, "kind": "exchangeProperty", "displayName": "To Endpoint", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "Endpoint URI where this Exchange is being sent to" }
   }
 }
