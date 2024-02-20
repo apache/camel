@@ -15,7 +15,7 @@
 
 *{component-header}*
 
-The http://www.hazelcast.com/[Hazelcast] List component is one of Camel Hazelcast Components which allows you to access Hazelcast distributed list.
+The http://www.hazelcast.com/[Hazelcast] List component is one of Camel Hazelcast Components which allows you to access a Hazelcast distributed list.
 
 == Options
 
@@ -35,7 +35,7 @@ include::partial$component-endpoint-options.adoc[]
 
 == List producer – to(“hazelcast-list:foo”)
 
-The list producer provides 8 operations:
+The list producer provides eight operations:
 
 * add
 * addAll
@@ -93,7 +93,7 @@ purpose.
 
 == List consumer – from(“hazelcast-list:foo”)
 
-The list consumer provides 2 operations:
+The list consumer provides two operations:
 * add
 * remove
 
