@@ -17,12 +17,8 @@
 This component provides access to remote file systems over the FTP and
 SFTP protocols.
 
-When consuming from remote FTP server make sure you read the section titled _Default when consuming files_
+When consuming from remote FTP server, make sure you read the section <<FTP-DefaultWhenConsumingFiles,Default when consuming files>>
 further below for details related to consuming files.
-
-Absolute path is *not* supported. Camel translates absolute path to relative by trimming all
-leading slashes from `directoryname`. There'll be WARN message printed
-in the logs.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -46,9 +42,15 @@ sftp://[username@]hostname[:port]/directoryname[?options]
 ftps://[username@]hostname[:port]/directoryname[?options]
 ----
 
-Where *directoryname* represents the underlying directory. The directory
-name is a relative path. Absolute path's is *not* supported. The
+Where `directoryname` represents the underlying directory. The directory
+name is a relative path. Absolute path is *not* supported. The
 relative path can contain nested folders, such as /inbox/us.
+
+[NOTE]
+=====
+Camel translates the absolute path to relative by trimming all leading slashes from `directoryname`.
+There'll be a warning (`WARN` level) message printed in the logs.
+=====
 
 The `autoCreate` option is supported. When consumer
 starts, before polling is scheduled, there's additional FTP operation
@@ -64,10 +66,10 @@ You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
 This component uses two different libraries for the actual FTP work. FTP
-and FTPS uses http://commons.apache.org/net/[Apache Commons Net] while
+and FTPS use http://commons.apache.org/net/[Apache Commons Net] while
 SFTP uses http://www.jcraft.com/jsch/[JCraft JSCH].
 
-FTPS (also known as FTP Secure) is an extension to FTP that adds
+FTPS, also known as FTP Secure, is an extension to FTP that adds
 support for the Transport Layer Security (TLS) and the Secure Sockets
 Layer (SSL) cryptographic protocols.
 
@@ -92,7 +94,7 @@ include::partial$component-endpoint-headers.adoc[]
 == FTPS component default trust store
 
 When using the `ftpClient.` properties related to SSL with the FTPS
-component, the trust store accept all certificates. If you only want
+component, the trust store accepts all certificates. If you only want
 trust selective certificates, you have to configure the trust store with
 the `ftpClient.trustStore.xxx` options or by configuring a custom
 `ftpClient`.
@@ -104,7 +106,7 @@ You can configure additional options on the `ftpClient` and
 `ftpClientConfig` from the URI directly by using the `ftpClient.` or
 `ftpClientConfig.` prefix.
 
-For example to set the `setDataTimeout` on the `FTPClient` to 30 seconds
+For example, to set the `setDataTimeout` on the `FTPClient` to 30 seconds
 you can do:
 
 [source,java]
@@ -112,7 +114,7 @@ you can do:
 from("ftp://foo@myserver?password=secret&ftpClient.dataTimeout=30000").to("bean:foo");
 ----
 
-You can mix and match and have use both prefixes, for example to
+You can mix and match and use both prefixes, for example, to
 configure date format or timezones.
 
 [source,java]
@@ -124,15 +126,15 @@ You can have as many of these options as you like.
 
 See the documentation of the Apache Commons FTP FTPClientConfig for
 possible options and more details. And as well for Apache Commons FTP
-FTPClient.
+`FTPClient`.
 
-If you do not like having many and long configuration in the url you can
+If you do not like having many and long configurations in the url, you can
 refer to the `ftpClient` or `ftpClientConfig` to use by letting Camel
 lookup in the Registry for it.
 
 For example:
 
-[source,java]
+[source,xml]
 ----
    <bean id="myConfig" class="org.apache.commons.net.ftp.FTPClientConfig">
        <property name="lenientFutureDates" value="true"/>
@@ -140,7 +142,7 @@ For example:
    </bean>
 ----
 
-And then let Camel lookup this bean when you use the # notation in the
+And then let Camel look up this bean when you use the # notation in the
 url.
 
 [source,java]
@@ -148,41 +150,23 @@ url.
 from("ftp://foo@myserver?password=secret&ftpClientConfig=#myConfig").to("bean:foo");
 ----
 
-
-== Examples
-
-----
-ftp://someone@someftpserver.com/public/upload/images/holiday2008?password=secret&binary=true
-
-ftp://someoneelse@someotherftpserver.co.uk:12049/reports/2008/password=secret&binary=false
-
-ftp://publicftpserver.com/download
-----
-
 == Concurrency
 
-FTP Consumer does not support concurrency
-
 The FTP consumer (with the same endpoint) does not support concurrency
-(the backing FTP client is not thread safe). +
- You can use multiple FTP consumers to poll from different endpoints. It
-is only a single endpoint that does not support concurrent consumers.
+(the backing FTP client is not thread safe).
+You can use multiple FTP consumers to poll from different endpoints.
+It is only a single endpoint that does not support concurrent consumers.
 
 The FTP producer does *not* have this issue, it supports concurrency.
 
-== More information
-
-This component is an extension of the File component.
-So there are more samples and details on the File
-component page.
-
+[[FTP-DefaultWhenConsumingFiles]]
 == Default when consuming files
 
 The FTP consumer will by default leave the consumed
 files untouched on the remote FTP server. You have to configure it
 explicitly if you want it to delete the files or move them to another
-location. For example you can use `delete=true` to delete the files, or
-use `move=.done` to move the files into a hidden done sub directory.
+location. For example, you can use `delete=true` to delete the files, or
+use `move=.done` to move the files into a hidden done subdirectory.
 
 The regular File consumer is different as it will by
 default move files to a `.camel` sub directory. The reason Camel does
@@ -191,18 +175,17 @@ permissions by default to be able to move or delete files.
 
 === limitations
 
-The option *readLock* can be used to force Camel *not* to consume files
-that is currently in the progress of being written. However, this option
+The option `readLock` can be used to force Camel *not* to consume files
+that are currently in the progress of being written. However, this option
 is turned off by default, as it requires that the user has write access.
-See the options table at File2 for more details about
-read locks. +
- There are other solutions to avoid consuming files that are currently
+See the options table for more details about read locks.
+There are other solutions to avoid consuming files that are currently
 being written over FTP; for instance, you can write to a temporary
 destination and move the file after it has been written.
 
 When moving files using `move` or `preMove` option the files are
 restricted to the FTP_ROOT folder. That prevents you from moving files
-outside the FTP area. If you want to move files to another area you can
+outside the FTP area. If you want to move files to another area, you can
 use soft links and move files into a soft linked folder.
 
 == Exchange Properties
@@ -213,16 +196,16 @@ Camel sets the following exchange properties
 |=======================================================================
 |Header |Description
 
-|`CamelBatchIndex` |Current index out of total number of files being consumed in this batch.
+|`CamelBatchIndex` |The current index out of total number of files being consumed in this batch.
 
-|`CamelBatchSize` |Total number of files being consumed in this batch.
+|`CamelBatchSize` |The total number of files being consumed in this batch.
 
-|`CamelBatchComplete` |True if there are no more files in this batch.
+|`CamelBatchComplete` | `true` if there are no more files in this batch.
 |=======================================================================
 
 == About timeouts
 
-The two set of libraries (see top) has different API for setting
+The two sets of libraries (see top) have different API for setting
 timeout. You can use the `connectTimeout` option for both of them to set
 a timeout in millis to establish a network connection. An individual
 `soTimeout` can also be set on the FTP/FTPS, which corresponds to using
@@ -239,13 +222,13 @@ entire remote file content into memory as it is streamed directly into
 the local file using `FileOutputStream`.
 
 Camel will store to a local file with the same name as the remote file,
-though with `.inprogress` as extension while the file is being
-downloaded. Afterwards, the file is renamed to remove the `.inprogress`
-suffix. And finally, when the Exchange is complete
+though with `.inprogress` as the extension while the file is being
+downloaded. Afterward, the file is renamed to remove the `.inprogress`
+suffix. And finally, when the Exchange is complete,
 the local file is deleted.
 
 So if you want to download files from a remote FTP server and store it
-as files then you need to route to a file endpoint such as:
+as files, then you need to route to a file endpoint such as:
 
 [source,java]
 ----
@@ -263,8 +246,8 @@ As Camel knows it's a local work file, it can optimize and use a rename instead 
 == Stepwise changing directories
 
 Camel FTP can operate in two modes in terms of
-traversing directories when consuming files (eg downloading) or
-producing files (eg uploading)
+traversing directories when consuming files (e.g., downloading) or
+producing files (e.g., uploading)
 
 * stepwise
 * not stepwise
@@ -276,12 +259,12 @@ stepwise, while others can only download if they do not.
 You can use the `stepwise` option to control the behavior.
 
 Note that stepwise changing of directory will in most cases only work
-when the user is confined to it's home directory and when the home
+when the user is confined to its home directory and when the home
 directory is reported as `"/"`.
 
 The difference between the two of them is best illustrated with an
 example. Suppose we have the following directory structure on the remote
-FTP server we need to traverse and download files:
+FTP server, we need to traverse and download files:
 
 ----
 /
@@ -291,11 +274,15 @@ FTP server we need to traverse and download files:
 /one/two/sub-b
 ----
 
-And that we have a file in each of sub-a (a.txt) and sub-b (b.txt)
+And that we have a file in each of `sub-a` (`a.txt`) and `sub-b` (`b.txt`)
 folder.
 
-== Using stepwise=true (default mode)
+[tabs]
+====
 
+Default (Stepwise enabled)::
++
+.Using `stepwise=true` (default mode)
 ----
 TYPE A
 200 Type set to A
@@ -379,12 +366,12 @@ QUIT
 221 Goodbye
 disconnected.
 ----
-
 As you can see when stepwise is enabled, it will traverse the directory
 structure using CD xxx.
 
-== Using stepwise=false
-
+Stepwise Disabled::
++
+.Using `stepwise=false`
 ----
 230 Logged on
 TYPE A
@@ -425,53 +412,30 @@ QUIT
 221 Goodbye
 disconnected.
 ----
-
-As you can see when not using stepwise, there are no CD operation
++
+As you can see when not using stepwise, there is no CD operation
 invoked at all.
 
-== Samples
+====
 
-In the sample below we set up Camel to download all the reports from the
-FTP server once every hour (60 min) as BINARY content and store it as
-files on the local file system.
+== Filtering Strategies
 
-And the route using XML DSL:
+Camel supports pluggable filtering strategies. They are described below.
 
-[source,xml]
-----
-  <route>
-     <from uri="ftp://scott@localhost/public/reports?password=tiger&amp;binary=true&amp;delay=60000"/>
-     <to uri="file://target/test-reports"/>
-  </route>
-----
+[TIP]
+====
+See also the documentation for filtering strategies on the xref:file-component.adoc[File component].
+====
 
-=== Consuming a remote FTPS server (implicit SSL) and client authentication
-
-[source,java]
-----
-from("ftps://admin@localhost:2222/public/camel?password=admin&securityProtocol=SSL&implicit=true
-      &ftpClient.keyStore.file=./src/test/resources/server.jks
-      &ftpClient.keyStore.password=password&ftpClient.keyStore.keyPassword=password")
-  .to("bean:foo");
-----
-
-=== Consuming a remote FTPS server (explicit TLS) and a custom trust store configuration
-
-[source,java]
-----
-from("ftps://admin@localhost:2222/public/camel?password=admin&ftpClient.trustStore.file=./src/test/resources/server.jks&ftpClient.trustStore.password=password")
-  .to("bean:foo");
-----
-
-== Custom filtering
+=== Custom filtering
 
 Camel supports pluggable filtering strategies. This strategy it to use
 the build in `org.apache.camel.component.file.GenericFileFilter` in
 Java. You can then configure the endpoint with such a filter to skip
 certain filters before being processed.
 
-In the sample we have built our own filter that only accepts files
-starting with report in the filename.
+In the sample, we have built our own filter that only accepts files
+starting with `report` in the filename.
 
 And then we can configure our route using the *filter* attribute to
 reference our filter (using `#` notation) that we have defined in the
@@ -488,12 +452,12 @@ spring XML file:
   </route>
 ----
 
-== Filtering using ANT path matcher
+=== Filtering using ANT path matcher
 
-The ANT path matcher is a filter that is shipped out-of-the-box in the
+The ANT path matcher is a filter shipped out-of-the-box in the
 *camel-spring* jar. So you need to depend on *camel-spring* if you are
-using Maven. +
- The reason is that we leverage Spring's
+using Maven.
+The reason is that we leverage Spring's
 http://static.springsource.org/spring/docs/3.0.x/api/org/springframework/util/AntPathMatcher.html[AntPathMatcher]
 to do the actual matching.
 
@@ -529,7 +493,7 @@ your route in the following way:
 </route>
 ----
 
-You can also assign a user name and password to the proxy, if necessary.
+You can also assign a username and password to the proxy, if necessary.
 Please consult the documentation for `com.jcraft.jsch.Proxy` to discover
 all options.
 
@@ -537,8 +501,8 @@ all options.
 
 If you want to explicitly specify the list of authentication methods
 that should be used by `sftp` component, use `preferredAuthentications`
-option. If for example you would like Camel to attempt to authenticate
-with private/public SSH key and fallback to user/password authentication
+option. If, for example, you would like Camel to attempt to authenticate
+with a private/public SSH key and fallback to user/password authentication
 in the case when no public key is available, use the following route
 configuration:
 
@@ -552,11 +516,11 @@ from("sftp://localhost:9999/root?username=admin&password=admin&preferredAuthenti
 
 When you want to download a single file and knows the file name, you can
 use `fileName=myFileName.txt` to tell Camel the name of the file to
-download. By default the consumer will still do a FTP LIST command to do
+download. By default, the consumer will still do an FTP LIST command to do
 a directory listing and then filter these files based on the `fileName`
 option. Though in this use-case it may be desirable to turn off the
-directory listing by setting `useList=false`. For example the user
-account used to login to the FTP server may not have permission to do a
+directory listing by setting `useList=false`. For example, the user
+account used to log in to the FTP server may not have permission to do an
 FTP LIST command. So you can turn off this with `useList=false`, and
 then provide the fixed name of the file to download with
 `fileName=myFileName.txt`, then the FTP consumer can still download the
@@ -564,7 +528,7 @@ file. If the file for some reason does not exist, then Camel will by
 default throw an exception, you can turn this off and ignore this by
 setting `ignoreFileNotFoundOrPermissionError=true`.
 
-For example to have a Camel route that pickup a single file, and delete
+For example, to have a Camel route that picks up a single file, and delete
 it after use you can do
 
 [source,java]
@@ -575,7 +539,7 @@ from("ftp://admin@localhost:21/nolist/?password=admin&stepwise=false&useList=fal
 
 Notice that we have used all the options we talked above.
 
-You can also use this with `ConsumerTemplate`. For example to download a
+You can also use this with `ConsumerTemplate`. For example, to download a
 single file (if it exists) and grab the file content as a String type:
 
 [source,java]
@@ -588,6 +552,54 @@ String data = template.retrieveBodyNoWait("ftp://admin@localhost:21/nolist/?pass
 This component has log level *TRACE* that can be helpful if you have
 problems.
 
+== Samples
 
+In the sample below, we set up Camel to download all the reports from the
+FTP server once every hour (60 min) as BINARY content and store it as
+files on the local file system.
+
+And the route using XML DSL:
+
+[source,xml]
+----
+  <route>
+     <from uri="ftp://scott@localhost/public/reports?password=tiger&amp;binary=true&amp;delay=60000"/>
+     <to uri="file://target/test-reports"/>
+  </route>
+----
+
+=== Consuming a remote FTPS server (implicit SSL) and client authentication
+
+[source,java]
+----
+from("ftps://admin@localhost:2222/public/camel?password=admin&securityProtocol=SSL&implicit=true
+      &ftpClient.keyStore.file=./src/test/resources/server.jks
+      &ftpClient.keyStore.password=password&ftpClient.keyStore.keyPassword=password")
+  .to("bean:foo");
+----
+
+=== Consuming a remote FTPS server (explicit TLS) and a custom trust store configuration
+
+[source,java]
+----
+from("ftps://admin@localhost:2222/public/camel?password=admin&ftpClient.trustStore.file=./src/test/resources/server.jks&ftpClient.trustStore.password=password")
+  .to("bean:foo");
+----
+
+=== Examples
+
+----
+ftp://someone@someftpserver.com/public/upload/images/holiday2008?password=secret&binary=true
+
+ftp://someoneelse@someotherftpserver.co.uk:12049/reports/2008/password=secret&binary=false
+
+ftp://publicftpserver.com/download
+----
+
+== More information
+
+This component is an extension of the xref:file-component.adoc[File component].
+
+You can find additional samples and details on the File component page.
 
 include::spring-boot:partial$starter.adoc[]
