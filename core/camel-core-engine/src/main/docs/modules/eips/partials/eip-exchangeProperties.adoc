@@ -4,7 +4,7 @@
 |util.valueAsString(value.defaultValue) \
 |util.javaSimpleName(value.javaType)'
 :requires: 'util=util/jsonpath-util.js'
-include::jsonpathcount$example$json/{shortname}.json[queries='optioncount=nodes$.exchangeProperties[]']
+include::jsonpathcount$example$json/{shortname}.json[queries='optioncount=nodes$.exchangeProperties.*']
 
 ifeval::[{optioncount} == 0]
 The {doctitle} eip has no exchange properties.
@@ -18,6 +18,6 @@ The {doctitle} eip supports {optioncount} exchange properties, which are listed 
 | Name | Description | Default | Type
 |===
 
-jsonpathTable::example$json/{shortname}.json['nodes$.exchangeProperties[]',{cellformats},{requires}]
+jsonpathTable::example$json/{shortname}.json['nodes$.exchangeProperties.*',{cellformats},{requires}]
 endif::[]
 
