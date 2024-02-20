@@ -129,16 +129,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <extensions>
-            <!-- Used to find the right kudu-binary artifact with the Maven
-                 property ${os.detected.classifier} -->
-            <extension>
-                <groupId>kr.motd.maven</groupId>
-                <artifactId>os-maven-plugin</artifactId>
-                <version>${os-maven-plugin-version}</version>
-            </extension>
-        </extensions>
-    </build>
 </project>
