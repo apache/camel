@@ -23,5 +23,8 @@
     "ignoreInvalidEndpoint": { "index": 8, "kind": "attribute", "displayName": "Ignore Invalid Endpoint", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to ignore invalid endpoint URIs and skip sending the message." },
     "allowOptimisedComponents": { "index": 9, "kind": "attribute", "displayName": "Allow Optimised Components", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to allow components to optimise toD if they are org.apache.camel.spi.SendDynamicAware ." },
     "autoStartComponents": { "index": 10, "kind": "attribute", "displayName": "Auto Start Components", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to auto startup components when toD is starting up." }
+  },
+  "exchangeProperties": {
+    "CamelToEndpoint": { "index": 0, "kind": "exchangeProperty", "displayName": "To Endpoint", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "Endpoint URI where this Exchange is being sent to" }
   }
 }

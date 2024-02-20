@@ -14,5 +14,8 @@
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "errorHandlerType": { "index": 1, "kind": "element", "displayName": "Error Handler Type", "required": true, "type": "object", "javaType": "org.apache.camel.ErrorHandlerFactory", "oneOf": [ "deadLetterChannel", "defaultErrorHandler", "jtaTransactionErrorHandler", "noErrorHandler", "springTransactionErrorHandler" ], "deprecated": false, "autowired": false, "secret": false, "description": "The specific error handler in use." }
+  },
+  "exchangeProperties": {
+    "CamelExceptionCaught": { "index": 0, "kind": "exchangeProperty", "displayName": "Exception Caught", "required": false, "javaType": "java.lang.Exception", "deprecated": false, "autowired": false, "secret": false, "description": "Stores the caught exception due to a processing error of the current Exchange" }
   }
 }

@@ -19,5 +19,8 @@
     "variableReceive": { "index": 4, "kind": "attribute", "displayName": "Variable Receive", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ." },
     "uri": { "index": 5, "kind": "attribute", "displayName": "Uri", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the uri of the endpoint to send to." },
     "pattern": { "index": 6, "kind": "attribute", "displayName": "Pattern", "label": "advanced", "required": false, "type": "enum", "javaType": "org.apache.camel.ExchangePattern", "enum": [ "InOnly", "InOut" ], "deprecated": false, "autowired": false, "secret": false, "description": "Sets the optional ExchangePattern used to invoke this endpoint" }
+  },
+  "exchangeProperties": {
+    "CamelToEndpoint": { "index": 0, "kind": "exchangeProperty", "displayName": "To Endpoint", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "Endpoint URI where this Exchange is being sent to" }
   }
 }
