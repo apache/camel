@@ -21,7 +21,7 @@ following features to Camel:
 1.  Creation of nodes in any of the ZooKeeper create modes.
 2.  Get and Set the data contents of arbitrary cluster nodes (data
 being set must be convertible to `byte[]`).
-3.  Create and retrieve the list the child nodes attached to a
+3.  Create and retrieve the list of the child nodes attached to a
 particular node.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -79,7 +79,7 @@ the rest of the route:
 from("zookeeper://localhost:39913/somepath/somenode").to("mock:result");
 ----
 
-If the node does not yet exist then a flag can be supplied to have the
+If the node does not yet exist, then a flag can be supplied to have the
 endpoint await its creation:
 
 [source,java]
@@ -116,7 +116,7 @@ not to `/somepath/somenode` but to the path from the header
 `/somepath/someothernode`.
 
 WARNING: the `testPayload` must be convertible
-to `byte[]` as the data stored in ZooKeeper is byte based.
+to `byte[]` as the data stored in ZooKeeper is byte-based.
 
 [source,java]
 ----
@@ -158,10 +158,10 @@ or equivalently:
 
 ZooKeeper nodes can have different types; they can be 'Ephemeral' or
 'Persistent' and 'Sequenced' or 'Unsequenced'. For further information
-of each type you can check
+of each type, you can check
 http://zookeeper.apache.org/doc/trunk/zookeeperProgrammers.html#Ephemeral+Nodes[here].
-By default endpoints will create unsequenced, ephemeral nodes, but the
-type can be easily manipulated via a uri config parameter or via a
+By default, endpoints will create unsequenced, ephemeral nodes, but the
+type can be easily manipulated via an URI config parameter or via a
 special message header. The values expected for the create mode are
 simply the names from the `CreateMode` enumeration:
 
@@ -170,7 +170,7 @@ simply the names from the `CreateMode` enumeration:
 * `EPHEMERAL`
 * `EPHEMERAL_SEQUENTIAL`
 
-For example to create a persistent _znode_ via the URI config:
+For example, to create a persistent _znode_ via the URI config:
 
 [source,java]
 ----
@@ -181,7 +181,7 @@ from("direct:create-and-write-to-persistent-znode")
 or using the header `CamelZookeeperCreateMode`.
 
 WARNING: the `testPayload` must be convertible to `byte[]` as the data stored in
-ZooKeeper is byte based.
+ZooKeeper is byte-based.
 
 [source,java]
 ----
