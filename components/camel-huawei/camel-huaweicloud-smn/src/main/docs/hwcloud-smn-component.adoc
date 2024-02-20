@@ -67,7 +67,7 @@ include::partial$component-endpoint-options.adoc[]
 
 |`CamelHwCloudSmnMessageTtl` |`Integer` | Validity of the posted notification message
 
-|`CamelHwCloudSmnTemplateTags` |`Map<String, String>` | Contains K,V pairs of tags and values when using operation `publishAsTemplatedMessage`
+|`CamelHwCloudSmnTemplateTags` |`Map<String, String>` | Contains `K,V` pairs of tags and values when using operation `publishAsTemplatedMessage`
 
 |`CamelHwCloudSmnTemplateName` |`String` |Name of the template to use while using operation `publishAsTemplatedMessage`
 
