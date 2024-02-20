@@ -59,9 +59,9 @@ include::partial$component-endpoint-headers.adoc[]
 The following https://grpc.io/docs/guides/auth.html[authentication] mechanisms are built-in to gRPC and available in this component:
 
 * *SSL/TLS:* gRPC has SSL/TLS integration and promotes the use of SSL/TLS to authenticate the server, and to encrypt all the data exchanged between the client and the server. Optional mechanisms are available for clients to provide certificates for mutual authentication.
-* *Token-based authentication with Google:* gRPC provides a generic mechanism to attach metadata based credentials to requests and responses. Additional support for acquiring access tokens while accessing Google APIs through gRPC is provided. In general this mechanism must be used as well as SSL/TLS on the channel.
+* *Token-based authentication with Google:* gRPC provides a generic mechanism to attach metadata-based credentials to requests and responses. Additional support for acquiring access tokens while accessing Google APIs through gRPC is provided. In general, this mechanism must be used as well as SSL/TLS on the channel.
 
-To enable these features the following component properties combinations must be configured:
+To enable these features, the following component properties combinations must be configured:
 
 [width="100%",cols="10%,20%,25%,15%,30%",options="header",]
 |=======================================================================
@@ -84,7 +84,7 @@ To enable these features the following component properties combinations must be
 
 == gRPC producer resource type mapping
 
-The table below shows the types of objects in the message body, depending on the types (simple or stream) of incoming and outgoing parameters, as well as the invocation style (synchronous or asynchronous). Please note, that invocation of the procedures with incoming stream parameter in asynchronous style are not allowed.
+The table below shows the types of objects in the message body, depending on the types (simple or stream) of incoming and outgoing parameters, as well as the invocation style (synchronous or asynchronous). Please note that invocation of the procedures with incoming stream parameter in asynchronous style is not allowed.
 
 [width="100%",cols="15%,15%,15%,25%,25%",options="header",]
 |=======================================================================
@@ -104,11 +104,11 @@ The table below shows the types of objects in the message body, depending on the
 
 == gRPC Proxy
 
-It is not possible to create universal proxy-route for all methods, so you need to divide your gRPC service into several services by method's type: unary, server streaming, client streaming and bidirectional streaming.
+It is not possible to create a universal proxy-route for all methods, so you need to divide your gRPC service into several services by method's type: unary, server streaming, client streaming and bidirectional streaming.
 
 === Unary
 
-For unary requests it is enough to write the following code:
+For unary requests, it is enough to write the following code:
 
 [source,java]
 ----
@@ -123,7 +123,8 @@ from("grpc://localhost:1101" +
 
 === Server streaming
 
-Server streaming may be done by the same approach as unary, but in that configuration Camel route will wait stream for completion and will aggregate all responses to list before sending that data as response stream. If this behavior is unacceptable, you need to apply a number of options:
+Server streaming may be done by the same approach as unary, but in that configuration Camel route will wait stream for completion and will aggregate all responses to a list before sending that data as response stream.
+If this behavior is unacceptable, you need to apply a number of options:
 
 1. Set `routeControlledStreamObserver=true` for consumer. Later it will be used to publish responses;
 2. Set `streamRepliesTo` option for producer to handle streaming nature of responses;
@@ -154,11 +155,12 @@ from("direct:next")
 
 === Client streaming and bidirectional streaming
 
-Both client streaming and bidirectional streaming gRPC methods exposes StreamObserver as responses handler, so you need the same technic as described in server streaming section -- all 5 steps.
+Both client streaming and bidirectional streaming gRPC methods expose `StreamObserver` as responses' handler.
+Therefore, you need the same technique as described in the server streaming section (all 5 steps).
 
-But there another thing -- requests also comes in streaming mode. So you need the following:
+But there is another thing: requests also come in streaming mode. So you need the following:
 
-1. Set consumer strategy to DELEGATION -- that differs from default PROPAGATION option in the fact that consumer will not produce responses at all. If you set PROPAGATION, then you will receive more responses than you expected;
+1. Set consumer strategy to DELEGATION -- that differs from the default PROPAGATION option in the fact that consumer will not produce responses at all. If you set PROPAGATION, then you will receive more responses than you expected;
 2. Forward `onError` and `onCompletion` on consumer;
 3. Set producer strategy to STREAMING.
 
@@ -250,11 +252,11 @@ from("direct:grpc-jwt")
 
 == Configuration
 
-It is recommended to use the `protobuf-maven-plugin`, which calls the Protocol Buffer Compiler (protoc) to generate Java source files from .proto (protocol buffer definition) files. This plugin will generate procedures request and response classes, their builders and gRPC procedures stubs classes as well.
+It is recommended to use the `protobuf-maven-plugin`, which calls the Protocol Buffer Compiler (protoc) to generate Java source files from .proto (protocol buffer definition) files. This plugin will generate procedure request and response classes, their builders and gRPC procedures stubs classes as well.
 
-Following steps are required:
+The following steps are required:
 
-Insert operating system and CPU architecture detection extension inside **<build>** tag of the project pom.xml or set ${os.detected.classifier} parameter manually
+Insert operating system and CPU architecture detection extension inside **<build>** tag of the project `pom.xml` or set `${os.detected.classifier}` parameter manually
 [source,xml]
 -------------------------------------------------------------------------
 <extensions>
