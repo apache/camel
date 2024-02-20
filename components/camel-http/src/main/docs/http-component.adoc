@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-The HTTP component provides HTTP based endpoints
+The HTTP component provides HTTP-based endpoints
 for calling external HTTP resources (as a client to call external
 servers using HTTP).
 
@@ -59,36 +59,36 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Message Body
 
-Camel will store the HTTP response from the external server on the OUT
-body. All headers from the IN message will be copied to the OUT message,
+Camel will store the HTTP response from the external server on the _OUT_ body.
+All headers from the _IN_ message will be copied to the _OUT_ message,
 so headers are preserved during routing. Additionally, Camel will add the
-HTTP response headers as well to the OUT message headers.
+HTTP response headers as well to the _OUT_ message headers.
 
 == Using System Properties
 
 When setting useSystemProperties to true, the HTTP Client will look for
 the following System Properties, and it will use it:
 
-* ssl.TrustManagerFactory.algorithm
-* http://javax.net/[javax.net].ssl.trustStoreType
-* http://javax.net/[javax.net].ssl.trustStore
-* http://javax.net/[javax.net].ssl.trustStoreProvider
-* http://javax.net/[javax.net].ssl.trustStorePassword
-* java.home
-* ssl.KeyManagerFactory.algorithm
-* http://javax.net/[javax.net].ssl.keyStoreType
-* http://javax.net/[javax.net].ssl.keyStore
-* http://javax.net/[javax.net].ssl.keyStoreProvider
-* http://javax.net/[javax.net].ssl.keyStorePassword
-* http.proxyHost
-* http.proxyPort
-* http.nonProxyHosts
-* http.keepAlive
-* http.maxConnections
+* `ssl.TrustManagerFactory.algorithm`
+* `javax.net.ssl.trustStoreType`
+* `javax.net.ssl.trustStore`
+* `javax.net.ssl.trustStoreProvider`
+* `javax.net.ssl.trustStorePassword`
+* `java.home`
+* `ssl.KeyManagerFactory.algorithm`
+* `javax.net.ssl.keyStoreType`
+* `javax.net.ssl.keyStore`
+* `javax.net.ssl.keyStoreProvider`
+* `javax.net.ssl.keyStorePassword`
+* `http.proxyHost`
+* `http.proxyPort`
+* `http.nonProxyHosts`
+* `http.keepAlive`
+* `http.maxConnections`
 
 == Response code
 
-Camel will handle according to the HTTP response code:
+Camel will handle, according to the HTTP response code:
 
 * Response code is in the range 100..299, Camel regards it as a success
 response.
@@ -110,7 +110,7 @@ codes. This allows you to get any response from the remote server.
 
 * The HTTP status code
 * The HTTP status line (text of the status code)
-* Redirect location, if server returned a redirect
+* Redirect location if server returned a redirect
 * Response body as a `java.lang.String`, if server provided a body as
 response
 
@@ -156,7 +156,7 @@ from("direct:start")
   .to("http://oldhost");
 -----------------------------------------------------------
 
-In the sample above Camel will call the http://newhost despite the
+In the sample above, Camel will call the http://newhost despite the
 endpoint is configured with http://oldhost. +
 If the http endpoint is working in bridge mode, it will ignore the
 message header of `Exchange.HTTP_URI`.
@@ -264,7 +264,7 @@ Properties and then the endpoint proxy options if provided.
 So you can override the system properties with the endpoint options.
 
 There is also a `http.proxyScheme` property you
-can set to explicit configure the scheme to use.
+can set to explicitly configure the scheme to use.
 
 == Configuring charset
 
@@ -291,7 +291,7 @@ from("timer://foo?fixedRate=true&delay=0&period=10000")
 
 === URI Parameters from the endpoint URI
 
-In this sample we have the complete URI endpoint that is just what you
+In this sample, we have the complete URI endpoint that is just what you
 would have typed in a web browser. Multiple URI parameters can of course
 be set using the `&` character as separator, just as you would in the
 web browser. Camel does no tricks here.
@@ -334,19 +334,19 @@ int responseCode = out.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
 
 == Disabling Cookies
 
-To disable cookies in the CookieStore you can set the HTTP Client to ignore cookies by
+To disable cookies in the CookieStore, you can set the HTTP Client to ignore cookies by
 adding this URI option: `httpClient.cookieSpec=ignore`. This doesn't affect cookies manually set in the `Cookie` header
 
 == Basic auth with the streaming message body
 
-In order to avoid the `NonRepeatableRequestException`, you need to do the
+To avoid the `NonRepeatableRequestException`, you need to do the
 Preemptive Basic Authentication by adding the option: `authenticationPreemptive=true`
 
 == OAuth2 Support
 
-In order to get a access token from a Authorization Server and fill that in Authorization header to do requests to protected services, you will need to use `oauth2ClientId`, `oauth2ClientSecret` and  `oauth2TokenEndpoint` properties, and those should be defined as specified at RFC 6749 and provided by your Authorization Server.
+To get an access token from an Authorization Server and fill that in Authorization header to do requests to protected services, you will need to use `oauth2ClientId`, `oauth2ClientSecret` and  `oauth2TokenEndpoint` properties, and those should be defined as specified at RFC 6749 and provided by your Authorization Server.
 
-In below example camel will do a underlying request to `https://localhost:8080/realms/master/protocol/openid-connect/token` using provided credentials (client id and client secret), then will get `access_token` from response and lastly will fill it at `Authorization` header of request which will be done to `https://localhost:9090`.
+In below example camel will do an underlying request to `https://localhost:8080/realms/master/protocol/openid-connect/token` using provided credentials (client id and client secret), then will get `access_token` from response and lastly will fill it at `Authorization` header of request which will be done to `https://localhost:9090`.
 
 [source,java]
 ------------------------------------------------------------------------------------
@@ -358,13 +358,15 @@ from("direct:start")
   .to("https://localhost:9090/?oauth2ClientId=" + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint);
 ------------------------------------------------------------------------------------
 
-NOTE: Camel only provide support for OAuth2 client credentials flow
+[NOTE]
+Camel only provides support for OAuth2 client credentials flow
 
-Important: Camel does not perform any validation in access token. It's up to the underlying service to validate it.
+[IMPORTANT]
+Camel does not perform any validation in access token. It's up to the underlying service to validate it.
 
 == Advanced Usage
 
-If you need more control over the HTTP producer you should use the
+If you need more control over the HTTP producer, you should use the
 `HttpComponent` where you can set various classes to give you custom
 behavior.
 
@@ -376,7 +378,7 @@ Using the JSSE Configuration Utility
 The HTTP component supports SSL/TLS configuration
 through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE
 Configuration Utility].  This utility greatly decreases the amount of
-component specific code you need to write and is configurable at the
+component-specific code you need to write and is configurable at the
 endpoint and component levels.  The following examples demonstrate how
 to use the utility with the HTTP component.
 
@@ -422,7 +424,7 @@ Spring DSL based configuration of endpoint
 [[HTTP-ConfiguringApacheHTTPClientDirectly]]
 Configuring Apache HTTP Client Directly
 
-Basically camel-http component is built on the top of
+Basically, a camel-http component is built on the top of
 https://hc.apache.org/httpcomponents-client-5.1.x/[Apache HttpClient].
 Please refer to
 https://hc.apache.org/httpcomponents-client-4.5.x/current/tutorial/html/connmgmt.html[SSL/TLS
@@ -433,7 +435,7 @@ class. +
 `org.apache.camel.component.http.HttpClientConfigurer` to do some
 configuration on the http client if you need full control of it.
 
-However, if you _just_ want to specify the keystore and truststore you
+However, if you _just_ want to specify the keystore and truststore, you
 can do this with Apache HTTP `HttpClientConfigurer`, for example:
 
 [source,java]
@@ -447,8 +449,8 @@ registry.register(new Scheme("https", 443, new SSLSocketFactory(keystore, "mypas
 
 And then you need to create a class that implements
 `HttpClientConfigurer`, and registers https protocol providing a
-keystore or truststore per example above. Then, from your camel route
-builder class you can hook it up like so:
+keystore or truststore per the example above. Then, from your camel route
+builder class, you can hook it up like so:
 
 [source,java]
 --------------------------------------------------------------------------------------
@@ -474,7 +476,7 @@ keystore and truststore as described above, it will work fine.
 [[HTTP-UsingHTTPStoauthenticategotchas]]
 Using HTTPS to authenticate gotchas
 
-An end user reported that he had problem with authenticating with HTTPS.
+An end user reported that he had a problem with authenticating with HTTPS.
 The problem was eventually resolved by providing a custom configured
 `org.apache.hc.core5.http.protocol.HttpContext`:
 
@@ -528,11 +530,11 @@ public class HttpContextFactory {
 [[HTTP-UsingdifferentSSLContextParameters]]
 Using different SSLContextParameters
 
-The xref:http-component.adoc[HTTP] component only support one instance of
+The xref:http-component.adoc[HTTP] component only supports one instance of
 `org.apache.camel.support.jsse.SSLContextParameters` per component. If you
-need to use 2 or more different instances, then you need to setup
+need to use two or more different instances, then you need to set up
 multiple xref:http-component.adoc[HTTP] components as shown below. Where we have
-2 components, each using their own instance of `sslContextParameters`
+two components, each using their own instance of `sslContextParameters`
 property.
 
 [source,xml]
