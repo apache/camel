@@ -4566,6 +4566,34 @@ public interface MongoDbEndpointBuilderFactory {
         public String mongoDbStreamOperationType() {
             return "CamelMongoDbStreamOperationType";
         }
+
+        /**
+         * Indicates which document to return, the document before or after an
+         * update and return atomic operation.
+         * 
+         * The option is a: {@code com.mongodb.client.model.ReturnDocument}
+         * type.
+         * 
+         * Group: producer update one and return
+         * 
+         * @return the name of the header {@code MongoDbReturnDocumentType}.
+         */
+        public String mongoDbReturnDocumentType() {
+            return "CamelMongoDbReturnDocumentType";
+        }
+
+        /**
+         * Options to use. When set, options set in the headers will be ignored.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: producer update one and options
+         * 
+         * @return the name of the header {@code MongoDbOperationOption}.
+         */
+        public String mongoDbOperationOption() {
+            return "CamelMongoDbOperationOption";
+        }
     }
     static MongoDbEndpointBuilder endpointBuilder(
             String componentName,
