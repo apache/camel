@@ -9,7 +9,7 @@
 
 *Since Camel {since}*
 
-The camel-headersmap is a faster implementation of a case-insenstive map which can be plugged in
+The Headersmap component is a faster implementation of a case-insensitive map which can be plugged in
 and used by Camel at runtime to have slight faster performance in the Camel Message headers.
 
 == Auto-detection from classpath
