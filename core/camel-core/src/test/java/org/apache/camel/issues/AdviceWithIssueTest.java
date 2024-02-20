@@ -89,7 +89,7 @@ public class AdviceWithIssueTest extends ContextTestSupport {
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:from").expectedBodiesReceived("World");
-        getMockEndpoint("mock:from").expectedHeaderReceived(Exchange.INTERCEPTED_ENDPOINT, "direct://start");
+        getMockEndpoint("mock:from").expectedPropertyReceived(Exchange.INTERCEPTED_ENDPOINT, "direct://start");
 
         template.sendBody("direct:start", "World");
 
@@ -108,7 +108,7 @@ public class AdviceWithIssueTest extends ContextTestSupport {
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:to").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:to").expectedHeaderReceived(Exchange.INTERCEPTED_ENDPOINT, "mock://result");
+        getMockEndpoint("mock:to").expectedPropertyReceived(Exchange.INTERCEPTED_ENDPOINT, "mock://result");
 
         template.sendBody("direct:start", "World");
 

@@ -71,7 +71,7 @@ public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
         context.start();
 
         getMockEndpoint("mock:detour").expectedMessageCount(1);
-        getMockEndpoint("mock:detour").expectedHeaderReceived(Exchange.INTERCEPTED_ENDPOINT, "file://foo");
+        getMockEndpoint("mock:detour").expectedPropertyReceived(Exchange.INTERCEPTED_ENDPOINT, "file://foo");
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("direct:first", "Hello World");

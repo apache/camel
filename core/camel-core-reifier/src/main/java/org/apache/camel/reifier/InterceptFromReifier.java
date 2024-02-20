@@ -18,6 +18,7 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -38,7 +39,7 @@ public class InterceptFromReifier extends InterceptReifier<InterceptFromDefiniti
             @Override
             public boolean process(Exchange exchange, AsyncCallback callback) {
                 if (exchange.getFromEndpoint() != null) {
-                    exchange.getMessage().setHeader(Exchange.INTERCEPTED_ENDPOINT, exchange.getFromEndpoint().getEndpointUri());
+                    exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ENDPOINT, exchange.getFromEndpoint().getEndpointUri());
                 }
                 return super.process(exchange, callback);
             }

@@ -73,8 +73,7 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
             LOG.debug("Sending to endpoint: {} is intercepted and detoured to: {} for exchange: {}", getEndpoint(),
                     endpoint.getBefore(), exchange);
         }
-        // add header with the real endpoint uri
-        exchange.getIn().setHeader(Exchange.INTERCEPTED_ENDPOINT, delegate.getEndpointUri());
+        exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ENDPOINT, delegate.getEndpointUri());
 
         if (pipeline != null) {
             // detour the exchange with the pipeline that has before and after included

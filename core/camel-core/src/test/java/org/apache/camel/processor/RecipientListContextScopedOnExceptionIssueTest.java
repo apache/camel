@@ -52,7 +52,7 @@ public class RecipientListContextScopedOnExceptionIssueTest extends ContextTestS
 
                 interceptSendToEndpoint("direct*").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        String target = exchange.getIn().getHeader(Exchange.INTERCEPTED_ENDPOINT, String.class);
+                        String target = exchange.getProperty(Exchange.INTERCEPTED_ENDPOINT, String.class);
                         exchange.getIn().setHeader("target", target);
                     }
 
