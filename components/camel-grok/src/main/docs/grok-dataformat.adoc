@@ -14,7 +14,7 @@
 This component provides dataformat for processing inputs with grok patterns.
 Grok patterns are used to process unstructured data into structured objects - `List<Map<String, Object>>`.
 
-This component is based on https://github.com/thekrakken/java-grok[Java Grok library]
+This component is based on the https://github.com/thekrakken/java-grok[Java Grok library]
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -31,7 +31,7 @@ for this component:
 
 == Basic usage
 
-Extract all IP adresses from input
+.Extract all IP addresses from input
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:in")
@@ -39,7 +39,7 @@ from("direct:in")
     .to("log:out");
 --------------------------------------------------------------------------------
 
-Parse Apache logs and process only 4xx responses
+.Parse Apache logs and process only 4xx responses
 [source,java]
 --------------------------------------------------------------------------------
 from("file://apacheLogs")
@@ -56,9 +56,30 @@ All https://github.com/thekrakken/java-grok/tree/master/src/main/resources/patte
 == Custom patterns
 
 Camel Grok DataFormat supports plugable patterns, which are auto loaded from Camel Registry.
-You can register patterns with Java DSL and Spring DSL
+You can register patterns with Java DSL and Spring DSL:
 
-Spring DSL:
+[tabs]
+====
+
+Java DSL::
++
+[source,java]
+--------------------------------------------------------------------------------
+public class MyRouteBuilder extends RouteBuilder {
+
+    @Override
+    public void configure() throws Exception {
+        bindToRegistry("myCustomPatternBean", new GrokPattern("FOOBAR", "foo|bar"));
+
+        from("direct:in")
+            .unmarshal().grok("%{FOOBAR:fooBar}")
+            .to("log:out");
+    }
+}
+--------------------------------------------------------------------------------
+
+Spring XML::
++
 [source,xml]
 --------------------------------------------------------------------------------
 <beans>
@@ -78,24 +99,9 @@ Spring DSL:
 </camelContext>
 --------------------------------------------------------------------------------
 
-Java DSL:
-[source,java]
---------------------------------------------------------------------------------
-public class MyRouteBuilder extends RouteBuilder {
+====
 
-    @Override
-    public void configure() throws Exception {
-        bindToRegistry("myCustomPatternBean", new GrokPattern("FOOBAR", "foo|bar"));
-
-        from("direct:in")
-            .unmarshal().grok("%{FOOBAR:fooBar}")
-            .to("log:out");
-    }
-}
---------------------------------------------------------------------------------
-
-
-== Grok Dataformat Options
+== Grok Data format Options
 
 // dataformat options: START
 include::partial$dataformat-options.adoc[]
