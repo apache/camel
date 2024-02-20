@@ -471,6 +471,25 @@ public interface SpringRabbitmqComponentBuilderFactory {
             return this;
         }
         /**
+         * Specify arguments for configuring the different RabbitMQ concepts, a
+         * different prefix is required for each element: consumer. exchange.
+         * queue. binding. dlq.exchange. dlq.queue. dlq.binding. For example to
+         * declare a queue with message ttl argument: queue.x-message-ttl=60000.
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param args the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitmqComponentBuilder args(
+                java.util.Map<java.lang.String, java.lang.Object> args) {
+            doSetProperty("args", args);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -601,6 +620,7 @@ public interface SpringRabbitmqComponentBuilderFactory {
             case "allowNullBody": ((SpringRabbitMQComponent) component).setAllowNullBody((boolean) value); return true;
             case "lazyStartProducer": ((SpringRabbitMQComponent) component).setLazyStartProducer((boolean) value); return true;
             case "replyTimeout": ((SpringRabbitMQComponent) component).setReplyTimeout((long) value); return true;
+            case "args": ((SpringRabbitMQComponent) component).setArgs((java.util.Map) value); return true;
             case "autowiredEnabled": ((SpringRabbitMQComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "ignoreDeclarationExceptions": ((SpringRabbitMQComponent) component).setIgnoreDeclarationExceptions((boolean) value); return true;
             case "messageConverter": ((SpringRabbitMQComponent) component).setMessageConverter((org.springframework.amqp.support.converter.MessageConverter) value); return true;
