@@ -37,9 +37,9 @@ for this component:
 == Authentication Configuration
 
 Google Functions component authentication is targeted for use with the GCP Service Accounts.
-For more information please refer to https://github.com/googleapis/google-cloud-java#authentication[Google Cloud Authentication].
+For more information, please refer to https://github.com/googleapis/google-cloud-java#authentication[Google Cloud Authentication].
 
-When you have the **service account key** you can provide authentication credentials to your application code.
+When you have the **service account key**, you can provide authentication credentials to your application code.
 Google security credentials can be set through the component endpoint:
 
 [source,java]
@@ -63,7 +63,7 @@ google-functions://functionName[?options]
 You can append query options to the URI in the following format,
 `?options=value&option2=value&...`
 
-For example in order to call the function `myCamelFunction` from the project `myProject` and location `us-central1`, use the following snippet:
+For example, to call the function `myCamelFunction` from the project `myProject` and location `us-central1`, use the following snippet:
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ Google Functions component provides the following operation on the producer side
 - updateFunction
 - deleteFunction
 
-If you don't specify an operation by default the producer will use the `callFunction` operation.
+If you don't specify an operation by default, the producer will use the `callFunction` operation.
 
 === Advanced component configuration
 
@@ -120,7 +120,7 @@ from("direct:start")
 
 === Google Functions Producer Operation examples
 
-- ListFunctions: This operation invoke the Google Functions client and get the list of cloud Functions
+- `ListFunctions`: This operation invokes the Google Functions client and gets the list of cloud Functions
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -132,7 +132,7 @@ from("direct:start")
 
 This operation will get the list of cloud functions for the project `myProject` and location `us-central1`.
 
-- GetFunction: this operation get the Cloud Functions object
+- `GetFunction`: this operation gets the Cloud Functions object
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -145,7 +145,7 @@ from("direct:start")
 
 This operation will get the `CloudFunction` object for the project `myProject`, location `us-central1` and functionName `myCamelFunction`.
 
-- CallFunction: this operation call the function using an HTTP request
+- `CallFunction`: this operation calls the function using an HTTP request
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -159,7 +159,7 @@ from("direct:start")
     .to("mock:result");
 --------------------------------------------------------------------------------
 
-- GenerateDownloadUrl: this operation generate the signed URL for downloading deployed function source code.
+- `GenerateDownloadUrl`: this operation generates the signed URL for downloading deployed function source code.
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -170,7 +170,7 @@ from("direct:start")
     .to("mock:result");
 --------------------------------------------------------------------------------
 
-- GenerateUploadUrl: this operation generate a signed URL for uploading a function source code.
+- `GenerateUploadUrl`: this operation generates a signed URL for uploading a function source code.
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -180,7 +180,7 @@ from("direct:start")
     .to("mock:result");
 --------------------------------------------------------------------------------
 
-- createFunction: this operation creates a new function.
+- `createFunction`: this operation creates a new function.
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -196,7 +196,7 @@ from("direct:start")
     .to("mock:result");
 --------------------------------------------------------------------------------
 
-- updateFunction: this operation updates existing function.
+- `updateFunction`: this operation updates existing function.
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -212,7 +212,7 @@ from("direct:start")
     .to("mock:result");
 --------------------------------------------------------------------------------
 
-- deleteFunction: this operation Deletes a function with the given name from the specified project.
+- `deleteFunction`: this operation Deletes a function with the given name from the specified project.
 
 [source,java]
 --------------------------------------------------------------------------------
