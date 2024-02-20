@@ -21,7 +21,7 @@ the https://developers.google.com/api-client-library/java/apis/bigquery/v2[Googl
 
 The current implementation does not use gRPC.
 
-The current implementation does not support querying BigQuery i.e. is a producer only.
+The current implementation does not support querying BigQuery, i.e., is a producer only.
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -42,14 +42,14 @@ for this component:
 == Authentication Configuration
 
 Google BigQuery component authentication is targeted for use with the GCP Service Accounts.
-For more information please refer to https://cloud.google.com/docs/authentication[Google Cloud Platform Auth Guide]
+For more information, please refer to https://cloud.google.com/docs/authentication[Google Cloud Platform Auth Guide]
 
 Google security credentials can be set explicitly by providing the path to the GCP credentials file location.
 
 Or they are set implicitly, where the connection factory falls back on
 https://developers.google.com/identity/protocols/application-default-credentials#howtheywork[Application Default Credentials].
 
-When you have the **service account key** you can provide authentication credentials to your application code.
+When you have the **service account key**, you can provide authentication credentials to your application code.
 Google security credentials can be set through the component endpoint:
 
 [source,java]
@@ -99,11 +99,11 @@ Producer endpoints can accept and deliver to BigQuery individual and grouped
 exchanges alike. Grouped exchanges have `Exchange.GROUPED_EXCHANGE` property set.
 
 Google BigQuery producer will send a grouped exchange in a single api call unless different table suffix or
-partition decorators are specified in which case it will break it down to ensure data is written with the
+partition decorators are specified. In that case, it will break it down to ensure data is written with the
 correct suffix or partition decorator.
 
 Google BigQuery endpoint expects the payload to be either a map or list of maps. A payload containing a map
-will insert a single row and a payload containing a list of map's will insert a row for each entry in the list.
+will insert a single row, and a payload containing a list of maps will insert a row for each entry in the list.
 
 == Template tables
 
@@ -111,7 +111,7 @@ Reference: https://cloud.google.com/bigquery/streaming-data-into-bigquery#templa
 
 Templated tables can be specified using the `GoogleBigQueryConstants.TABLE_SUFFIX` header.
 
-I.e. the following route will create tables and insert records sharded on a per day basis:
+I.e. the following route will create tables and insert records sharded on a per-day basis:
 
 [source,java]
 ------------------------------------------------------
@@ -133,9 +133,10 @@ separate tables. When inserting data a specific partition can be specified by se
 
 Reference: https://cloud.google.com/bigquery/streaming-data-into-bigquery#dataconsistency
 
-A insert id can be set on the exchange with the header `GoogleBigQueryConstants.INSERT_ID` or by specifying
+An insert id can be set on the exchange with the header `GoogleBigQueryConstants.INSERT_ID` or by specifying
 query parameter `useAsInsertId`. As an insert id need to be specified per row inserted the exchange header can't
-be used when the payload is a list - if the payload is a list the `GoogleBigQueryConstants.INSERT_ID` will
+be used when the payload is a list.
+If the payload is a list the `GoogleBigQueryConstants.INSERT_ID` will
 be ignored. In that case use the query parameter `useAsInsertId`.
 
 
