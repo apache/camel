@@ -51,8 +51,11 @@ include::partial$component-endpoint-headers.adoc[]
 
 === Sample for *set*:
 
-Java DSL:
+[tabs]
+====
 
+Java DSL::
++
 [source,java]
 -----------------------------------------------------------------------------------------
 from("direct:set")
@@ -60,8 +63,8 @@ from("direct:set")
 .toF("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX);
 -----------------------------------------------------------------------------------------
 
-Spring DSL:
-
+Spring XML::
++
 [source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
@@ -73,13 +76,18 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
+====
+
 Provide the value to set inside the message body (here the value is 10):
 `template.sendBody("direct:set", 10);`
 
 === Sample for *get*:
 
-Java DSL:
+[tabs]
+====
 
+Java DSL::
++
 [source,java]
 ------------------------------------------------------------------------------------
 from("direct:get")
@@ -87,8 +95,8 @@ from("direct:get")
 .toF("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX);
 ------------------------------------------------------------------------------------
 
-Spring DSL:
-
+Spring XML::
++
 [source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
@@ -100,12 +108,18 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
+====
+
 You can get the number with
 `long body = template.requestBody("direct:get", null, Long.class);`.
 
 === Sample for *increment*:
 
-Java DSL:
+[tabs]
+====
+
+Java DSL::
++
 
 [source,java]
 ------------------------------------------------------------------------------------------
@@ -114,8 +128,8 @@ from("direct:increment")
 .toF("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX);
 ------------------------------------------------------------------------------------------
 
-Spring DSL:
-
+Spring XML::
++
 [source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
@@ -127,12 +141,18 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
+====
+
 The actual value (after increment) will be provided inside the message
 body.
 
 === Sample for *decrement*:
 
-Java DSL:
+[tabs]
+====
+
+Java DSL::
++
 
 [source,java]
 ------------------------------------------------------------------------------------------
@@ -141,8 +161,8 @@ from("direct:decrement")
 .toF("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX);
 ------------------------------------------------------------------------------------------
 
-Spring DSL:
-
+Spring XML::
++
 [source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
@@ -154,12 +174,18 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
+====
+
 The actual value (after decrement) will be provided inside the message
 body.
 
 === Sample for *destroy*
 
-Java DSL:
+[tabs]
+====
+
+Java DSL::
++
 
 [source,java]
 ----------------------------------------------------------------------------------------
@@ -168,8 +194,8 @@ from("direct:destroy")
 .toF("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX);
 ----------------------------------------------------------------------------------------
 
-Spring DSL:
-
+Spring XML::
++
 [source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
@@ -181,5 +207,6 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
+====
 
 include::spring-boot:partial$starter.adoc[]

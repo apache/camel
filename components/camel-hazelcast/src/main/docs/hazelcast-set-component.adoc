@@ -15,7 +15,7 @@
 
 *{component-header}*
 
-The http://www.hazelcast.com/[Hazelcast] Set component is one of Camel Hazelcast Components which allows you to access Hazelcast distributed set.
+The http://www.hazelcast.com/[Hazelcast] Set component is one of Camel Hazelcast Components which allows you to access a Hazelcast distributed set.
 
 
 // component-configure options: START
@@ -33,7 +33,7 @@ include::partial$component-endpoint-options.adoc[]
 
 == set cache producer
 
-The set producer provides 7 operations:
+The set producer provides seven operations:
 
 * add
 * removeAll

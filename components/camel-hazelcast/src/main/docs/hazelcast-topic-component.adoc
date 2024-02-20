@@ -55,7 +55,7 @@ from("direct:add")
 
 The topic consumer provides only one operation (received). This
 component is supposed to support multiple consumption as it's expected
-when it comes to topics so you are free to have as much consumers as you
+when it comes to topics, so you are free to have as many consumers as you
 need on the same hazelcast topic.
 
 [source,java]
