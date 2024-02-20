@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-The Zendesk component provides access to all of the zendesk.com APIs accessible
+The Zendesk component provides access to all the zendesk.com APIs accessible
 using https://github.com/cloudbees/zendesk-java-client[zendesk-java-client]. It
 allows producing messages to manage Zendesk ticket, user, organization, etc.
 
