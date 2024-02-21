@@ -32,18 +32,18 @@ public class ServiceBusUtilsTest {
     @Test
     void testCreateServiceBusMessage() {
         // test string
-        final ServiceBusMessage message1 = ServiceBusUtils.createServiceBusMessage("test string", null);
+        final ServiceBusMessage message1 = ServiceBusUtils.createServiceBusMessage("test string", null, null);
 
         assertEquals("test string", message1.getBody().toString());
 
         // test int
-        final ServiceBusMessage message2 = ServiceBusUtils.createServiceBusMessage(String.valueOf(12345), null);
+        final ServiceBusMessage message2 = ServiceBusUtils.createServiceBusMessage(String.valueOf(12345), null, null);
 
         assertEquals("12345", message2.getBody().toString());
 
         //test bytes
         byte[] testByteBody = "test string".getBytes(StandardCharsets.UTF_8);
-        final ServiceBusMessage message3 = ServiceBusUtils.createServiceBusMessage(testByteBody, null);
+        final ServiceBusMessage message3 = ServiceBusUtils.createServiceBusMessage(testByteBody, null, null);
         assertArrayEquals(testByteBody, message3.getBody().toBytes());
     }
 
@@ -53,7 +53,7 @@ public class ServiceBusUtilsTest {
         inputMessages.add("test data");
         inputMessages.add(String.valueOf(12345));
 
-        final Iterable<ServiceBusMessage> busMessages = ServiceBusUtils.createServiceBusMessages(inputMessages, null);
+        final Iterable<ServiceBusMessage> busMessages = ServiceBusUtils.createServiceBusMessages(inputMessages, null, null);
 
         assertTrue(StreamSupport.stream(busMessages.spliterator(), false)
                 .anyMatch(record -> record.getBody().toString().equals("test data")));
@@ -67,7 +67,7 @@ public class ServiceBusUtilsTest {
         inputMessages2.add(byteBody1);
         inputMessages2.add(byteBody2);
 
-        final Iterable<ServiceBusMessage> busMessages2 = ServiceBusUtils.createServiceBusMessages(inputMessages2, null);
+        final Iterable<ServiceBusMessage> busMessages2 = ServiceBusUtils.createServiceBusMessages(inputMessages2, null, null);
 
         assertTrue(StreamSupport.stream(busMessages2.spliterator(), false)
                 .anyMatch(message -> Arrays.equals(message.getBody().toBytes(), byteBody1)));
