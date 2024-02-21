@@ -812,7 +812,7 @@ public class Run extends CamelCommand {
                 // use current dir, however if we run a file that are in another folder, then we should track that folder instead
                 for (String r : sjReload.toString().split(",")) {
                     String path = FileUtil.onlyPath(r);
-                    if (path != null) {
+                    if (path != null && !path.equals(".camel-jbang")) {
                         reloadDir = path;
                         break;
                     }
