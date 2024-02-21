@@ -41,7 +41,7 @@ jte:templateName[?options]
 ---------------------------------
 
 Where *templateName* is the classpath-local URI of the template to
-invoke; or the complete URL of the remote template (eg:
+invoke; or the complete URL of the remote template (e.g.:
 `\file://folder/myfile.jte`).
 
 
@@ -82,7 +82,7 @@ with the following information:
 
 |=======================================================================
 
-You can setup your custom JTE data model in the
+You can set up your custom JTE data model in the
 message header with the key "*CamelJteDataModel*" just like this
 
 
@@ -90,7 +90,7 @@ message header with the key "*CamelJteDataModel*" just like this
 
 Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
-headers is set then Camel uses this over the endpoint configured
+headers is set, then Camel uses this over the endpoint configured
 resource. This allows you to provide a dynamic template at runtime.
 
 // component headers: START
@@ -99,7 +99,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Samples
 
-For example you could use something like:
+For example, you could use something like:
 
 [source,java]
 -------------------------------------------
@@ -107,7 +107,7 @@ from("rest:get:item/{id}").
   to("jte:com/acme/response.jte");
 -------------------------------------------
 
-To use a JTE template to formulate a response to the REST get call.
+To use a JTE template to formulate a response to the REST get call:
 
 [source,java]
 ----
