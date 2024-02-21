@@ -31,7 +31,7 @@ for this component:
 
 == Prerequisites
 
-You must have a valid Kudu instance running. More information are available at https://kudu.apache.org/[Apache Kudu].
+You must have a valid Kudu instance running. More information is available at https://kudu.apache.org/[Apache Kudu].
 
 
 // component-configure options: START
