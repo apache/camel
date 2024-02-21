@@ -18,12 +18,11 @@ include::partial$dataformat-options.adoc[]
 
 == Dependencies
 
-To use JsonAPI in your camel routes you need to add the dependency
+To use JsonAPI in your Camel routes, you need to add the dependency
 on *camel-jsonapi* which implements this data format.
 
-If you use maven you could just add the following to your pom.xml,
-substituting the version number for the latest & greatest release (see
-the download page for the latest versions).
+If you use Maven, you could add the following to your `pom.xml`,
+substituting the version number for the latest & greatest release.
 
 [source,xml]
 ----
