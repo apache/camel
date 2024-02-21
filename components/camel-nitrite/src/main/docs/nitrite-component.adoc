@@ -48,7 +48,7 @@ include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
 == Producer operations
-The following Operations are available to specify as NitriteConstants.OPERATION when producing to Nitrite.
+The following Operations are available to specify as `NitriteConstants.OPERATION` when producing to Nitrite.
 [width="100%",cols="2m,2m,1m,5",options="header"]
 |===
 | Class | Type | Parameters | Description
@@ -58,27 +58,27 @@ The following Operations are available to specify as NitriteConstants.OPERATION 
 | CreateIndexOperation | common | field:String(required), IndexOptions(required) | Create index with IndexOptions on field
 | DropIndexOperation | common | field:String(required) | Drop index on field
 | ExportDatabaseOperation | common | ExportOptions(optional) | Export full database to JSON and stores result in body - see Nitrite docs for details about format
-| GetAttributesOperation | common | | Get attributes of collection
+| GetAttributesOperation | common | | Get attributes of a collection
 | GetByIdOperation | common | NitriteId | Get Document by _id
-| ImportDatabaseOperation | common | | Import full database from JSON in body
-| InsertOperation | common | payload(optional) | Insert document to collection or object to ObjectRepository. If parameter not specified, inserts message body
+| ImportDatabaseOperation | common | | Import the full database from JSON in body
+| InsertOperation | common | payload(optional) | Insert document to collection or object to ObjectRepository. If parameter is not specified, inserts message body
 | ListIndicesOperation | common | | List indexes in collection and stores `List<Index>` in message body
 | RebuildIndexOperation | common | field (required), async (optional) | Rebuild existing index on field
-| UpdateOperation | common | payload(optional) | Update document in collection or object in ObjectRepository. If parameter not specified, updates document from message body
-| UpsertOperation | common | payload(optional) | Upsert (Insert or Update) document in collection or object in ObjectRepository. If parameter not specified, updates document from message body
+| UpdateOperation | common | payload(optional) | Update document in collection or object in ObjectRepository. If parameter is not specified, updates document from message body
+| UpsertOperation | common | payload(optional) | Upsert (Insert or Update) document in collection or object in ObjectRepository. If parameter is not specified, updates document from message body
 | FindRepositoryOperation | repository | ObjectFilter(optional), FindOptions(optional) | Find objects in ObjectRepository by ObjectFilter. If not specified, returns all objects in repository
-| RemoveRepositoryOperation | repository | ObjectFilter(required), RepoveOptions(optional) | Remove objects in ObjectRepository matched by ObjectFilter
+| RemoveRepositoryOperation | repository | ObjectFilter(required), RemoveOptions(optional) | Remove objects in ObjectRepository matched by ObjectFilter
 | UpdateRepositoryOperation | repository | ObjectFilter(required), UpdateOptions(optional), payload(optional) | Update objects matching ObjectFilter. If payload not specified, the message body is used
 |===
 
 == Examples
 
-=== Consume changes in collection.
+=== Consume changes in a collection.
 
 [source,java]
 ----
 from("nitrite:/path/to/database.db?collection=myCollection")
-    .to("log:change")
+    .to("log:change");
 ----
 
 === Consume changes in object repository.
@@ -86,7 +86,7 @@ from("nitrite:/path/to/database.db?collection=myCollection")
 [source,java]
 ----
 from("nitrite:/path/to/database.db?repositoryClass=my.project.MyPersistentObject")
-    .to("log:change")
+    .to("log:change");
 ----
 
 [source,java]
@@ -110,7 +110,7 @@ public class MyPersistentObject {
 ----
 from("direct:upsert")
     .setBody(constant(Document.createDocument("key1", "val1")))
-    .to("nitrite:/path/to/database.db?collection=myCollection")
+    .to("nitrite:/path/to/database.db?collection=myCollection");
 ----
 
 === Get Document by id
