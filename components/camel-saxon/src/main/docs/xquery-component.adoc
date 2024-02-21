@@ -40,8 +40,8 @@ from("queue:foo")
 ---------------------------
 
 You can also use functions inside your query, in which case you need an
-explicit type conversion (or you will get a org.w3c.dom.DOMException:
-HIERARCHY_REQUEST_ERR) by passing the Class as a second argument to the
+explicit type conversion (otherwise you will get a `org.w3c.dom.DOMException:
+HIERARCHY_REQUEST_ERR`), by passing the Class as a second argument to the
 *xquery()* method.
 
 [source,java]
@@ -52,8 +52,8 @@ from("direct:start")
 
 == Variables
 
-The IN message body will be set as the `contextItem`. Besides this these
-Variables is also added as parameters:
+The IN message body will be set as the `contextItem`. Besides this, these
+Variables are also added as parameters:
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -72,15 +72,15 @@ the variable which name is in.headers.foo
 the variable which name is out.headers.foo variable
 
 |*key name* |Object |Any exchange.properties and exchange.in.headers and any additional
-parameters set using `setParameters(Map)`. These parameters is added
-with they own key name, for instance if there is an IN header with the
+parameters set using `setParameters(Map)`. These parameters are added
+with their own key name, for instance, if there is an IN header with the
 key name *foo* then its added as *foo*.
 |=======================================================================
 
 == Using XML configuration
 
 If you prefer to configure your routes in your Spring
-XML file then you can use XPath expressions as follows
+XML file, then you can use XPath expressions as follows
 
 [source,xml]
 ---------------------------------------------------------------------------------------------------------------
@@ -104,9 +104,9 @@ XML file then you can use XPath expressions as follows
 ---------------------------------------------------------------------------------------------------------------
 
 Notice how we can reuse the namespace prefixes, *foo* in this case, in
-the XPath expression for easier namespace based XQuery expressions!
+the XPath expression for easier namespace-based XQuery expressions!
 
-When you use functions in your XQuery expression you need an explicit
+When you use functions in your XQuery expression, you need an explicit
 type conversion which is done in the xml configuration via the *@type*
 attribute:
 
@@ -120,7 +120,7 @@ attribute:
 
 Sometimes an XQuery expression can be quite large; it can essentally be
 used for Templating. So you may want to use an
-XQuery Endpoint so you can route using XQuery
+XQuery Endpoint, so you can route using XQuery
 templates.
 
 The following example shows how to take a message of an ActiveMQ queue
@@ -139,10 +139,10 @@ The following example shows how to take a message of an ActiveMQ queue
 
 == Loading script from external resource
 
-You can externalize the script and have Camel load it from a resource
+You can externalize the script and have Apache Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`.
 This is done using the following syntax: `"resource:scheme:location"`,
-e.g. to refer to a file on the classpath you can do:
+e.g., to refer to a file on the classpath you can do:
 
 [source,java]
 ------------------------------------------------------------------------------
@@ -152,17 +152,18 @@ e.g. to refer to a file on the classpath you can do:
 == Learning XQuery
 
 XQuery is a very powerful language for querying, searching, sorting and
-returning XML. For help learning XQuery try these tutorials
+returning XML.
+For help learning XQuery, try these tutorials
 
 * Mike Kay's http://www.stylusstudio.com/xquery_primer.html[XQuery Primer]
 * The W3Schools https://www.w3schools.com/xml/xquery_intro.asp[XQuery Tutorial]
 
 == Dependencies
 
-To use XQuery in your camel routes you need to add the dependency on
-*camel-saxon* which implements the XQuery language.
+To use XQuery in your Camel routes, you need to add the dependency on
+*camel-saxon*, which implements the XQuery language.
 
-If you use maven you could just add the following to your pom.xml,
+If you use Maven, you could add the following to your `pom.xml`,
 substituting the version number for the latest & greatest release.
 
 [source,xml]

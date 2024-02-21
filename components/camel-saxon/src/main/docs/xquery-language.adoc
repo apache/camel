@@ -38,11 +38,11 @@ And the following variables are available as well:
 |out.body |Object |*deprecated* The OUT message body (if any)
 |in.headers.* |Object |You can access the value of exchange.in.headers with key *foo* by using
 the variable which name is in.headers.foo
-|out.headers.* |Object |*deprecated* You can access the value of exchange.out.headers with key *foo* by using
-the variable which name is out.headers.foo variable
-|*key name* |Object |Any exchange.properties and exchange.in.headers and any additional
+|out.headers.* |Object |*deprecated* You can access the value of `exchange.out.headers` with key *foo* by using
+the variable which name is `out.headers.foo` variable
+|*key name* |Object |Any `exchange.properties` and `exchange.in.headers` and any additional
 parameters set using `setParameters(Map)`. These parameters are added
-with they own key name, for instance if there is an IN header with the
+with their own key name, for instance, if there is an IN header with the
 key name *foo* then its added as *foo*.
 |=======================================================================
 
@@ -58,7 +58,7 @@ from("queue:foo")
 You can also use functions inside your query, in which case you need an
 explicit type conversion, or you will get an `org.w3c.dom.DOMException:
 HIERARCHY_REQUEST_ERR`). You need to pass in the expected output type of the function.
-For example the concat function returns a `String` which is done as shown:
+For example, the concat function returns a `String` which is done as shown:
 
 [source,java]
 -----------------------------------------------------------------------------
@@ -81,7 +81,7 @@ And in XML DSL:
 === Using namespaces
 
 If you have a standard set of namespaces you wish to work with and wish
-to share them across many XQuery expressions you can use the
+to share them across many XQuery expressions, you can use the
 `org.apache.camel.support.builder.Namespaces` when using Java DSL as shown:
 
 [source,java]
@@ -94,10 +94,10 @@ from("direct:start")
 ----
 
 Notice how the namespaces are provided to `xquery` with the `ns` variable
-that are passed in as the 2nd parameter.
+that are passed in as the second parameter.
 
 Each namespace is a key=value pair, where the prefix is the key.
-In the XQuery expression then the namespace is used by its prefix, eg:
+In the XQuery expression then the namespace is used by its prefix, e.g.:
 
 [source,text]
 ----
@@ -113,7 +113,7 @@ Namespaces ns = new Namespaces("c", "http://acme.com/cheese")
                      .add("b", "http://acme.com/beer");
 ----
 
-When using namespaces in XML DSL then its different, as you setup the namespaces
+When using namespaces in XML DSL then its different, as you set up the namespaces
 in the XML root tag (or one of the `camelContext`, `routes`, `route` tags).
 
 In the XML example below we use Spring XML where the namespace is declared in the root tag `beans`,
@@ -155,7 +155,7 @@ from("direct:start").
 
 Notice that xquery will use DOMResult by default, so if we want to grab
 the value of the person node, using `text()` we need to tell XQuery to use
-String as result type, as shown:
+String as the result type, as shown:
 
 [source,java]
 -------------------------------------------------------------
@@ -178,10 +178,10 @@ declare them in the XQuery expression.
 
 == Loading script from external resource
 
-You can externalize the script and have Camel load it from a resource
+You can externalize the script and have Apache Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`.
 This is done using the following syntax: `"resource:scheme:location"`,
-e.g. to refer to a file on the classpath you can do:
+e.g., to refer to a file on the classpath you can do:
 
 [source,java]
 ------------------------------------------------------------------------------
@@ -191,19 +191,18 @@ e.g. to refer to a file on the classpath you can do:
 == Learning XQuery
 
 XQuery is a very powerful language for querying, searching, sorting and
-returning XML. For help learning XQuery try these tutorials
+returning XML. For help learning XQuery, try these tutorials
 
 * Mike Kay's http://www.stylusstudio.com/xquery_primer.html[XQuery Primer]
 * The W3Schools http://www.w3schools.com/xml/xquery_intro.asp[XQuery Tutorial]
 
 == Dependencies
 
-To use XQuery in your camel routes you need to add the a dependency on
-*camel-saxon* which implements the XQuery language.
+To use XQuery in your Camel routes, you need to add the dependency on
+*camel-saxon*, which implements the XQuery language.
 
-If you use maven you could just add the following to your pom.xml,
-substituting the version number for the latest & greatest release (see
-the download page for the latest versions).
+If you use Maven you could add the following to your `pom.xml`,
+substituting the version number for the latest & greatest release.
 
 [source,xml]
 --------------------------------------
