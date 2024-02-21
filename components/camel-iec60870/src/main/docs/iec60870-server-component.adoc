@@ -39,9 +39,9 @@ The URI syntax of the endpoint is:
 iec60870-server:host:port/00-01-02-03-04
 ----
 
-The information object address is encoded in the path in the syntax shows above. Please
-note that always the full, 5 octet address format is being used. Unused octets have to be filled
-with zero.
+The information object address is encoded in the path in the syntax above.
+Please note that always the full, 5-octet address format is being used.
+Unused octets have to be filled with zero.
 
 // component-configure options: START
 

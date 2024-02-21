@@ -39,12 +39,12 @@ The URI syntax of the endpoint is:
 iec60870-client:host:port/00-01-02-03-04
 ----
 
-The information object address is encoded in the path in the syntax shows above. Please
-note that always the full, 5 octet address format is being used. Unused octets have to be filled
-with zero.
+The information object address is encoded in the path in the syntax above.
+Please note that always the full, 5-octet address format is being used.
+Unused octets have to be filled with zero.
 
-A connection instance if identified by the host and port part of the URI, plus all parameters in the "id" group.
-If a new connection id is encountered the connection options will be evaluated and the connection instance
+A connection instance if identified by the host and port part of the URI, plus all parameters in the _"id"_ group.
+If a new connection id is encountered, the connection options will be evaluated and the connection instance
 is created with those options.
 
 [NOTE]
@@ -53,11 +53,11 @@ undefined which of those connection options will be used.
 
 The final connection options will be evaluated in the following order:
 
-* If present, the +connectionOptions+ parameter will be used
-* Otherwise the +defaultConnectionOptions+ instance is copied and customized in the following steps
-* Apply +protocolOptions+ if present
-* Apply +dataModuleOptions+ if present
-* Apply all explicit connection parameters (e.g. +timeZone+)
+* If present, the `connectionOptions` parameter will be used
+* Otherwise, the `defaultConnectionOptions` instance is copied and customized in the following steps
+* Apply `protocolOptions` if present
+* Apply `dataModuleOptions` if present
+* Apply all explicit connection parameters (e.g. `timeZone`)
 
 // component-configure options: START
 
