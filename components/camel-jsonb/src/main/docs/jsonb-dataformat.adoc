@@ -11,7 +11,7 @@
 
 *Since Camel {since}*
 
-JSON-B is a Data Format which uses the standard (javax) JSON-B library.
+JSON-B is a Data Format that uses the standard (javax) JSON-B library.
 
 [source,java]
 -------------------------------
@@ -31,12 +31,11 @@ include::partial$dataformat-options.adoc[]
 
 == Dependencies
 
-To use JSON-B in your camel routes you need to add the dependency
-on *camel-jsonb* which implements this data format.
+To use JSON-B in your Camel routes, you need to add the dependency
+on *camel-jsonb* that implements this data format.
 
-If you use maven you could just add the following to your pom.xml,
-substituting the version number for the latest & greatest release (see
-the download page for the latest versions).
+If you use Maven, you could add the following to your pom.xml,
+substituting the version number for the latest & greatest release.
 
 [source,xml]
 ----------------------------------------------------------
@@ -50,7 +49,7 @@ the download page for the latest versions).
 
 You have to add a dependency on the *implementation* of a jsonb specification.
 
-If you want to add the Johnzon implementation and you are using maven, just add following to your pom.xml
+If you want to add the Johnzon implementation, and you are using maven, add following to your `pom.xml`:
 
 [source,xml]
 ----------------------------------------------------------
