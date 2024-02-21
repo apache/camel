@@ -79,8 +79,8 @@ the header with the key `CamelMyBatisResult`.
 
 == Samples
 
-For example if you wish to consume beans from a JMS queue and insert
-them into a database you could do the following:
+For example, if you wish to consume beans from a JMS queue and insert
+them into a database, you could do the following:
 
 [source,java]
 ----
@@ -111,7 +111,7 @@ Where *insertAccount* is the MyBatis ID in the SQL mapping file:
 
 == Using StatementType for better control of MyBatis
 
-When routing to an MyBatis endpoint you will want more fine grained
+When routing to an MyBatis endpoint, you will want more fine-grained
 control so you can control whether the SQL statement to be executed is a
 `SELECT`, `UPDATE`, `DELETE` or `INSERT` etc. So for instance if we want
 to route to an MyBatis endpoint in which the IN body contains parameters
@@ -152,7 +152,7 @@ from("direct:start")
 
 MyBatis allows you to insert multiple rows using its for-each batch
 driver. To use this, you need to use the <foreach> in the mapper XML
-file. For example as shown below:
+file. For example, as shown below:
 
 [source,xml]
 ----
@@ -187,7 +187,7 @@ from("direct:start")
 
 MyBatis allows you to update multiple rows using its for-each batch
 driver. To use this, you need to use the <foreach> in the mapper XML
-file. For example as shown below:
+file. For example, as shown below:
 
 [source,xml]
 ----
@@ -217,7 +217,7 @@ from("direct:start")
 
 MyBatis allows you to delete multiple rows using its for-each batch
 driver. To use this, you need to use the <foreach> in the mapper XML
-file. For example as shown below:
+file. For example, as shown below:
 
 [source,xml]
 ----
@@ -244,14 +244,14 @@ from("direct:start")
 
 === Notice on InsertList, UpdateList and DeleteList StatementTypes
 
-Parameter of any type (List, Map, etc.) can be passed to mybatis and an
+Parameter of any type (List, Map, etc.) can be passed to mybatis, and an
 end user is responsible for handling it as required with the help of
 http://www.mybatis.org/mybatis-3/dynamic-sql.html[mybatis dynamic queries] capabilities.
 
 === Scheduled polling example
 
 This component supports scheduled polling and can therefore be used as
-a Polling Consumer. For example to poll the
+a Polling Consumer. For example, to poll the
 database every minute:
 
 [source,java]
@@ -293,7 +293,7 @@ by commas.
 
 The route below illustrates we execute the *consumeAccount* statement
 data is processed. This allows us to change the status of the row in the
-database to processed, so we avoid consuming it twice or more.
+database to process, so we avoid consuming it twice or more.
 
 [source,java]
 ----
@@ -404,7 +404,7 @@ Spring Boot users can use https://mybatis.org/spring-boot-starter/mybatis-spring
 </dependency>
 ----
 
-in particular auto configured beans from mybatis-spring-boot-starter can be used as follows:
+in particular, autoconfigured beans from mybatis-spring-boot-starter can be used as follows:
 
 [source,properties]
 ----
