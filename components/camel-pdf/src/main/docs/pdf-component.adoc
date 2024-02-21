@@ -14,12 +14,12 @@
 
 *{component-header}*
 
-The PDF components provides the ability to create, modify or extract
+The PDF component provides the ability to create, modify or extract
 content from PDF documents. This component uses
-https://pdfbox.apache.org/[Apache PDFBox] as underlying library to work
+https://pdfbox.apache.org/[Apache PDFBox] as the underlying library to work
 with PDF documents.
 
-In order to use the PDF component, Maven users will need to add the
+To use the PDF component, Maven users will need to add the
 following dependency to their `pom.xml`:
 
 *pom.xml*
