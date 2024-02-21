@@ -62,6 +62,7 @@ import org.apache.camel.generator.openapi.RestDslGenerator;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.DownloadListener;
+import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.CamelCaseOrderedProperties;
@@ -923,6 +924,12 @@ public class Run extends CamelCommand {
         }
         if (kameletsVersion != null) {
             jbangArgs.add("-Dcamel-kamelets.version=" + kameletsVersion);
+        }
+        // tooling may signal to run JMX debugger in suspended mode via JVM system property
+        // which we must include in args as well
+        String debugSuspend = System.getProperty(BacklogDebugger.SUSPEND_MODE_SYSTEM_PROP_NAME);
+        if (debugSuspend != null) {
+            jbangArgs.add("-D" + BacklogDebugger.SUSPEND_MODE_SYSTEM_PROP_NAME + "=" + debugSuspend);
         }
         if (isDebugMode()) {
             jbangArgs.add("--debug=" + jvmDebugPort); // jbang --debug=port
