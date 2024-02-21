@@ -38,8 +38,7 @@ mvel:templateName[?options]
 ---------------------------
 
 Where *templateName* is the classpath-local URI of the template to
-invoke; or the complete URL of the remote template (eg:
-\file://folder/myfile.mvel).
+invoke; or the complete URL of the remote template (e.g.: `\file://folder/myfile.mvel`).
 
 
 // component-configure options: START
@@ -80,14 +79,14 @@ Camel will provide exchange information in the MVEL context (just a
 The mvel template resource is, by default, hot reloadable for both file
 and classpath resources (expanded jar). If you set `contentCache=true`,
 Camel will only load the resource once, and thus hot reloading is not
-possible. This scenario can be used in production, when the resource
+possible. This scenario can be used in production when the resource
 never changes.
 
 == Dynamic templates
 
 Camel provides two headers by which you can define a different resource
 location for a template, or the template content itself. If any of these
-headers is set then Camel uses this over the endpoint configured
+headers is set, then Camel uses this over the endpoint configured
 resource. This allows you to provide a dynamic template at runtime.
 
 // component headers: START
@@ -117,7 +116,7 @@ from("direct:in").
   to("mvel:dummy?allowTemplateFromHeader=true");
 -------------------------------------------------------------------------
 
-To specify a template directly as a header the component should use
+To specify a template directly as a header, the component should use
 dynamically via a header, so for example:
 
 [source,java]

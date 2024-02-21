@@ -18,7 +18,7 @@ MVEL is powerful for templates, but can also be used for
 xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate]
 
 For example, you can use MVEL in a xref:manual::predicate.adoc[Predicate]
-with the xref:eips:choice-eip.adoc[Content Based Router] EIP.
+with the xref:eips:choice-eip.adoc[Content-Based Router] EIP.
 
 You can use MVEL dot notation to invoke operations. If you for instance
 have a body that contains a POJO that has a `getFamilyName` method then
@@ -92,10 +92,10 @@ And in XML:
 
 == Loading script from external resource
 
-You can externalize the script and have Camel load it from a resource
+You can externalize the script and have Apache Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`.
 This is done using the following syntax: `"resource:scheme:location"`,
-e.g. to refer to a file on the classpath you can do:
+e.g., to refer to a file on the classpath you can do:
 
 [source,java]
 ----
@@ -104,12 +104,11 @@ e.g. to refer to a file on the classpath you can do:
 
 == Dependencies
 
-To use MVEL in your camel routes you need to add the dependency on
+To use MVEL in your Camel routes, you need to add the dependency on
 *camel-mvel* which implements the MVEL language.
 
-If you use maven you could just add the following to your pom.xml,
-substituting the version number for the latest & greatest release (see
-the download page for the latest versions).
+If you use Maven, you could add the following to your `pom.xml`,
+substituting the version number for the latest & greatest release.
 
 [source,xml]
 ----
