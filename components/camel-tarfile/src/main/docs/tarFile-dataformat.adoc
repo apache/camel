@@ -12,11 +12,11 @@
 *Since Camel {since}*
 
 The Tar File Data Format is a message compression
-and de-compression format. Messages can be marshalled (compressed) to
+and decompression format. Messages can be marshalled (compressed) to
 Tar Files containing a single entry, and Tar Files containing a single
 entry can be unmarshalled (decompressed) to the original file contents.
 
-There is also a aggregation strategy that can
+There is also an aggregation strategy that can
 aggregate multiple messages into a single Tar File.
 
 == TarFile Options
@@ -29,7 +29,7 @@ include::partial$dataformat-options.adoc[]
 
 == Marshal
 
-In this example we marshal a regular text/XML payload to a compressed
+In this example, we marshal a regular text/XML payload to a compressed
 payload using Tar File compression, and send it to an ActiveMQ queue
 called MY_QUEUE.
 
@@ -43,7 +43,7 @@ incoming `CamelFileName` message header, which is the standard message
 header used by the file component. Additionally, the
 outgoing `CamelFileName` message header is automatically set to the
 value of the incoming `CamelFileName` message header, with the ".tar"
-suffix. So for example, if the following route finds a file named
+suffix. So, for example, if the following route finds a file named
 "test.txt" in the input directory, the output will be a Tar File named
 "test.txt.tar" containing a single Tar entry named "test.txt":
 
@@ -79,7 +79,7 @@ the `UnTarpedMessageProcessor`.
 from("activemq:queue:MY_QUEUE").unmarshal().tarFile().process(new UnTarpedMessageProcessor()); 
 -----------------------------------------------------------------------------------------------
 
-If the Tar File has more then one entry, the usingIterator option of
+If the Tar File has more than one entry, the usingIterator option of
 TarFileDataFormat to be true, and you can use splitter to do the further
 work.
 
@@ -118,7 +118,7 @@ Please note that this aggregation strategy requires eager completion
 check to work properly.
 ====
 
-In this example we aggregate all text files found in the input directory
+In this example, we aggregate all text files found in the input directory
 into a single Tar File that is stored in the output directory. 
 
 [source,java]
@@ -149,10 +149,10 @@ the `CamelFileName` header explicitly in your route:
 
 == Dependencies
 
-To use Tar Files in your camel routes you need to add a dependency on
-*camel-tarfile* which implements this data format.
+To use Tar Files in your camel routes, you need to add a dependency on
+*camel-tarfile*, which implements this data format.
 
-If you use Maven you can just add the following to your `pom.xml`,
+If you use Maven you can add the following to your `pom.xml`,
 substituting the version number for the latest & greatest release (see
 the download page for the latest versions).
 
