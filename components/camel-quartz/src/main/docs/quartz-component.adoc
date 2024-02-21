@@ -63,12 +63,12 @@ include::partial$component-endpoint-options.adoc[]
 
 == Configuring quartz.properties file
 
-By default Quartz will look for a `quartz.properties` file in the
+By default, Quartz will look for a `quartz.properties` file in the
 `org/quartz` directory of the classpath. If you are using WAR
-deployments this means just drop the quartz.properties in
+deployments, this means just drop the quartz.properties in
 `WEB-INF/classes/org/quartz`.
 
-However the Camel xref:quartz-component.adoc[Quartz] component also allows you
+However, the Camel xref:quartz-component.adoc[Quartz] component also allows you
 to configure properties:
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
@@ -80,7 +80,7 @@ to configure properties:
 |`propertiesFile` |`null` |`String` |File name of the properties to load from the classpath
 |===
 
-To do this you can configure this in Spring XML as follows
+To do this, you can configure this in Spring XML as follows
 
 [source,xml]
 ----
@@ -100,12 +100,12 @@ This option is set to true by default, unless explicitly disabled.
 
 == Clustering
 
-If you use Quartz in clustered mode, e.g. the `JobStore` is clustered.
+If you use Quartz in clustered mode, e.g., the `JobStore` is clustered.
 Then the xref:quartz-component.adoc[Quartz] component will *not* pause/remove
 triggers when a node is being stopped/shutdown. This allows the trigger
 to keep running on the other nodes in the cluster.
 
-*Note*: When running in clustered node no checking is done to ensure
+NOTE: When running in clustered node, no checking is done to ensure
 unique job name/group for endpoints.
 
 == Message Headers
@@ -125,8 +125,8 @@ was fired.
 Quartz supports
 http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html[Cron-like
 expressions] for specifying timers in a handy format. You can use these
-expressions in the `cron` URI parameter; though to preserve valid URI
-encoding we allow + to be used instead of spaces.
+expressions in the `cron` URI parameter; though, to preserve valid URI
+encoding, we allow `+` to be used instead of spaces.
 
 For example, the following will fire a message every five minutes
 starting at 12pm (noon) to 6pm on weekdays:
@@ -156,7 +156,7 @@ valid URI syntax:
 == Specifying time zone
 
 The Quartz Scheduler allows you to configure time zone per trigger. For
-example to use a timezone of your country, then you can do as follows:
+example, to use a time zone of your country, then you can do as follows:
 
 ----
 quartz://groupName/timerName?cron=0+0/5+12-18+?+*+MON-FRI&trigger.timeZone=Europe/Stockholm
@@ -183,7 +183,8 @@ quartz://groupName/timerName?cron=0+0/5+12-18+?+*+MON-FRI&trigger.endAt=2023-11-
 ----
 
 Note: Start and end dates may be affected by time drifts and unpredictable behavior during 
-daylight saving time changes. Exercise caution, especially in environments where precise timing is critical.
+daylight-saving time changes.
+Exercise caution, especially in environments where precise timing is critical.
 
 == Configuring misfire instructions
 
@@ -192,18 +193,18 @@ to handle misfire situations for the trigger.
 The concrete trigger type that you are using will have defined a set of additional `MISFIRE_INSTRUCTION_XXX`
 constants that may be set as this property's value.
 
-For example to configure the simple trigger to use misfire instruction 4:
+For example, to configure the simple trigger to use misfire instruction 4:
 
 ----
 quartz://myGroup/myTimerName?trigger.repeatInterval=2000&trigger.misfireInstruction=4
 ----
 
-And likewise you can configure the cron trigger with one of its misfire instructions as well:
+And likewise, you can configure the cron trigger with one of its misfire instructions as well:
 ----
 quartz://myGroup/myTimerName?cron=0/2+*+*+*+*+?&trigger.misfireInstruction=2
 ----
 
-The simple and cron triggers has the following misfire instructions representative:
+The simple and cron triggers have the following misfire instructions representative:
 
 === SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW = 1 (default)
 
@@ -212,48 +213,49 @@ situation, the SimpleTrigger wants to be fired now by Scheduler.
 
 This instruction should typically only be used for
 'one-shot' (non-repeating) Triggers. If it is used on a trigger with a
-repeat count > 0 then it is equivalent to the instruction MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT.
+repeat count > 0, then it is equivalent to the instruction `MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT`.
 
 === SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT = 2
 
 Instructs the Scheduler that upon a mis-fire
 situation, the SimpleTrigger wants to be
-re-scheduled to 'now' (even if the associated Calendar excludes 'now')
+re-scheduled to `now` (even if the associated Calendar excludes `now`)
 with the repeat count left as-is.  This does obey the
-Trigger end-time however, so if 'now' is after the
+Trigger end-time, however, so if `now` is after the
 end-time the Trigger will not fire again.
 
 Use of this instruction causes the trigger to 'forget'
-the start-time and repeat-count that it was originally setup with (this
-is only an issue if you for some reason wanted to be able to tell what
-the original values were at some later time).
+the start-time and repeat-count that it was originally setup with.
+This is only an issue if you for some reason wanted to be able to tell what
+the original values were at some later time.
 
 === SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT = 3
 
 Instructs the Scheduler that upon a mis-fire
 situation, the SimpleTrigger wants to be
-re-scheduled to 'now' (even if the associated Calendar
-excludes 'now') with the repeat count set to what it would be, if it had
-not missed any firings.  This does obey the Trigger end-time
-however, so if 'now' is after the end-time the Trigger will
+re-scheduled to `now` (even if the associated Calendar
+excludes `now`) with the repeat count set to what it would be, if it had
+not missed any firings.
+This does obey the Trigger end-time,
+however, so if `now` is after the end-time the Trigger will
 not fire again.
 
 Use of this instruction causes the trigger to 'forget'
 the start-time and repeat-count that it was originally setup with.
 Instead, the repeat count on the trigger will be changed to whatever
-the remaining repeat count is (this is only an issue if you for some
-reason wanted to be able to tell what the original values were at some
-later time).
+the remaining repeat count is.
+This is only an issue if you for some reason wanted to be able to
+tell what the original values were at some later time.
 
 This instruction could cause the Trigger
-to go to the 'COMPLETE' state after firing 'now', if all the
+to go to the 'COMPLETE' state after firing `now`, if all the
 repeat-fire-times where missed.
 
 === SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT = 4
 
 Instructs the Scheduler that upon a mis-fire
 situation, the SimpleTrigger wants to be
-re-scheduled to the next scheduled time after 'now' - taking into
+re-scheduled to the next scheduled time after `now` - taking into
 account any associated Calendar and with the
 repeat count set to what it would be, if it had not missed any firings.
 
@@ -264,7 +266,7 @@ to go directly to the 'COMPLETE' state if all fire-times where missed.
 
 Instructs the Scheduler that upon a mis-fire
 situation, the SimpleTrigger wants to be
-re-scheduled to the next scheduled time after 'now' - taking into
+re-scheduled to the next scheduled time after `now` - taking into
 account any associated Calendar, and with the repeat count left unchanged.
 
 WARNING: This instruction could cause the Trigger
@@ -279,10 +281,10 @@ situation, the CronTrigger wants to be fired now by Scheduler.
 === CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING = 2
 
 Instructs the Scheduler that upon a mis-fire
-situation, the CronTrigger wants to have it's
+situation, the CronTrigger wants to have its
 next-fire-time updated to the next time in the schedule after the
-current time (taking into account any associated Calendar
-but it does not want to be fired now.
+current time (taking into account any associated Calendar.
+However, it does not want to be fired now.
 
 
 == Using QuartzScheduledPollConsumerScheduler
@@ -290,11 +292,11 @@ but it does not want to be fired now.
 The xref:quartz-component.adoc[Quartz] component provides a
 Polling Consumer scheduler which allows to
 use cron based scheduling for xref:eips:polling-consumer.adoc[Polling
-Consumer] such as the File and FTP
+Consumers] such as the File and FTP
 consumers.
 
-For example to use a cron based expression to poll for files every 2nd
-second, then a Camel route can be define simply as:
+For example, to use a cron based expression to poll for files every second
+second, then a Camel route can be defined simply as:
 
 [source,java]
 ----
@@ -303,22 +305,22 @@ second, then a Camel route can be define simply as:
 ----
 
 Notice we define the `scheduler=quartz` to instruct Camel to use the
-xref:quartz-component.adoc[Quartz] based scheduler. Then we use `scheduler.xxx`
-options to configure the scheduler. The xref:quartz-component.adoc[Quartz]
-scheduler requires the cron option to be set.
+xref:quartz-component.adoc[Quartz-based] scheduler.
+Then we use `scheduler.xxx` options to configure the scheduler.
+The xref:quartz-component.adoc[Quartz] scheduler requires the cron option to be set.
 
-The following options is supported:
+The following options are supported:
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |===
 |Parameter |Default |Type |Description
 
-|`quartzScheduler` |`null` |`org.quartz.Scheduler` |To use a custom Quartz scheduler. If none configure then the shared
+|`quartzScheduler` |`null` |`org.quartz.Scheduler` |To use a custom Quartz scheduler. If none is configured, then the shared
 scheduler from the xref:quartz-component.adoc[Quartz] component is used.
 
 |`cron` |`null` |`String` |*Mandatory*: To define the cron expression for triggering the polls.
 
-|`triggerId` |`null` |`String` |To specify the trigger id. If none provided then an UUID is generated
+|`triggerId` |`null` |`String` |To specify the trigger id. If none is provided, then a UUID is generated
 and used.
 
 |`triggerGroup` |`QuartzScheduledPollConsumerScheduler` |`String` |To specify the trigger group.
@@ -328,7 +330,7 @@ and used.
 
 *Important:* Remember configuring these options from the endpoint
 URIs must be prefixed with `scheduler.`.
-For example to configure the trigger id and group:
+For example, to configure the trigger id and group:
 
 [source,java]
 ----
