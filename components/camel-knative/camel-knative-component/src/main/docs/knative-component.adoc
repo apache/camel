@@ -59,13 +59,14 @@ include::partial$component-endpoint-options.adoc[]
 
 The component support the following Knative resources you can target or exposes using the `type` path parameter:
 
-- **channel** allow producing or consuming events to or from a https://knative.dev/docs/eventing/channels/[**Knative Channel**]
-- **endpoint** allow exposing or targeting serverless workloads using https://knative.dev/docs/serving/spec/knative-api-specification-1.0/#service[**Knative Services**]
-- **event** allow producing or consuming events to or from a https://knative.dev/docs/eventing/broker[**Knative Broker**]
+- **channel**: allow producing or consuming events to or from a https://knative.dev/docs/eventing/channels/[**Knative Channel**]
+- **endpoint**: allow exposing or targeting serverless workloads using https://knative.dev/docs/serving/spec/knative-api-specification-1.0/#service[**Knative Services**]
+- **event**: allow producing or consuming events to or from a https://knative.dev/docs/eventing/broker[**Knative Broker**]
 
 == Knative Environment
 
-As the Knative component hides the technical details of how to communicate with Knative services to the user (protocols, addresses, etc.), it needs some metadata that describe the Knative environment to set-up the low level transport details. In order to do so, the component needs a so called `Knative Environment` which is essence is a Json document made by a number of `service` elements which looks like the below example:
+As the Knative component hides the technical details of how to communicate with Knative services to the user (protocols, addresses, etc.), it needs some metadata that describes the Knative environment to set up the low-level transport details.
+To do so, the component needs a so called `Knative Environment`, which is essence is a Json document made by a number of `service` elements which looks like the below example:
 
 [source,json]
 ------------------------------------------------------------
@@ -89,7 +90,7 @@ As the Knative component hides the technical details of how to communicate with 
 <2> the name of the resource
 <3> the url of the service to invoke (for producer only)
 <4> the Knative event type received or produced by the component
-<5> the type of the Camel Endpoint associated to this Knative resource (source=consumer, sink=producer)
+<5> the type of the Camel Endpoint associated with this Knative resource (source=consumer, sink=producer)
 
 The `metadata` fields has some additional advanced fields:
 
