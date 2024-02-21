@@ -30,12 +30,12 @@ from("kafka:topic").
   to("log:info");
 -------------------------------
 
-== Configuring the SchemaResolver
+== Configuring the `SchemaResolver`
 
 Since Protobuf serialization is schema-based, this data format requires that you provide a SchemaResolver object
-that is able to lookup the schema for each exchange that is going to be marshalled/unmarshalled.
+that is able to look up the schema for each exchange that is going to be marshalled/unmarshalled.
 
-You can add a single SchemaResolver to the registry and it will be looked up automatically.
+You can add a single SchemaResolver to the registry, and it will be looked up automatically.
 Or you can explicitly specify the reference to a custom SchemaResolver.
 
 == Protobuf Jackson Options
@@ -49,16 +49,15 @@ include::partial$dataformat-options.adoc[]
 
 You can configure `JacksonProtobufDataFormat` to use a custom `ProtobufMapper` in case you need more control of the mapping configuration.
 
-If you setup a single `ProtobufMapper` in the registry, then Camel will automatic lookup and use this `ProtobufMapper`.
+If you set up a single `ProtobufMapper` in the registry, then Camel will automatic lookup and use this `ProtobufMapper`.
 
 == Dependencies
 
-To use Protobuf Jackson in your camel routes you need to add the dependency
-on *camel-jackson-protobuf* which implements this data format.
+To use Protobuf Jackson in your Camel routes, you need to add the dependency
+on *camel-jackson-protobuf*, which implements this data format.
 
-If you use maven you could just add the following to your pom.xml,
-substituting the version number for the latest & greatest release (see
-the download page for the latest versions).
+If you use Maven, you could add the following to your pom.xml,
+substituting the version number for the latest & greatest release.
 
 [source,xml]
 ----------------------------------------------------------
