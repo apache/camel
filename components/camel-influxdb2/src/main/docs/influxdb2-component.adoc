@@ -14,11 +14,12 @@
 
 *{component-header}*
 
-This component allows you to interact with InfluxDB 2.x
-https://influxdata.com/time-series-platform/influxdb/ a time series database.
-The native body type for this component is Point (the native influxdb class), but it can also accept Map<String, Object> as message body and it will get converted to Point.class, please note that the map must contain an element with InfluxDbConstants.MEASUREMENT_NAME as key.
+This component allows you to interact with https://influxdata.com/time-series-platform/influxdb/[InfluxDB] 2.x,
+a time series database.
+The native body type for this component is `Point` (the native InfluxDB class).
+However, it can also accept `Map<String, Object>` as message body, and it will get converted to `Point.class`, please note that the map must contain an element with `InfluxDbConstants.MEASUREMENT_NAME` as key.
 
-Additionally, of course you may register your own Converters to your data type to Point, or use the (un)marshalling tools provided by camel.
+Additionally, you may register your own Converters to your data type to `Point`, or use the (un)marshalling tools provided by Camel.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -39,7 +40,7 @@ for this component:
 influxdb2://connectionBean?[options]
 -------------------------------
 
-The producer allows sending messages to a influxdb configured in the registry, using the native java driver.
+The producer allows sending messages to an InfluxDB configured in the registry, using the native java driver.
 
 // component-configure options: START
 
