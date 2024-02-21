@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-The Camel-Jsch component supports the
+The Camel Jsch component supports the
 http://en.wikipedia.org/wiki/Secure_copy[SCP protocol] using the Client
 API of the http://www.jcraft.com/jsch/[Jsch] project. Jsch is already
 used in camel by the xref:ftp-component.adoc[FTP] component for the *sftp:*
@@ -60,10 +60,9 @@ include::partial$component-endpoint-options.adoc[]
 
 == Limitations
 
-Currently camel-jsch only supports a
+Currently, camel-jsch only supports a
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Producer.html[Producer]
-(i.e. copy files to another host). 
-
+(i.e., copy files to another host).
 
 
 include::spring-boot:partial$starter.adoc[]
