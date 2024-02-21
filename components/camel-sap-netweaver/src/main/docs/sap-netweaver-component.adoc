@@ -43,10 +43,10 @@ sap-netweaver:https://host:8080/path?username=foo&password=secret
 
 == Prerequisites
 
-You would need to have an account to the SAP NetWeaver system to be able
+You would need to have an account on the SAP NetWeaver system to be able
 to leverage this component. SAP provides a
 http://scn.sap.com/docs/DOC-31221#section6[demo setup] where you can
-requires for an account.
+request an account.
 
 This component uses the basic authentication scheme for logging into SAP
 NetWeaver.
@@ -103,7 +103,7 @@ from("direct:start")
     .to("velocity:flight-info.vm")
 -----------------------------------------------------------------------------
 
-Where url, username, password and command is defined as:
+Where `url`, `username`, `password` and `command` are defined as:
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------------
@@ -137,7 +137,7 @@ HTML page
 </html>
 ------------------------------------------------------------------------
 
-When running the application you get sample output:
+When running the application, you get sample output:
 
 -------------------------------
 Flight information:
