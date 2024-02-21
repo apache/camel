@@ -17,6 +17,7 @@
 package org.apache.camel.main;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -64,6 +65,7 @@ import org.apache.camel.main.download.PromptPropertyPlaceholderSource;
 import org.apache.camel.main.download.StubBeanRepository;
 import org.apache.camel.main.download.TypeConverterLoaderDownloadListener;
 import org.apache.camel.main.injection.AnnotationDependencyInjection;
+import org.apache.camel.main.reload.OpenApiGeneratorReloadStrategy;
 import org.apache.camel.main.util.ClipboardReloadStrategy;
 import org.apache.camel.main.util.ExtraClassesClassLoader;
 import org.apache.camel.main.util.ExtraFilesClassLoader;
@@ -612,6 +614,16 @@ public class KameletMain extends MainCommandLineSupport {
                 answer.addService(reloader);
                 PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(answer);
                 scheduler.schedulePeriodTask(reloader, 2000);
+            }
+
+            // reload with openapi
+            String openapi = getInitialProperties().getProperty("camel.jbang.open-api");
+            String reload = getInitialProperties().getProperty("camel.main.routesReloadDirectory");
+            if (openapi != null && (reload != null || sourceDir != null)) {
+                // add open-api reloader that generate output to .camel-jbang/generated-openapi.yaml
+                File file = Paths.get(openapi).toFile();
+                OpenApiGeneratorReloadStrategy rs = new OpenApiGeneratorReloadStrategy(file);
+                answer.addService(rs);
             }
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
