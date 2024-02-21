@@ -23,7 +23,7 @@ with any bean defined in a Spring ApplicationContext
 * Camel uses Spring Transactions as the default transaction handling in
 components like xref:jms-component.adoc[JMS] and xref:jms-component.adoc[JPA]
 * Camel integrates with various Spring helper classes; such as providing
-Type Converter support for Spring Resources etc
+Type Converter support for Spring Resources, etc.
 * Allows you to reuse the Spring Testing
 framework to simplify your unit and integration testing using
 xref:eips:enterprise-integration-patterns.adoc[Enterprise Integration
@@ -108,8 +108,8 @@ discovery and initialization of routes in given packages. This is
 configured by adding tags to the camel context in your spring context
 definition, specifying the packages to be recursively searched for
 `RouteBuilder` implementations. To use this feature, requires a
-`<package></package>` tag specifying a comma
-separated list of packages that should be searched e.g.
+`<package></package>` tag specifying a comma-separated list of
+packages that should be searched e.g.
 
 [source,xml]
 ----
@@ -120,17 +120,18 @@ separated list of packages that should be searched e.g.
 
 
 WARNING: Use caution when specifying the package name as `org.apache.camel` or a
-sub package of this. This causes Camel to search in its own packages for
-your routes which could cause problems.
+subpackage of this.
+This causes Camel to search in its own packages for
+your routes, which could cause problems.
 
 
 [NOTE]
 ====
 *Will ignore already instantiated classes*
 
-The `<package>` and `<packageScan>` will skip all classes which have already
-been created by Spring etc. So if you define a route builder as a spring
-bean tag then that class will be skipped. You can include those beans
+The `<package>` and `<packageScan>` will skip all classes that Spring has already
+created etc. So if you define a route builder as a spring
+bean tag, then that class will be skipped. You can include those beans
 using `<routeBuilder ref="theBeanId"/>` or the `<contextScan>` feature.
 ====
 
@@ -155,7 +156,7 @@ applied to the fully qualified names of the discovered classes. e.g.
 --------------------------------------------------------------
 
 Exclude patterns are applied before the include patterns. If no include
-or exclude patterns are defined then all the Route classes discovered in
+or exclude patterns are defined, then all the Route classes discovered in
 the packages will be returned.
 
 In the above example, camel will scan all the `org.example.routes`
@@ -189,7 +190,7 @@ but not match org.simple.PrecludedRoute
 
 === Using contextScan
 
-You can allow Camel to scan the container context, e.g. the Spring
+You can allow Camel to scan the container context, e.g., the Spring
 `ApplicationContext` for route builder instances. This allows you to use
 the Spring `<component-scan>` feature and have Camel pickup any
 `RouteBuilder` instances which were created by Spring in its scan process.
@@ -212,9 +213,9 @@ public class MyRoute extends SpringRouteBuilder {
 You can also use the ant style for inclusion and exclusion, as mentioned
 above in the `<packageScan>` documentation.
 
-== How do I import routes from other XML files
+== How do I import routes from other XML files?
 
-When defining routes in Camel using Spring XML you may want to define some routes in other XML files.
+When defining routes in Camel using Spring XML, you may want to define some routes in other XML files.
 For example, you may have many routes, and it may help to maintain the
 application if some routes are in separate XML files. You may
 also want to store common and reusable routes in other XML files, which
@@ -249,7 +250,7 @@ a couple of routes as shown:
             <from uri="direct:start"/>
             <to uri="mock:result"/>
         </route>
-        <!-- and another route, you can have as many your like -->
+        <!-- and another route, you can have as many you like -->
         <route id="bar">
             <from uri="direct:bar"/>
             <to uri="mock:bar"/>
@@ -273,7 +274,7 @@ to import the `myCoolRoute.xml` file. +
      <!-- refer to a given route to be used -->
      <routeContextRef ref="myCoolRoutes"/>
 
-     <!-- we can of course still use routes inside camelContext -->
+     <!-- we can still use routes inside camelContext -->
      <route id="inside">
          <from uri="direct:inside"/>
          <to uri="mock:inside"/>
@@ -289,13 +290,14 @@ You can have as many `<routeContextRef/>` as you like.
 *Reusable routes*
 
 The routes defined in `<routeContext/>` can be reused by multiple
-`<camelContext/>`. However, it is only the definition which is reused. At
-runtime each CamelContext will create its own instance of the route
+`<camelContext/>`.
+However, it is only the definition that is reused.
+At runtime, each CamelContext will create its own instance of the route
 based on the definition.
 
 === Test time exclusion.
 
-At test time it is often desirable to be able to selectively exclude
+At test time, it is often desirable to be able to selectively exclude
 matching routes from being initialized that are not applicable or useful
 to the test scenario. For instance, you might have a spring context file
 `routes-context.xml` and three Route builders `RouteA`, `RouteB` and `RouteC` in
@@ -319,7 +321,7 @@ public class RouteAandRouteBOnlyTest extends SpringTestSupport {
 }
 ----------------------------------------------------------------
 
-In order to hook into the camelContext initialization by spring to
+To hook into the camelContext initialization by spring to
 exclude the class `MyExcludedRouteBuilder`, we need to intercept the spring
 context creation. When overriding createApplicationContext to create the
 spring context, we call the `getRouteExcludingApplicationContext()` method
@@ -408,7 +410,7 @@ Integration] for further injections.
 
 == Integration Testing
 
-To avoid a hung route when testing using Spring Transactions see the
+To avoid a hung route when testing using Spring Transactions, see the
 note about Spring Integration Testing under Transactional Client.
 
 == Cron Component Support
