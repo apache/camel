@@ -25,6 +25,7 @@ import java.util.Optional;
 import org.apache.camel.Exchange;
 
 public interface CloudEvent {
+
     String CAMEL_CLOUD_EVENT_ID = "CamelCloudEventID";
     String CAMEL_CLOUD_EVENT_SOURCE = "CamelCloudEventSource";
     String CAMEL_CLOUD_EVENT_VERSION = "CamelCloudEventVersion";

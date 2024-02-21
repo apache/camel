@@ -33,6 +33,13 @@ public enum CloudEvents implements CloudEvent {
     //
     v1_0_1(new CloudEventImpl(
             "1.0.1",
+            CloudEventAttributes.V1_0_ATTRIBUTES)),
+
+    //
+    // V1.0.2 - https://github.com/cloudevents/spec/blob/v1.0.2/spec.md
+    //
+    v1_0_2(new CloudEventImpl(
+            "1.0.2",
             CloudEventAttributes.V1_0_ATTRIBUTES));
 
     private final CloudEvent instance;
@@ -58,7 +65,7 @@ public enum CloudEvents implements CloudEvent {
             }
         }
 
-        throw new IllegalArgumentException("Unable to find an implementation fo CloudEvents spec: " + version);
+        throw new IllegalArgumentException("Cannot find an implementation for CloudEvents spec: " + version);
     }
 
     private static class CloudEventImpl implements CloudEvent {
