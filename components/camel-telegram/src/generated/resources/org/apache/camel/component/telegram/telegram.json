@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "telegram",
     "title": "Telegram",
-    "description": "Send and receive messages acting as a Telegram Bot Telegram Bot API.",
+    "description": "Send and receive messages using the Telegram Bot API.",
     "deprecated": false,
     "firstVersion": "2.18.0",
     "label": "cloud,api,chat",
