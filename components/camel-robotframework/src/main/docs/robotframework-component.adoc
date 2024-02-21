@@ -16,13 +16,14 @@
 
 The *robotframework:* component allows for processing camel exchanges
 in acceptance test suites which are already implemented with its own DSL. 
-The depending keyword libraries that can be used inside test suites 
+The depending keyword libraries that can be used inside test suites
 implemented in Robot DSL, could have been implemented either via 
 Java or Pyhton.
 
 This component will let you execute business logic of acceptance test cases 
 in Robot language on which you can pass parameters to feed data via power 
-of Camel Routes, however there is no reverse binding of parameters back where
+of Camel Routes.
+However, there is no reverse binding of parameters back where
 you can pass values back into Camel exchange. Therefore, for that reason,
 it actually acts like a template language passing camel exchanges by binding
 data into the test cases implemented. 
@@ -74,7 +75,7 @@ from("direct:setVariableCamelBody")
 ----
 
 To use a robot test case to execute and collect the results
-and pass them to generate custom report if such need happens
+and pass them to generate a custom report if such need happens
 
 It's possible to specify what template the component
 should use dynamically via a header, so for example:
@@ -88,8 +89,8 @@ from("direct:in")
 
 Robotframework component helps you pass values into robot test cases 
 with the similar approach how you would be able to pass values using 
-Camel Simple Language. Components supports passing values in three
-different ways. Exchange body, headers and properties.
+Camel Simple Language. Components support passing values in three
+different ways. Exchange body, headers, and properties.
 
 [source,java]
 ----
