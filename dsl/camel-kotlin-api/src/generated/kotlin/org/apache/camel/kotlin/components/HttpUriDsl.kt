@@ -73,16 +73,24 @@ public class HttpUriDsl(
     it.property("connectionClose", connectionClose.toString())
   }
 
-  public fun followRedirects(followRedirects: String) {
-    it.property("followRedirects", followRedirects)
-  }
-
-  public fun followRedirects(followRedirects: Boolean) {
-    it.property("followRedirects", followRedirects.toString())
-  }
-
   public fun httpMethod(httpMethod: String) {
     it.property("httpMethod", httpMethod)
+  }
+
+  public fun skipRequestHeaders(skipRequestHeaders: String) {
+    it.property("skipRequestHeaders", skipRequestHeaders)
+  }
+
+  public fun skipRequestHeaders(skipRequestHeaders: Boolean) {
+    it.property("skipRequestHeaders", skipRequestHeaders.toString())
+  }
+
+  public fun skipResponseHeaders(skipResponseHeaders: String) {
+    it.property("skipResponseHeaders", skipResponseHeaders)
+  }
+
+  public fun skipResponseHeaders(skipResponseHeaders: Boolean) {
+    it.property("skipResponseHeaders", skipResponseHeaders.toString())
   }
 
   public fun throwExceptionOnFailure(throwExceptionOnFailure: String) {
@@ -129,6 +137,14 @@ public class HttpUriDsl(
     it.property("deleteWithBody", deleteWithBody.toString())
   }
 
+  public fun followRedirects(followRedirects: String) {
+    it.property("followRedirects", followRedirects)
+  }
+
+  public fun followRedirects(followRedirects: Boolean) {
+    it.property("followRedirects", followRedirects.toString())
+  }
+
   public fun getWithBody(getWithBody: String) {
     it.property("getWithBody", getWithBody)
   }
@@ -163,22 +179,6 @@ public class HttpUriDsl(
 
   public fun preserveHostHeader(preserveHostHeader: Boolean) {
     it.property("preserveHostHeader", preserveHostHeader.toString())
-  }
-
-  public fun skipRequestHeaders(skipRequestHeaders: String) {
-    it.property("skipRequestHeaders", skipRequestHeaders)
-  }
-
-  public fun skipRequestHeaders(skipRequestHeaders: Boolean) {
-    it.property("skipRequestHeaders", skipRequestHeaders.toString())
-  }
-
-  public fun skipResponseHeaders(skipResponseHeaders: String) {
-    it.property("skipResponseHeaders", skipResponseHeaders)
-  }
-
-  public fun skipResponseHeaders(skipResponseHeaders: Boolean) {
-    it.property("skipResponseHeaders", skipResponseHeaders.toString())
   }
 
   public fun userAgent(userAgent: String) {
