@@ -14,9 +14,8 @@
 
 *{component-header}*
 
-The JsonPatch component allows you to process a JSON messages using an
-https://github.com/schibsted/jslt[JSLT] expression. This can be
-ideal when doing JSON to JSON transformation or querying data.
+The JsonPatch component allows you to process JSON messages using an
+https://github.com/java-json-tools/json-patch[JSON Patch] (https://datatracker.ietf.org/doc/html/rfc6902[RFC 6902]).
 
 Maven users will need to add the following dependency to
 their `pom.xml` for this component:
