@@ -106,10 +106,10 @@ In Spring DSL:
 
 == Dependencies
 
-To use SWIFT MX in your Camel routes you need to add a dependency on
+To use SWIFT MX in your Camel routes, you need to add a dependency on
 *camel-swift* which implements this data format.
 
-If you use Maven you can just add the following to your pom.xml:
+If you use Maven, you can add the following to your pom.xml:
 
 [source,xml]
 ----
