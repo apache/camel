@@ -13,7 +13,7 @@
 
 SOAP is a Data Format which uses JAXB2 and JAX-WS
 annotations to marshal and unmarshal SOAP payloads. It provides the
-basic features of Apache CXF without need for the CXF Stack.
+basic features of Apache CXF without the need for the CXF Stack.
 
 *Namespace prefix mapping*
 
@@ -32,7 +32,7 @@ include::partial$dataformat-options.adoc[]
 == ElementNameStrategy
 
 An element name strategy is used for two purposes. The first is to find
-a xml element name for a given object and soap action when marshaling
+ an XML element name for a given object and soap action when marshaling
 the object into a SOAP message. The second is to find an Exception class
 for a given soap fault name.
 
@@ -43,8 +43,8 @@ for a given soap fault name.
 |QNameStrategy |Uses a fixed qName that is configured on instantiation. Exception lookup
 is not supported
 
-|TypeNameStrategy |Uses the name and namespace from the @XMLType annotation of the given
-type. If no namespace is set then package-info is used. Exception lookup
+|TypeNameStrategy |Uses the name and namespace from the `@XMLType` annotation of the given
+type. If no namespace is set, then package-info is used. Exception lookup
 is not supported
 
 |ServiceInterfaceStrategy |Uses information from a webservice interface to determine the type name
@@ -52,22 +52,26 @@ and to find the exception class for a SOAP fault
 |=======================================================================
 
 If you have generated the web service stub code with cxf-codegen or a
-similar tool then you probably will want to use the
-ServiceInterfaceStrategy. In the case you have no annotated service
-interface you should use QNameStrategy or TypeNameStrategy.
+similar tool, then you probably will want to use the
+`ServiceInterfaceStrategy`. In the case you have no annotated service
+interface you should use `QNameStrategy` or `TypeNameStrategy`.
 
 == Using the Java DSL
 
-The following example uses a named DataFormat of _soap_ which is
-configured with the package com.example.customerservice to initialize
+The following example uses a named `DataFormat` of _soap_ which is
+configured with the package `com.example.customerservice` to initialize
 the
 http://java.sun.com/javase/6/docs/api/javax/xml/bind/JAXBContext.html[JAXBContext].
-The second parameter is the ElementNameStrategy. The route is able to
-marshal normal objects as well as exceptions. (Note the below just sends
-a SOAP Envelope to a queue. A web service provider would actually need
-to be listening to the queue for a SOAP call to actually occur, in which
-case it would be a one way SOAP request. If you need request reply then
-you should look at the next example.)
+The second parameter is the `ElementNameStrategy`. The route is able to
+marshal normal objects as well as exceptions.
+
+[NOTE]
+====
+The below just sends a SOAP Envelope to a queue.
+A web service provider would actually need to be listening to the queue for a SOAP call to actually occur, in which
+case it would be a one way SOAP request.
+If you need to request a reply, then you should look at the next example.
+====
 
 [source,java]
 -------------------------------------------------------------------------------------------------------------------------------------
@@ -81,7 +85,7 @@ from("direct:start")
 ====
 *See also*
 
-As the SOAP dataformat inherits from the xref:jaxb-dataformat.adoc[JAXB] dataformat
+As the SOAP dataformat inherits from the xref:jaxb-dataformat.adoc[JAXB] dataformat,
 most settings apply here as well
 ====
 
@@ -99,7 +103,7 @@ from("direct:start")
   .to("jms:myQueue");
 -------------------------------------------------------------------------------------------------------------------------------------
 
-When using XML DSL there is a version attribute you can set on the
+When using XML DSL, there is a version attribute you can set on the
 <soap> element.
 
 [source,xml]
@@ -128,17 +132,17 @@ And in the Camel route
 
 *Since Camel 2.8.1*
 
-Multi-part SOAP messages are supported by the ServiceInterfaceStrategy.
-The ServiceInterfaceStrategy must be initialized with a service
+Multipart SOAP messages are supported by the `ServiceInterfaceStrategy`.
+The `ServiceInterfaceStrategy` must be initialized with a service
 interface definition that is annotated in accordance with JAX-WS 2.2 and
 meets the requirements of the Document Bare style. The target method
 must meet the following criteria, as per the JAX-WS specification: 
 1. it must have at most one `in` or `in/out` non-header parameter, 
 2. if it has a return type other than `void` it must have no `in/out` or `out`
 non-header parameters,
-3. if it it has a return type of `void` it must have at most one `in/out` or `out` non-header parameter.
+3. if it has a return type of `void` it must have at most one `in/out` or `out` non-header parameter.
 
-The ServiceInterfaceStrategy should be initialized with a boolean
+The `ServiceInterfaceStrategy` should be initialized with a boolean
 parameter that indicates whether the mapping strategy applies to the
 request parameters or response parameters.
 
@@ -196,10 +200,10 @@ GetCustomersByNameResponse response = proxy.getCustomersByName(new GetCustomersB
 
 === Webservice Server
 
-Using the following route sets up a webservice server that listens on
-jms queue customerServiceQueue and processes requests using the class
-CustomerServiceImpl. The customerServiceImpl of course should implement
-the interface CustomerService. Instead of directly instantiating the
+Using the following route sets up a webservice server that consumes from the
+jms queue `customerServiceQueue` and processes requests using the class
+`CustomerServiceImpl`. The `customerServiceImpl` should implement
+the interface `CustomerService`. Instead of directly instantiating the
 server class it could be defined in a spring context as a regular bean.
 
 [source,java]
@@ -218,8 +222,8 @@ from("jms://queue:customerServiceQueue")
 
 == Dependencies
 
-To use the SOAP dataformat in your camel routes you need to add the
-following dependency to your pom.
+To use the SOAP dataformat in your Camel routes, you need to add the
+following dependency to your `pom.xml`.
 
 [source,xml]
 -------------------------------------
