@@ -29,7 +29,7 @@ The configuration properties for the OpenTelemetry tracer are:
 messages that matches the pattern. The content is a Set<String> where the key is a pattern. The pattern
 uses the rules from Intercept.
 |encoding |false| Sets whether the header keys need to be encoded (connector specific) or not. The value is a boolean.
-Dashes need for instances to be encoded for JMS property keys.
+Dashes are required for instances to be encoded for JMS property keys.
 
 |=======================================================================
 
@@ -46,15 +46,15 @@ context. You can optionally specify a `Tracer`, or alternatively it can be impli
 [source,java]
 --------------------------------------------------------------------------------------------------
 OpenTelemetryTracer otelTracer = new OpenTelemetryTracer();
-// By default it uses the DefaultTracer, but you can override it with a specific OpenTelemetry Tracer implementation.
+// By default, it uses the DefaultTracer, but you can override it with a specific OpenTelemetry Tracer implementation.
 otelTracer.setTracer(...);
 // And then initialize the context
 otelTracer.init(camelContext);
 --------------------------------------------------------------------------------------------------
 
-You would still need OpenTelemetry to instrument your code, which can be done via a Java agent (see further below).
+NOTE: You would still need OpenTelemetry to instrument your code, which can be done via a <<OpenTelemetry-JavaAgent,Java agent>>.
 
-=== Using with standalone Camel
+=== Using it with standalone Camel
 
 If you use `camel-main` as standalone Camel, then you can enable and use OpenTelemetry without Java code.
 
@@ -67,7 +67,7 @@ camel.opentelemetry.enabled = true
 # camel.opentelemetry.instrumentationName = myApp
 ----
 
-You would still need OpenTelemetry to instrument your code, which can be done via a Java agent (see further below).
+NOTE: You would still need OpenTelemetry to instrument your code, which can be done via a <<OpenTelemetry-JavaAgent,Java agent>>.
 
 == Spring Boot
 
@@ -78,6 +78,7 @@ the main class with `@CamelOpenTelemetry`.
 The `OpenTelemetryTracer` will be implicitly obtained from the camel context's `Registry`, unless
 a `OpenTelemetryTracer` bean has been defined by the application.
 
+[[OpenTelemetry-JavaAgent]]
 == Java Agent
 
 Download the https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/[latest version].
