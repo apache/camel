@@ -6,14 +6,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 
-= Choice EIP
-:doctitle: Choice
-:shortname: choice
-:description: Route messages based on a series of predicates
-:since: 
-:supportlevel: Stable
-:tabs-sync-option:
-
 The
 http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content
 Based Router] from the xref:enterprise-integration-patterns.adoc[EIP
