@@ -79,8 +79,8 @@ When configured as a message queue consumer endpoint, the endpoint will poll
 a message queue on an IBM i system. For every entry on the queue, a new
 `Exchange` is sent with the entry's data in the _In_ message's body. The
 data is always formatted as a `String`. Note that only new messages will
-be processed. That is, any existing messages on the queue that have already
-been handled by another program will not be processed by this endpoint.
+be processed. That is, this endpoint will not process any existing messages
+on the queue that have already been handled by another program.
 
 For a data queue provider endpoint, the _In_ message body contents will be
 put on the data queue as either raw bytes or text.
@@ -104,8 +104,8 @@ mechanisms. A parameter can be _omitted_ by passing null as the value in
 its position (the program has to support it). After the program execution,
 the endpoint returns an `Object[]` in the message body. Depending on
 _format_, the returned array will be populated with `byte[]` or `String`
-objects representing the values as they were returned by the program. Input
-only parameters will contain the same data as the beginning of the invocation.
+objects representing the values as they were returned by the program.
+Input-only parameters will contain the same data as the beginning of the invocation.
 This endpoint does not implement a provider endpoint!
 
 // component headers: START
@@ -134,9 +134,9 @@ public class Jt400RouteBuilder extends RouteBuilder {
 === Program call examples
 
 In the snippet below, the data Exchange sent to the direct:work endpoint
-will contain three string that will be used as the arguments for the
+will contain three strings that will be used as the arguments for the
 program “compute” in the library “assets”. This program will write the
-output values in the 2nd and 3rd parameters. All the parameters will be
+output values in the second and third parameters. All the parameters will be
 sent to the direct:play endpoint.
 
 [source,java]
