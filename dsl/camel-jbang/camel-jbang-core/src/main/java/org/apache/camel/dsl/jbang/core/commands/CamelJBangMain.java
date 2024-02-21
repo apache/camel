@@ -60,6 +60,14 @@ public class CamelJBangMain implements Callable<Integer> {
     }
 
     public static void run(CamelJBangMain main, String... args) {
+        // set pid as system property as logging ${sys:pid} needs to be resolved on windows
+        try {
+            long pid = ProcessHandle.current().pid();
+            System.setProperty("pid", Long.toString(pid));
+        } catch (Exception e) {
+            // ignore
+        }
+
         commandLine = new CommandLine(main)
                 .addSubcommand("init", new CommandLine(new Init(main)))
                 .addSubcommand("run", new CommandLine(new Run(main)))
