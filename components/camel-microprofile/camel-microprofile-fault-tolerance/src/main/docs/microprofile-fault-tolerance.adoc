@@ -11,7 +11,7 @@
 
 This component supports the Circuit Breaker EIP with the MicroProfile Fault Tolerance library.
 
-For more details see the xref:eips:circuitBreaker-eip.adoc[Circuit Breaker EIP] documentation.
+For more details, see the xref:eips:circuitBreaker-eip.adoc[Circuit Breaker EIP] documentation.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
