@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-The Mina component is a transport for working with
+The Mina component is a transport mechanism for working with
 http://mina.apache.org/[Apache MINA 2.x]
 
 [TIP]
@@ -23,8 +23,8 @@ Favor using xref:netty-component.adoc[Netty] as Netty is a much more active
 maintained and popular project than Apache Mina currently is.
 ====
 
-WARNING: Be careful with `sync=false` on consumer endpoints. Since camel-mina all
-consumer exchanges are InOut. This is different to camel-mina.
+WARNING: Be careful with `sync=false` on consumer endpoints. In camel-mina, all
+consumer exchanges are `InOut`. This is different to camel-mina.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -49,8 +49,8 @@ mina:vm://hostname[:port][?options]
 
 You can specify a codec in the Registry using the
 *codec* option. If you are using TCP and no codec is specified then the
-`textline` flag is used to determine if text line based codec or object
-serialization should be used instead. By default the object
+`textline` flag is used to determine if text-line-based codec or object
+serialization should be used instead. By default, the object
 serialization is used.
 
 For UDP if no codec is specified the default uses a basic `ByteBuffer`
@@ -97,7 +97,7 @@ your codec. See xref:dataformats:hl7-dataformat.adoc[HL7] that has a custom code
 
 In this sample, Camel exposes a service that listens for TCP connections
 on port 6200. We use the *textline* codec. In our route, we create a
-Mina consumer endpoint that listens on port 6200:
+Mina consumer endpoint that listens to on port 6200:
 
 [source,java]
 ---------------------------------------------------------------------------------------
@@ -147,8 +147,8 @@ assertEquals("Bye World", response);
 
 == Sample with Spring DSL
 
-Spring DSL can, of course, also be used for xref:mina-component.adoc[MINA]. In the
-sample below we expose a TCP server on port 5555:
+Spring DSL can also be used for xref:mina-component.adoc[MINA].
+In the sample below, we expose a TCP server on port 5555:
 
 [source,xml]
 -----------------------------------------------------------
@@ -173,7 +173,7 @@ could be implemented as follows:
 
 == Closing Session When Complete
 
-When acting as a server you sometimes want to close the session when,
+When acting as a server, you sometimes want to close the session when,
 for example, a client conversion is finished. To instruct Camel to close
 the session, you should add a header with the key
 `CamelMinaCloseSessionWhenComplete` set to a boolean `true` value.
@@ -203,7 +203,7 @@ with the key `MinaConstants.MINA_REMOTE_ADDRESS`.
 
 Filters permit you to use some Mina Filters, such as `SslFilter`. You
 can also implement some customized filters. Please note that `codec` and
-`logger` are also implemented as Mina filters of type, `IoFilter`. Any
+`logger` are also implemented as Mina filters of the type, `IoFilter`. Any
 filters you may define are appended to the end of the filter chain; that
 is, after `codec` and `logger`.
 
